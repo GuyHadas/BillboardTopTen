@@ -14,6 +14,7 @@ var Billboard = React.createClass({
     return (
       <div>
         Hello world!
+        World Hello!
       </div>
     );
   }
