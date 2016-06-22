@@ -2,11 +2,11 @@ var React = require("react");
 var ReactDOM = require("react-dom");
 var HashHistory = require('react-router').hashHistory;
 
-var Track = require("./track.jsx");
+var Graph = require("./graph.jsx");
 
 var Home = React.createClass({
   getInitialState: function() {
-    return { charts: null };
+    return { charts: null, currentChart: null };
   },
 
   componentDidMount: function() {
@@ -15,29 +15,23 @@ var Home = React.createClass({
       type: 'GET',
       url: 'billboard-data.json',
       success: function(charts) {
-        self.setState({charts: charts});
+        self.setState({charts: charts, currentChart: charts[Object.keys(charts)[0]]});
       }
     });
   },
 
+  
+
   render: function() {
     if (!this.state.charts) {
-      var list = <div>Loading...</div>;
+      var graph = <div>Loading...</div>;
     } else {
-      list = [];
-       for (var i = 0; i < 10; i++) {
-         var chart = this.state.charts[Object.keys(this.state.charts)[i]];
-         list.push(<div>{Object.keys(this.state.charts)[i]}</div>);
-         for (var j = 0; j < 10; j++) {
-           list.push(<Track track={chart[j]}/>);
-         }
-         list.push(<br/>);
-      }
+      graph = <Graph chart={this.state.currentChart}/>;
     }
     return (
-      <ul>
-        {list}
-      </ul>
+      <div>
+        {graph}
+      </div>
     );
   }
 });
