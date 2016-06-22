@@ -7,14 +7,14 @@ var IndexRoute = require('react-router').IndexRoute;
 var Link = require('react-router').Link;
 var HashHistory = require('react-router').hashHistory;
 
+var Home = require("./components/home.jsx");
 
 var Billboard = React.createClass({
 
   render: function() {
     return (
       <div>
-        Hello world!
-        World Hello!
+        {this.props.children}
       </div>
     );
   }
@@ -22,6 +22,7 @@ var Billboard = React.createClass({
 
 var routes = (
   <Route path="/" component={Billboard}>
+    <IndexRoute component={Home} />
   </Route>
 );
 
