@@ -16,11 +16,22 @@ var Home = React.createClass({
       url: 'billboard-data.json',
       success: function(charts) {
         self.setState({charts: charts, currentChart: charts[Object.keys(charts)[0]]});
+        self.incrementCharts();
       }
     });
   },
 
-  
+  incrementCharts: function() {
+    var self = this;
+    var i = 1;
+    var nextDate = setInterval(function() {
+      self.setState({ currentChart: self.state.charts[Object.keys(self.state.charts)[i]] });
+      i += 1;
+      if ( i == Object.keys(self.state.charts).length - 1) {
+        clearInterval(nextDate);
+      }
+    }, 3000);
+  },
 
   render: function() {
     if (!this.state.charts) {
