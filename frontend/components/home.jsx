@@ -6,7 +6,7 @@ var Graph = require("./graph.jsx");
 
 var Home = React.createClass({
   getInitialState: function() {
-    return { charts: null, currentChart: null };
+    return { charts: null, currentDate: null };
   },
 
   componentDidMount: function() {
@@ -15,7 +15,7 @@ var Home = React.createClass({
       type: 'GET',
       url: 'billboard-data.json',
       success: function(charts) {
-        self.setState({charts: charts, currentChart: charts[Object.keys(charts)[0]]});
+        self.setState({ charts: charts, currentDate: Object.keys(charts)[0] });
         self.incrementCharts();
       }
     });
@@ -25,7 +25,7 @@ var Home = React.createClass({
     var self = this;
     var i = 1;
     var nextDate = setInterval(function() {
-      self.setState({ currentChart: self.state.charts[Object.keys(self.state.charts)[i]] });
+      self.setState({ currentDate: Object.keys(self.state.charts)[i] });
       i += 1;
       if ( i == Object.keys(self.state.charts).length - 1) {
         clearInterval(nextDate);
@@ -37,7 +37,10 @@ var Home = React.createClass({
     if (!this.state.charts) {
       var graph = <div>Loading...</div>;
     } else {
-      graph = <Graph chart={this.state.currentChart}/>;
+      graph = <Graph
+        date={this.state.currentDate}
+        chart={this.state.charts[this.state.currentDate]}
+        />;
     }
     return (
       <div>
