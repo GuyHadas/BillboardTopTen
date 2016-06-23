@@ -6,7 +6,11 @@ var Graph = require("./graph.jsx");
 
 var Home = React.createClass({
   getInitialState: function() {
-    return { charts: null, currentDate: null };
+    return {
+      charts: null,
+      currentDate: null,
+      currentTrackURL: null
+     };
   },
 
   componentDidMount: function() {
@@ -15,8 +19,12 @@ var Home = React.createClass({
       type: 'GET',
       url: 'billboard-data.json',
       success: function(charts) {
-        self.setState({ charts: charts, currentDate: Object.keys(charts)[0] });
+        self.setState({
+          charts: charts,
+          currentDate: Object.keys(charts)[0],
+        });
         self.incrementCharts();
+        self.playTopSong(charts[Object.keys(charts)[0]][2].spotify_id);
       }
     });
   },
@@ -30,10 +38,25 @@ var Home = React.createClass({
       if ( i == Object.keys(self.state.charts).length - 1) {
         clearInterval(nextDate);
       }
-    }, 3000);
+    }, 7000);
+  },
+
+  playTopSong: function(spotify_id) {
+    console.log(spotify_id);
+    var self = this;
+    $.ajax({
+      type: "GET",
+      url: "https://api.spotify.com/v1/tracks/" + spotify_id,
+      success: function(track) {
+        console.log(track);
+
+        self.setState({ currentTrackURL: track.preview_url });
+      }
+    });
   },
 
   render: function() {
+    console.log(this.state.currentTrackURL);
     if (!this.state.charts) {
       var graph = <div>Loading...</div>;
     } else {
@@ -41,10 +64,18 @@ var Home = React.createClass({
         date={this.state.currentDate}
         chart={this.state.charts[this.state.currentDate]}
         />;
+      var audio = <embed
+        src={this.state.currentTrackURL}
+        autostart="true"
+        loop="true"
+        className="audio"
+        />;
+
     }
     return (
       <div>
         {graph}
+        {audio}
       </div>
     );
   }
