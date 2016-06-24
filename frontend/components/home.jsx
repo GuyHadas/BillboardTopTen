@@ -12,7 +12,8 @@ var Home = React.createClass({
     return {
       charts: null,
       currentDate: null,
-      currentTrackURL: null
+      currentTrackURL: null,
+      soundPlaying: true
      };
   },
 
@@ -95,6 +96,11 @@ var Home = React.createClass({
     });
   },
 
+  toggleSound: function(e) {
+    e.preventDefault();
+    this.setState({ soundPlaying: !this.state.soundPlaying });
+  },
+
   render: function() {
     console.log(this.state.currentTrackURL);
     if (!this.state.charts) {
@@ -105,7 +111,13 @@ var Home = React.createClass({
         chart={this.state.charts[this.state.currentDate]}
         />;
       if (this.state.currentTrackURL) {
-        var audio = <Sound playStatus={Sound.status.PLAYING} url={this.state.currentTrackURL}/>;
+        var volume = this.state.soundPlaying ? 100 : 0;
+        var pausePlay = this.state.soundPlaying ? "Pause" : "Play";
+         var audio =
+         <div>
+           <Sound playStatus={Sound.status.PLAYING} volume={volume} url={this.state.currentTrackURL}/>
+           <div onClick={this.toggleSound} className="toggle-sound">{pausePlay}</div>
+         </div>;
       }
     }
     return (
@@ -118,3 +130,6 @@ var Home = React.createClass({
 });
 
 module.exports = Home;
+
+
+// fix We Are Young - F.U.N query
