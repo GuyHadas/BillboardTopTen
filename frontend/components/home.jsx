@@ -15,6 +15,7 @@ var Home = React.createClass({
   },
 
   componentDidMount: function() {
+    // this.getTopSearchResults("kanye");
     var self = this;
     $.ajax({
       type: 'GET',
@@ -25,7 +26,7 @@ var Home = React.createClass({
           currentDate: Object.keys(charts)[0],
         });
         self.incrementCharts();
-        self.playTopSong(charts[Object.keys(charts)[0]][2].spotify_id);
+        // self.playTopSong(charts[Object.keys(charts)[0]][0].spotify_id);
       }
     });
   },
@@ -35,27 +36,54 @@ var Home = React.createClass({
     var i = 1;
     var nextDate = setInterval(function() {
       self.setState({ currentDate: Object.keys(self.state.charts)[i] });
-      self.playTopSong(self.state.charts[Object.keys(self.state.charts)[i]][0].spotify_id);
+      var topSong = self.state.charts[Object.keys(self.state.charts)[i]][0];
+      if (topSong.spotify_id) {
+        self.getSongInfo(topSong.spotify_id);
+      } else {
+         var title = topSong.title.split(" ").join("+");
+         title = title.replace(/[^a-zA-Z+ ]/g, "");
+         var artist = topSong.artist.split(" ")[0];
+         artist = artist.replace(/[^a-zA-Z+ ]/g, "");
+         var query = [title, artist].join("+");
+         self.playTopSong(query);
+      }
       i += 1;
       if ( i == Object.keys(self.state.charts).length - 1) {
         clearInterval(nextDate);
       }
-    }, 7000);
+    }, 3000);
   },
 
-  playTopSong: function(spotify_id) {
+  getSongInfo: function(spotifyId) {
     var self = this;
     $.ajax({
       type: "GET",
-      url: "https://api.spotify.com/v1/tracks/" + spotify_id,
+      url: "https://api.spotify.com/v1/tracks/" + spotifyId,
       success: function(track) {
-        self.setState({ currentTrackURL: track.preview_url });
+        var title = track.name.split(" ").join("+");
+        title = title.replace(/[^a-zA-Z+ ]/g, "");
+        var artist = track.artists[0].name.split(" ").join("+");
+        artist = artist.replace(/[^a-zA-Z+ ]/g, "");
+        var query = [title, artist].join("+");
+        self.playTopSong(query);
+      }
+    });
+  },
+
+  playTopSong: function(query) {
+    var self = this;
+    $.ajax({
+      type: "GET",
+      url: "https://itunes.apple.com/search?term=" + query + "&country=us&limit=5&media=music",
+      success: function(results) {
+        console.log(results);
+        // self.setState({ currentTrackURL: track.preview_url });
       }
     });
   },
 
   render: function() {
-    console.log(this.state.currentTrackURL);
+    // console.log(this.state.currentTrackURL);
     if (!this.state.charts) {
       var graph = <div>Loading...</div>;
     } else {
@@ -65,14 +93,11 @@ var Home = React.createClass({
         />;
       if (this.state.currentTrackURL) {
         var audio = <AudioPlayer trackURL={this.state.currentTrackURL}/>;
-        // this.state.currentTrack.play();
-        // this.state.currentTrack.pause();
       }
     }
     return (
       <div>
         {graph}
-        {audio}
       </div>
     );
   }

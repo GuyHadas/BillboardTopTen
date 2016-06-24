@@ -13,6 +13,10 @@ var AudioPlayer = React.createClass({
     $("audio").stop();
   },
 
+  componentWillReceiveProps: function() {
+    $("audio").stop();
+  },
+
   render: function() {
     return (
       <audio autoPlay controls>
