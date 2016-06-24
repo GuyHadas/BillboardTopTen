@@ -4,6 +4,8 @@ var HashHistory = require('react-router').hashHistory;
 
 var Graph = require("./graph.jsx");
 var AudioPlayer = require("./audioPlayer.jsx");
+var Sound = require('react-sound');
+
 
 var Home = React.createClass({
   getInitialState: function() {
@@ -62,7 +64,7 @@ var Home = React.createClass({
       if ( i == Object.keys(self.state.charts).length - 1) {
         clearInterval(nextDate);
       }
-    }, 3000);
+    }, 7000);
   },
 
   getSongInfo: function(spotifyId) {
@@ -103,7 +105,7 @@ var Home = React.createClass({
         chart={this.state.charts[this.state.currentDate]}
         />;
       if (this.state.currentTrackURL) {
-        var audio = <AudioPlayer trackURL={this.state.currentTrackURL}/>;
+        var audio = <Sound playStatus={Sound.status.PLAYING} url={this.state.currentTrackURL}/>;
       }
     }
     return (
