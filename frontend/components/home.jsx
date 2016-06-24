@@ -75,15 +75,15 @@ var Home = React.createClass({
     $.ajax({
       type: "GET",
       url: "https://itunes.apple.com/search?term=" + query + "&country=us&limit=5&media=music",
+      dataType: "jsonp",
       success: function(results) {
-        console.log(results);
-        // self.setState({ currentTrackURL: track.preview_url });
+        self.setState({ currentTrackURL: results.results[0].previewUrl });
       }
     });
   },
 
   render: function() {
-    // console.log(this.state.currentTrackURL);
+    console.log(this.state.currentTrackURL);
     if (!this.state.charts) {
       var graph = <div>Loading...</div>;
     } else {
@@ -98,6 +98,7 @@ var Home = React.createClass({
     return (
       <div>
         {graph}
+        {audio}
       </div>
     );
   }
