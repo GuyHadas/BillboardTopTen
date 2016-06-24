@@ -26,7 +26,18 @@ var Home = React.createClass({
           currentDate: Object.keys(charts)[0],
         });
         self.incrementCharts();
-        // self.playTopSong(charts[Object.keys(charts)[0]][0].spotify_id);
+
+        var topSong = charts[Object.keys(charts)[0]][0];
+        if (topSong.spotify_id) {
+          self.getSongInfo(topSong.spotify_id);
+        } else {
+           var title = topSong.title.split(" ").join("+");
+           title = title.replace(/[^a-zA-Z+ ]/g, "");
+           var artist = topSong.artist.split(" ")[0];
+           artist = artist.replace(/[^a-zA-Z+ ]/g, "");
+           var query = [title, artist].join("+");
+           self.playTopSong(query);
+        }
       }
     });
   },
