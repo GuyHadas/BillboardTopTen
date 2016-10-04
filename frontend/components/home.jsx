@@ -24,6 +24,7 @@ var Home = React.createClass({
       type: 'GET',
       url: 'billboard-data.json',
       success: function(charts) {
+        console.log("charts: ", charts);
         self.setState({
           charts: charts,
           currentDate: Object.keys(charts)[0],
@@ -102,7 +103,6 @@ var Home = React.createClass({
   },
 
   render: function() {
-    console.log(this.state.currentTrackURL);
     if (!this.state.charts) {
       var graph = <div>Loading...</div>;
     } else {
