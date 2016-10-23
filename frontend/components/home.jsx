@@ -13,17 +13,17 @@ var Home = React.createClass({
       charts: null,
       currentDate: null,
       currentTrackURL: null,
-      soundPlaying: true
+      soundPlaying: false
      };
   },
 
   componentDidMount: function() {
-    // this.getTopSearchResults("kanye");
     var self = this;
     $.ajax({
       type: 'GET',
       url: 'billboard-data.json',
       success: function(charts) {
+        console.log(charts);
         self.setState({
           charts: charts,
           currentDate: Object.keys(charts)[0],

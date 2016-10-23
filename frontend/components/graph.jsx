@@ -3,23 +3,9 @@ var ReactDOM = require("react-dom");
 var HashHistory = require('react-router').hashHistory;
 
 var Track = require('./track.jsx');
+var Title = require('./title.jsx');
 
 var Graph = React.createClass({
-  // getInitialState: function() {
-  //
-  // },
-  //
-  // componentDidMount: function() {
-  //
-  // },
-  //
-  // componentWillUnmount: function() {
-  //
-  // },
-  //
-  // __onChange: function() {
-  //
-  // },
 
   toDate: function(date) {
     var months = {
@@ -47,10 +33,12 @@ var Graph = React.createClass({
     });
 
     return (
-      <ul>
-        {date}
-        {tracks}
-      </ul>
+      <div id="graph">
+        <Title date={this.toDate(this.props.date)} artist={this.props.chart[0].artist} />
+        <ul id="trackList">
+          {tracks}
+        </ul>
+      </div>
     );
   }
 });

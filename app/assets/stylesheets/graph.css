@@ -1,0 +1,46 @@
+#graph {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#titleBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+}
+
+#titleArtist {
+  font-size: 20px;
+}
+
+#titleDate {
+  font-size: 16px;
+}
+
+#trackList {
+  background-color: azure;
+  border: 1px solid #ccc;
+  width: 500px;
+  border-radius: 20px;
+  top: 100;
+  height: 500px;
+}
+
+.trackBox:nth-child(10) {
+  border-bottom: none;
+}
+
+.trackBox {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  border-bottom: 1px solid #ccc;
+  width: inherit;
+  margin-top: 50px;
+}
