@@ -8,6 +8,7 @@ import Title from './title.jsx';
 class Graph extends React.Component{
   constructor(props){
     super(props);
+    this.toDate = this.toDate.bind(this);
   }
   toDate(date) {
     const months = {

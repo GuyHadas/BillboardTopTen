@@ -1,30 +1,27 @@
-var React = require("react");
-var ReactDOM = require("react-dom");
-var HashHistory = require('react-router').hashHistory;
+import React from "react";
+import ReactDOM from "react-dom";
 
-var AudioPlayer = React.createClass({
+class AudioPlayer extends React.Component{
+  constructor(props){
+    super(props);
+  }
 
-
-  componentDidMount: function() {
-
-  },
-
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     $("audio").stop();
-  },
+  }
 
-  componentWillReceiveProps: function() {
+  componentWillReceiveProps() {
     $("source").attr("src", "");
     $("audio").stop();
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <audio autoPlay controls>
         <source src={this.props.trackURL} type="audio/mpeg" />
       </audio>
     );
   }
-});
+}
 
-module.exports = AudioPlayer;
+export default AudioPlayer;
