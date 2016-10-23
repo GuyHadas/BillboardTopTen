@@ -11,9 +11,11 @@ var Home = React.createClass({
   getInitialState: function() {
     return {
       charts: null,
+      trackMetaData: null,
       currentDate: null,
       currentTrackURL: null,
-      soundPlaying: false
+      soundPlaying: false,
+      nextChartDate: null
      };
   },
 
@@ -23,24 +25,22 @@ var Home = React.createClass({
       type: 'GET',
       url: 'billboard-data.json',
       success: function(charts) {
-        console.log(charts);
-        self.setState({
-          charts: charts,
-          currentDate: Object.keys(charts)[0],
+        console.log('Successfully loaded charts: ', charts);
+        $.ajax({
+          type: 'GET',
+          url: 'track-meta.json',
+          success: function(trackMetaData) {
+            console.log('Successfully loaded meta data: ', trackMetaData);
+            self.setState({
+              trackMetaData: trackMetaData,
+              charts: charts,
+              currentDate: Object.keys(charts)[0],
+              nextChartDate: Object.keys(charts)[1],
+              currentTrackURL: trackMetaData[Object.keys(charts)[0]]['previewUrl']
+            });
+            self.incrementCharts();
+          }
         });
-        self.incrementCharts();
-
-        var topSong = charts[Object.keys(charts)[0]][0];
-        if (topSong.spotify_id) {
-          self.getSongInfo(topSong.spotify_id);
-        } else {
-           var title = topSong.title.split(" ").join("+");
-           title = title.replace(/[^a-zA-Z+ ]/g, "");
-           var artist = topSong.artist.split(" ")[0];
-           artist = artist.replace(/[^a-zA-Z+ ]/g, "");
-           var query = [title, artist].join("+");
-           self.playTopSong(query);
-        }
       }
     });
   },
@@ -49,51 +49,16 @@ var Home = React.createClass({
     var self = this;
     var i = 1;
     var nextDate = setInterval(function() {
-      self.setState({ currentDate: Object.keys(self.state.charts)[i] });
-      var topSong = self.state.charts[Object.keys(self.state.charts)[i]][0];
-      if (topSong.spotify_id) {
-        self.getSongInfo(topSong.spotify_id);
-      } else {
-         var title = topSong.title.split(" ").join("+");
-         title = title.replace(/[^a-zA-Z+ ]/g, "");
-         var artist = topSong.artist.split(" ")[0];
-         artist = artist.replace(/[^a-zA-Z+ ]/g, "");
-         var query = [title, artist].join("+");
-         self.playTopSong(query);
-      }
+      self.setState({
+        currentDate: Object.keys(self.state.charts)[i],
+        nextChartDate: Object.keys(self.state.charts)[i + 1],
+        currentTrackURL: self.state.trackMetaData[Object.keys(self.state.charts)[i]]['previewUrl']
+      });
       i += 1;
-      if ( i == Object.keys(self.state.charts).length - 1) {
+      if ( i === Object.keys(self.state.charts).length - 1) {
         clearInterval(nextDate);
       }
     }, 7000);
-  },
-
-  getSongInfo: function(spotifyId) {
-    var self = this;
-    $.ajax({
-      type: "GET",
-      url: "https://api.spotify.com/v1/tracks/" + spotifyId,
-      success: function(track) {
-        var title = track.name.split(" ").join("+");
-        title = title.replace(/[^a-zA-Z+ ]/g, "");
-        var artist = track.artists[0].name.split(" ").join("+");
-        artist = artist.replace(/[^a-zA-Z+ ]/g, "");
-        var query = [title, artist].join("+");
-        self.playTopSong(query);
-      }
-    });
-  },
-
-  playTopSong: function(query) {
-    var self = this;
-    $.ajax({
-      type: "GET",
-      url: "https://itunes.apple.com/search?term=" + query + "&country=us&limit=5&media=music",
-      dataType: "jsonp",
-      success: function(results) {
-        self.setState({ currentTrackURL: results.results[0].previewUrl });
-      }
-    });
   },
 
   toggleSound: function(e) {
@@ -102,13 +67,13 @@ var Home = React.createClass({
   },
 
   render: function() {
-    console.log(this.state.currentTrackURL);
     if (!this.state.charts) {
       var graph = <div>Loading...</div>;
     } else {
       graph = <Graph
         date={this.state.currentDate}
         chart={this.state.charts[this.state.currentDate]}
+        nextChart={this.state.charts[this.state.nextChartDate]}
         />;
       if (this.state.currentTrackURL) {
         var volume = this.state.soundPlaying ? 100 : 0;

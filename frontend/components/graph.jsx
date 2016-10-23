@@ -27,10 +27,19 @@ var Graph = React.createClass({
   },
 
   render: function() {
+    var self = this;
     var date = this.toDate(this.props.date);
-    var tracks = this.props.chart.map(function(track) {
-      return <Track key={track.rank} track={track} />;
+    var nextChartIds = this.props.nextChart.map(function(track) {
+      return track.spotify_id;
     });
+    var tracks = this.props.chart.map(function(track) {
+      var nextTrackRank = nextChartIds.indexOf(track.spotify_id) + 1; // index 0 should be rank 1, etc...
+      if (nextTrackRank === 0) {
+        nextTrackRank = 11; // if track is not in next week's charts, animate to bottom of list
+      }
+      return <Track key={track.rank} track={track} nextTrackRank={nextTrackRank} />;
+    });
+
 
     return (
       <div id="graph">

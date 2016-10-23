@@ -14,7 +14,6 @@ var AudioPlayer = React.createClass({
   },
 
   componentWillReceiveProps: function() {
-    console.log("WHAT THE FUCKKKKK");
     $("source").attr("src", "");
     $("audio").stop();
   },
