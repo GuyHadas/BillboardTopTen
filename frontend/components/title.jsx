@@ -1,17 +1,11 @@
-var React = require("react");
-var ReactDOM = require("react-dom");
-var HashHistory = require('react-router').hashHistory;
+import React from "react";
+import ReactDOM from "react-dom";
 
-var Title = React.createClass({
+const Title = ({artist, date}) =>(
+    <div id="titleBox">
+      <span id="titleArtist">{artist}</span>
+      <span id="titleDate">{date}</span>
+    </div>
+);
 
-  render: function() {
-    return (
-      <div id="titleBox">
-        <span id="titleArtist">{this.props.artist}</span>
-        <span id="titleDate">{this.props.date}</span>
-      </div>
-    );
-  }
-});
-
-module.exports = Title;
+export default Title;

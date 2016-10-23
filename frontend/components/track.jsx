@@ -1,21 +1,22 @@
-var React = require("react");
-var ReactDOM = require("react-dom");
-var HashHistory = require('react-router').hashHistory;
+import React from "react";
+import ReactDOM from "react-dom";
+import { hashHistory } from 'react-router';
 
-var Track = React.createClass({
+class Track extends React.Component{
 
-  getInitialState: function() {
-    return { top: (this.props.track.rank * 55) + 25 };
-  },
+  constructor(props) {
+    super(props);
+    this.state = { top: (this.props.track.rank * 55) + 25 };
+  }
 
-  componentDidUpdate: function() {
+  componentDidUpdate() {
     if (this.state.top !== (this.props.nextTrackRank * 55) + 25) {
       this.setState({ top: (this.props.nextTrackRank * 55) + 25 });
     }
-  },
+  }
 
-  render: function() {
-    var top = this.state.top;
+  render() {
+    const top = this.state.top;
 
     return (
       <div className="trackBox"
@@ -27,6 +28,6 @@ var Track = React.createClass({
       </div>
     );
   }
-});
+}
 
-module.exports = Track;
+export default Track;
