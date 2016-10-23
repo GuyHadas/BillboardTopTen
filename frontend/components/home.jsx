@@ -1,74 +1,75 @@
-var React = require("react");
-var ReactDOM = require("react-dom");
-var HashHistory = require('react-router').hashHistory;
+import React from "react";
+import ReactDOM from "react-dom";
+import { hashHistory } from 'react-router';
+import Graph from "./graph.jsx";
+import AudioPlayer from "./audioPlayer.jsx";
+import Sound from 'react-sound';
 
-var Graph = require("./graph.jsx");
-var AudioPlayer = require("./audioPlayer.jsx");
-var Sound = require('react-sound');
-
-
-var Home = React.createClass({
-  getInitialState: function() {
-    return {
+class Home extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       charts: null,
       trackMetaData: null,
       currentDate: null,
       currentTrackURL: null,
       soundPlaying: false,
       nextChartDate: null
-     };
-  },
+    };
+    this.toggleSound = this.toggleSound.bind(this);
+    this.incrementCharts = this.incrementCharts.bind(this);
+  }
 
-  componentDidMount: function() {
-    var self = this;
+  componentDidMount() {
     $.ajax({
       type: 'GET',
       url: 'billboard-data.json',
-      success: function(charts) {
+      success: (charts) => {
         console.log('Successfully loaded charts: ', charts);
         $.ajax({
           type: 'GET',
           url: 'track-meta.json',
-          success: function(trackMetaData) {
+          success: (trackMetaData) => {
             console.log('Successfully loaded meta data: ', trackMetaData);
-            self.setState({
+            this.setState({
               trackMetaData: trackMetaData,
               charts: charts,
               currentDate: Object.keys(charts)[0],
               nextChartDate: Object.keys(charts)[1],
               currentTrackURL: trackMetaData[Object.keys(charts)[0]]['previewUrl']
             });
-            self.incrementCharts();
+            this.incrementCharts();
           }
         });
       }
     });
-  },
+  }
 
-  incrementCharts: function() {
-    var self = this;
-    var i = 1;
-    var nextDate = setInterval(function() {
-      self.setState({
-        currentDate: Object.keys(self.state.charts)[i],
-        nextChartDate: Object.keys(self.state.charts)[i + 1],
-        currentTrackURL: self.state.trackMetaData[Object.keys(self.state.charts)[i]]['previewUrl']
+  incrementCharts() {
+    let i = 1;
+    const nextDate = setInterval(() => {
+      this.setState({
+        currentDate: Object.keys(this.state.charts)[i],
+        nextChartDate: Object.keys(this.state.charts)[i + 1],
+        currentTrackURL: this.state.trackMetaData[Object.keys(this.state.charts)[i]]['previewUrl']
       });
       i += 1;
-      if ( i === Object.keys(self.state.charts).length - 1) {
+      if ( i === Object.keys(this.state.charts).length - 1) {
         clearInterval(nextDate);
       }
     }, 7000);
-  },
+  }
 
-  toggleSound: function(e) {
+  toggleSound(e) {
     e.preventDefault();
     this.setState({ soundPlaying: !this.state.soundPlaying });
-  },
+  }
 
-  render: function() {
+  render() {
+    let graph;
+    let audio;
     if (!this.state.charts) {
-      var graph = <div>Loading...</div>;
+      graph = <div>Loading...</div>;
     } else {
       graph = <Graph
         date={this.state.currentDate}
@@ -76,9 +77,9 @@ var Home = React.createClass({
         nextChart={this.state.charts[this.state.nextChartDate]}
         />;
       if (this.state.currentTrackURL) {
-        var volume = this.state.soundPlaying ? 100 : 0;
-        var pausePlay = this.state.soundPlaying ? "Pause" : "Play";
-         var audio =
+        let volume = this.state.soundPlaying ? 100 : 0;
+        let pausePlay = this.state.soundPlaying ? "Pause" : "Play";
+        audio =
          <div>
            <Sound playStatus={Sound.status.PLAYING} volume={volume} url={this.state.currentTrackURL}/>
            <div onClick={this.toggleSound} className="toggle-sound">{pausePlay}</div>
@@ -92,9 +93,6 @@ var Home = React.createClass({
       </div>
     );
   }
-});
+}
 
-module.exports = Home;
-
-
-// fix We Are Young - F.U.N query
+export default Home;

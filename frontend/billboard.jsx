@@ -1,26 +1,19 @@
-var React = require("react");
-var ReactDOM = require("react-dom");
+import React from "react";
+import ReactDOM from "react-dom";
+import { Link, IndexRoute, Route, Router, hashHistory } from 'react-router';
+import Home from "./components/home";
 
-var Router = require('react-router').Router;
-var Route = require('react-router').Route;
-var IndexRoute = require('react-router').IndexRoute;
-var Link = require('react-router').Link;
-var HashHistory = require('react-router').hashHistory;
-
-var Home = require("./components/home.jsx");
-
-var Billboard = React.createClass({
-
-  render: function() {
+class Billboard extends React.Component {
+  render() {
     return (
       <div>
         {this.props.children}
       </div>
     );
   }
-});
+}
 
-var routes = (
+const routes = (
   <Route path="/" component={Billboard}>
     <IndexRoute component={Home} />
   </Route>
@@ -28,7 +21,7 @@ var routes = (
 
 document.addEventListener("DOMContentLoaded", function(){
   ReactDOM.render(
-    <Router history={HashHistory}>
+    <Router history={hashHistory}>
       {routes}
     </Router>, document.getElementById('root'));
 });
