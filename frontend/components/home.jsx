@@ -40,24 +40,6 @@ class Home extends React.Component {
       });
       this.incrementCharts();
     });
-    // $.ajax({
-    //   type: 'GET',
-    //   url: 'billboard-data.json',
-    //   success: (charts) => {
-    //     console.log('Successfully loaded charts: ', charts);
-    //     $.ajax({
-    //       type: 'GET',
-    //       url: 'track-meta.json',
-    //       success: (trackMetaData) => {
-    //         console.log('Successfully loaded meta data: ', trackMetaData);
-    //         this.setState({
-    //
-    //         });
-    //         this.incrementCharts();
-    //       }
-    //     });
-    //   }
-    // });
   }
 
   incrementCharts() {
