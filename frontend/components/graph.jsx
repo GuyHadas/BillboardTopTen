@@ -1,9 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { hashHistory } from 'react-router';
 
 import Track from './track.jsx';
-import Title from './title.jsx';
+import { Title } from './title.jsx';
 
 class Graph extends React.Component{
   constructor(props){

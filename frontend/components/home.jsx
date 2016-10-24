@@ -1,8 +1,8 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
 import { hashHistory } from 'react-router';
-import Graph from "./graph.jsx";
-import AudioPlayer from "./audioPlayer.jsx";
+import Graph from './graph.jsx';
+import AudioPlayer from './audioPlayer.jsx';
 import Sound from 'react-sound';
 
 class Home extends React.Component {
@@ -21,28 +21,43 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    $.ajax({
-      type: 'GET',
-      url: 'billboard-data.json',
-      success: (charts) => {
-        console.log('Successfully loaded charts: ', charts);
-        $.ajax({
-          type: 'GET',
-          url: 'track-meta.json',
-          success: (trackMetaData) => {
-            console.log('Successfully loaded meta data: ', trackMetaData);
-            this.setState({
-              trackMetaData: trackMetaData,
-              charts: charts,
-              currentDate: Object.keys(charts)[0],
-              nextChartDate: Object.keys(charts)[1],
-              currentTrackURL: trackMetaData[Object.keys(charts)[0]]['previewUrl']
-            });
-            this.incrementCharts();
-          }
-        });
-      }
+    let charts;
+
+    $.get('billboard-data.json')
+    .then(_charts => {
+      console.log('Successfully loaded charts: ', _charts);
+      charts = _charts;
+      return $.get('track-meta.json');
+    })
+    .then(trackMetaData => {
+      console.log('Successfully loaded meta data: ', trackMetaData);
+      this.setState({
+        trackMetaData: trackMetaData,
+        charts: charts,
+        currentDate: Object.keys(charts)[0],
+        nextChartDate: Object.keys(charts)[1],
+        currentTrackURL: trackMetaData[Object.keys(charts)[0]]['previewUrl']
+      });
+      this.incrementCharts();
     });
+    // $.ajax({
+    //   type: 'GET',
+    //   url: 'billboard-data.json',
+    //   success: (charts) => {
+    //     console.log('Successfully loaded charts: ', charts);
+    //     $.ajax({
+    //       type: 'GET',
+    //       url: 'track-meta.json',
+    //       success: (trackMetaData) => {
+    //         console.log('Successfully loaded meta data: ', trackMetaData);
+    //         this.setState({
+    //
+    //         });
+    //         this.incrementCharts();
+    //       }
+    //     });
+    //   }
+    // });
   }
 
   incrementCharts() {
