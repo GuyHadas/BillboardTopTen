@@ -30,15 +30,30 @@ class Graph extends React.Component{
 
   render() {
     const date = this.toDate(this.props.date);
-    const nextChartIds = this.props.nextChart.map(function(track) {
-      return track.spotify_id;
-    });
-    const tracks = this.props.chart.map(function(track) {
-      let nextTrackRank = nextChartIds.indexOf(track.spotify_id) + 1; // index 0 should be rank 1, etc...
+
+    const nextChartNames = this.props.nextChart.map(trackOnDeck => trackOnDeck.title);
+
+    const tracks = this.props.chart.map(track => {
+      let nextTrackRank = nextChartNames.indexOf(track.title) + 1; // index 0 should be rank 1, etc...
       if (nextTrackRank === 0) {
-        nextTrackRank = 11; // if track is not in next week's charts, animate to bottom of list
+        nextTrackRank = 20; // if track is not in next week's charts, animate to bottom of list
       }
       return <Track key={track.rank} track={track} nextTrackRank={nextTrackRank} />;
+    });
+
+    let tracksOnDeck = this.props.nextChart.filter(trackOnDeck => {
+      const currentTrackNames = this.props.chart.map(track => track.title);
+      console.log(currentTrackNames.includes(trackOnDeck.title));
+      return (trackOnDeck.rank < 11 && !currentTrackNames.includes(trackOnDeck.title));
+    });
+
+    tracksOnDeck = tracksOnDeck.map(trackOnDeck => {
+      const dummyTrack = {
+        title: trackOnDeck.title,
+        rank: 20
+      };
+
+      return <Track key={trackOnDeck.rank + 10} track={dummyTrack} nextTrackRank={trackOnDeck.rank} />;
     });
 
     return (
@@ -46,6 +61,7 @@ class Graph extends React.Component{
         <Title date={this.toDate(this.props.date)} artist={this.props.chart[0].artist} />
         <ul id="trackList">
           {tracks}
+          {tracksOnDeck}
         </ul>
       </div>
     );
