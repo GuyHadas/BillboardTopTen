@@ -10,11 +10,13 @@ class Track extends React.Component{
 
   componentDidMount() {
     if (this.state.top !== (this.props.nextTrackRank * 55) + 25) {
+      // console.log(this.props.track.title, 'current: ', this.props.track.rank, 'next: ', this.props.nextTrackRank);
       this.setState({ top: (this.props.nextTrackRank * 55) + 25 });
     }
   }
 
   componentDidUpdate() {
+
     if (this.state.top !== (this.props.nextTrackRank * 55) + 25) {
       this.setState({ top: (this.props.nextTrackRank * 55) + 25 });
     }

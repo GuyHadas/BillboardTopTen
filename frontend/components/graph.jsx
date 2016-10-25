@@ -38,13 +38,12 @@ class Graph extends React.Component{
       if (nextTrackRank === 0) {
         nextTrackRank = 20; // if track is not in next week's charts, animate to bottom of list
       }
-      return <Track key={track.rank} track={track} nextTrackRank={nextTrackRank} />;
+      return <Track track={track} nextTrackRank={nextTrackRank} />;
     });
 
+    const currentTrackNames = this.props.chart.map(track => track.title);
     let tracksOnDeck = this.props.nextChart.filter(trackOnDeck => {
-      const currentTrackNames = this.props.chart.map(track => track.title);
-      console.log(currentTrackNames.includes(trackOnDeck.title));
-      return (trackOnDeck.rank < 11 && !currentTrackNames.includes(trackOnDeck.title));
+      return (!currentTrackNames.includes(trackOnDeck.title));
     });
 
     tracksOnDeck = tracksOnDeck.map(trackOnDeck => {
@@ -53,7 +52,7 @@ class Graph extends React.Component{
         rank: 20
       };
 
-      return <Track key={trackOnDeck.rank + 10} track={dummyTrack} nextTrackRank={trackOnDeck.rank} />;
+      return <Track track={dummyTrack} nextTrackRank={trackOnDeck.rank} />;
     });
 
     return (
