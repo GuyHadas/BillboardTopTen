@@ -53,7 +53,7 @@ class Home extends React.Component {
       if ( i === Object.keys(this.state.charts).length - 1) {
         clearInterval(nextDate);
       }
-    }, 7000);
+    }, 3000);
   }
 
   toggleSound(e) {
