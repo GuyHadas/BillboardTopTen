@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { hashHistory } from 'react-router';
 import Graph from './graph.jsx';
-import AudioPlayer from './audioPlayer.jsx';
 import Sound from 'react-sound';
 
 class Home extends React.Component {
