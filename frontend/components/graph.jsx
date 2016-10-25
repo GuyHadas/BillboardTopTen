@@ -32,13 +32,12 @@ class Graph extends React.Component{
     const date = this.toDate(this.props.date);
 
     const nextChartNames = this.props.nextChart.map(trackOnDeck => trackOnDeck.title);
-
     const tracks = this.props.chart.map(track => {
       let nextTrackRank = nextChartNames.indexOf(track.title) + 1; // index 0 should be rank 1, etc...
       if (nextTrackRank === 0) {
-        nextTrackRank = 20; // if track is not in next week's charts, animate to bottom of list
+        nextTrackRank = 13; // if track is not in next week's charts, animate to bottom of list
       }
-      return <Track track={track} nextTrackRank={nextTrackRank} />;
+      return <Track key={track.title} track={track} nextTrackRank={nextTrackRank} />;
     });
 
     const currentTrackNames = this.props.chart.map(track => track.title);
@@ -49,10 +48,9 @@ class Graph extends React.Component{
     tracksOnDeck = tracksOnDeck.map(trackOnDeck => {
       const dummyTrack = {
         title: trackOnDeck.title,
-        rank: 20
+        rank: 13
       };
-
-      return <Track track={dummyTrack} nextTrackRank={trackOnDeck.rank} />;
+      return <Track key={trackOnDeck.title} track={dummyTrack} nextTrackRank={trackOnDeck.rank}/>;
     });
 
     return (
