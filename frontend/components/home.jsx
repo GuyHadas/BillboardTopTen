@@ -13,7 +13,7 @@ class Home extends React.Component {
       trackMetaData: null,
       currentDate: null,
       currentTrackURL: null,
-      soundPlaying: false,
+      soundPlaying: true,
       nextChartDate: null
     };
     this.toggleSound = this.toggleSound.bind(this);
@@ -75,7 +75,7 @@ class Home extends React.Component {
         />;
       if (this.state.currentTrackURL) {
         let volume = this.state.soundPlaying ? 100 : 0;
-        let pausePlay = this.state.soundPlaying ? "Pause" : "Play";
+        let pausePlay = this.state.soundPlaying ? "Mute" : "Play";
         audio =
          <div>
            <Sound playStatus={Sound.status.PLAYING} volume={volume} url={this.state.currentTrackURL}/>
