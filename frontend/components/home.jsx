@@ -17,6 +17,7 @@ class Home extends React.Component {
     };
     this.toggleSound = this.toggleSound.bind(this);
     this.incrementCharts = this.incrementCharts.bind(this);
+    this.handleSongFinishedPlaying = this.handleSongFinishedPlaying.bind(this);
   }
 
   componentDidMount() {
@@ -61,6 +62,11 @@ class Home extends React.Component {
     this.setState({ soundPlaying: !this.state.soundPlaying });
   }
 
+  handleSongFinishedPlaying() {
+    this.setState({currentTrackURL: this.state.currentTrackURL});
+  }
+
+
   render() {
     let graph;
     let audio;
@@ -77,8 +83,14 @@ class Home extends React.Component {
         let pausePlay = this.state.soundPlaying ? "Mute" : "Play";
         audio =
          <div>
-           <Sound playStatus={Sound.status.PLAYING} volume={volume} url={this.state.currentTrackURL}/>
-           <div onClick={this.toggleSound} className="toggle-sound">{pausePlay}</div>
+           <Sound playStatus={Sound.status.PLAYING}
+                  volume={volume}
+                  url={this.state.currentTrackURL}
+                  onFinishedPlaying={this.handleSongFinishedPlaying}/>
+           <div onClick={this.toggleSound}
+                className="toggle-sound">
+                {pausePlay}
+            </div>
          </div>;
       }
     }
