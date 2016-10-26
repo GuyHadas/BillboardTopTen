@@ -1,7 +1,7 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import _ from "lodash";
-import moment from "moment";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import _ from 'lodash';
+import moment from 'moment';
 
 import Track from './track.jsx';
 import { Title } from './title.jsx';

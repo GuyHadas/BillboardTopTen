@@ -1,5 +1,5 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 class Track extends React.Component{
 
@@ -30,7 +30,7 @@ class Track extends React.Component{
     const distanceFromTop = this.state.top;
 
     return (
-      <div className="trackBox"
+      <div className='trackBox'
         style={{
           top: distanceFromTop,
           position: 'absolute'

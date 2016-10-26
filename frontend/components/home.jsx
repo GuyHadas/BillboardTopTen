@@ -83,12 +83,12 @@ class Home extends React.Component {
 
       if (this.state.currentTrackURL) {
         let volume = this.state.soundPlaying ? 100 : 0;
-        let pausePlay = this.state.soundPlaying ? "Mute" : "Play";
+        let pausePlay = this.state.soundPlaying ? 'Mute' : 'Play';
 
         audioComponent =
          <div>
            <Sound playStatus={Sound.status.PLAYING} volume={volume} url={this.state.currentTrackURL}/>
-           <div onClick={this.toggleSound} className="toggle-sound">{pausePlay}</div>
+           <div onClick={this.toggleSound} className='toggle-sound'>{pausePlay}</div>
          </div>;
       }
     }
