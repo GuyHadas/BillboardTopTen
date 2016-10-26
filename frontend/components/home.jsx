@@ -42,7 +42,7 @@ class Home extends React.Component {
   }
 
   incrementCharts() {
-    let i = 1;
+    let i = 18;
     const nextDate = setInterval(() => {
       this.setState({
         currentDate: Object.keys(this.state.charts)[i],

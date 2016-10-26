@@ -33,25 +33,28 @@ class Graph extends React.Component{
   render() {
     const date = this.toDate(this.props.date);
 
-    const nextChartNames = this.props.nextChart.map(trackOnDeck => trackOnDeck.title);
-    const tracks = this.props.chart.map(track => {
-      let nextTrackRank = nextChartNames.indexOf(track.title) + 1; // index 0 should be rank 1, etc...
+    const currentTracks = _.map(this.props.chart, 'title'); // title must act as primary key
+    const nextChartTracks = _.map(this.props.nextChart, 'title'); // title must act as primary key
+
+    const trackComponents = _.map(this.props.chart, track => {
+      let nextTrackRank = nextChartTracks.indexOf(track.title) + 1; // index 0 should be rank 1, etc...
+
       if (nextTrackRank === 0) {
         nextTrackRank = 13; // if track is not in next week's charts, animate to bottom of list
       }
+
       return <Track key={track.title} track={track} nextTrackRank={nextTrackRank} />;
     });
 
-    const currentTrackNames = this.props.chart.map(track => track.title);
-    let tracksOnDeck = this.props.nextChart.filter(trackOnDeck => {
-      return (!currentTrackNames.includes(trackOnDeck.title));
-    });
+    let tracksOnDeck = _.filter(this.props.nextChart, trackOnDeck => !currentTracks.includes(trackOnDeck.title));
 
-    tracksOnDeck = tracksOnDeck.map(trackOnDeck => {
+    const trackOnDeckComponents = tracksOnDeck.map(trackOnDeck => {
+      // renders the track to the staging area at the bottom of the list
       const dummyTrack = {
         title: trackOnDeck.title,
         rank: 13
       };
+
       return <Track key={trackOnDeck.title} track={dummyTrack} nextTrackRank={trackOnDeck.rank}/>;
     });
 
@@ -59,8 +62,8 @@ class Graph extends React.Component{
       <div id='graph'>
         <Title date={this.toDate(this.props.date)} artist={this.props.chart[0].artist} />
         <ul id='trackList'>
-          {tracks}
-          {tracksOnDeck}
+          {trackComponents}
+          {trackOnDeckComponents}
         </ul>
       </div>
     );
