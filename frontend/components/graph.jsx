@@ -30,7 +30,9 @@ class Graph extends React.Component{
       return <Track key={track.title} track={track} nextTrackRank={nextTrackRank} />;
     });
 
-    let tracksOnDeck = _.filter(this.props.nextChart, trackOnDeck => !currentTracks.includes(trackOnDeck.title));
+    let tracksOnDeck = _.filter(this.props.nextChart, trackOnDeck => {
+      return !(_.includes(currentTracks, trackOnDeck.title));
+    });
 
     const trackOnDeckComponents = tracksOnDeck.map(trackOnDeck => {
       // renders the track to the staging area at the bottom of the list
