@@ -5,29 +5,34 @@ class Track extends React.Component{
 
   constructor(props) {
     super(props);
-    this.state = {top: this.props.track.rank * 55 + 25};
+    this.calculateDistanceFromTop = this.calculateDistanceFromTop.bind(this);
+    this.state = { top: this.calculateDistanceFromTop(this.props.track.rank) };
+  }
+
+  calculateDistanceFromTop(rank) {
+    return (rank * 55) + 25;
   }
 
   componentDidMount() {
-    this.setState({top: this.props.track.rank * 55 + 25 });
+    this.setState({ top: this.calculateDistanceFromTop(this.props.track.rank) });
   }
 
   componentDidUpdate() {
     var self = this;
     window.setTimeout(function() {
-      if (self.state.top !== self.props.nextTrackRank * 55 + 25) {
-        self.setState({top: self.props.nextTrackRank * 55 + 25 });
+      if (self.state.top !== self.calculateDistanceFromTop(self.props.nextTrackRank)) {
+        self.setState({ top: self.calculateDistanceFromTop(self.props.nextTrackRank) });
       }
     } , 1000);
   }
 
   render() {
-    const top = this.state.top;
-    const left = this.props.left;
+    const distanceFromTop = this.state.top;
+
     return (
       <div className="trackBox"
         style={{
-          top: top,
+          top: distanceFromTop,
           position: 'absolute'
         }}>
         {this.props.track.title}
