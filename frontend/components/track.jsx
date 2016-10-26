@@ -10,7 +10,7 @@ class Track extends React.Component{
   }
 
   calculateDistanceFromTop(rank) {
-    return (rank * 55) + 25;
+    return (Number(rank) * 55) + 25;
   }
 
   componentDidMount() {
@@ -23,7 +23,7 @@ class Track extends React.Component{
       if (self.state.top !== self.calculateDistanceFromTop(self.props.nextTrackRank)) {
         self.setState({ top: self.calculateDistanceFromTop(self.props.nextTrackRank) });
       }
-    } , 1000);
+    } , 1000); // this plus css transition time must equal setIntervalTime from #incrementCharts
   }
 
   render() {
