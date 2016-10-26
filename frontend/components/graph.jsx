@@ -27,7 +27,7 @@ class Graph extends React.Component{
         nextTrackRank = 13; // if track is not in next week's charts, animate to bottom of list
       }
 
-      return <Track key={track.title} track={track} nextTrackRank={nextTrackRank} />;
+      return <Track key={track.title} track={track} nextTrackRank={nextTrackRank}/>;
     });
 
     let tracksOnDeck = _.filter(this.props.nextChart, trackOnDeck => {
@@ -46,7 +46,7 @@ class Graph extends React.Component{
 
     return (
       <div id='graph'>
-        <Title date={this.formatDate(this.props.date)} artist={this.props.chart[0].artist} />
+        <Title date={this.formatDate(this.props.date)} artist={this.props.chart[0].artist}/>
         <ul id='trackList'>
           {trackComponents}
           {trackOnDeckComponents}
