@@ -63,9 +63,8 @@ class Home extends React.Component {
   }
 
   handleSongFinishedPlaying() {
-    this.setState({currentTrackURL: this.state.currentTrackURL});
+    this.setState({ currentTrackURL: this.state.currentTrackURL });
   }
-
 
   render() {
     let graph;
