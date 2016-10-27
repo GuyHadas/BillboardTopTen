@@ -25,7 +25,7 @@ class Home extends React.Component {
   componentDidMount() {
     let charts;
 
-    $.get('billboard-data.json')
+    $.get('billboard-data-synced.json')
     .then(_charts => {
       charts = _charts;
 
@@ -45,7 +45,7 @@ class Home extends React.Component {
   }
 
   incrementCharts() {
-    let i = 1;
+    let i = 380;
     const nextDate = setInterval(() => {
       this.setState({
         currentDate: this.getDate(this.state.charts, i),
