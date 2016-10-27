@@ -45,7 +45,7 @@ class Home extends React.Component {
   }
 
   incrementCharts() {
-    let i = 380;
+    let i = 1;
     const nextDate = setInterval(() => {
       this.setState({
         currentDate: this.getDate(this.state.charts, i),
