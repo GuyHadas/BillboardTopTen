@@ -36,7 +36,7 @@ time, mark, audio, video {
 }
 
 body {
-  background: rgba(155, 221, 185, 0.5);
+  background: rgb(155, 221, 185);
   color: white;
   font-family: 'Roboto', sans-serif;
 }
