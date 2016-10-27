@@ -25,7 +25,7 @@ class Home extends React.Component {
   componentDidMount() {
     let charts;
 
-    $.get('billboard-data.json')
+    $.get('billboard-data-synced.json')
     .then(_charts => {
       charts = _charts;
 

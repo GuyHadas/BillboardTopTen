@@ -1,0 +1,10 @@
+require 'json'
+
+charts = JSON.parse(File.read("public/billboard-data.json"))
+track_meta = JSON.parse(File.read("public/track-meta.json"))
+
+charts.each do |k, v|
+  charts.delete(k) unless track_meta[k]
+end
+
+File.write("./public/billboard-data-synced.json", JSON.generate(charts))
