@@ -7,6 +7,7 @@ import Sound from 'react-sound';
 class Home extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       charts: null,
       trackMetaData: null,
@@ -15,8 +16,10 @@ class Home extends React.Component {
       soundPlaying: true,
       nextChartDate: null
     };
+
     this.toggleSound = this.toggleSound.bind(this);
     this.incrementCharts = this.incrementCharts.bind(this);
+    this.getDate = this.getDate.bind(this);
   }
 
   componentDidMount() {
@@ -24,19 +27,19 @@ class Home extends React.Component {
 
     $.get('billboard-data.json')
     .then(_charts => {
-      console.log('Successfully loaded charts: ', _charts);
       charts = _charts;
+
       return $.get('track-meta.json');
     })
     .then(trackMetaData => {
-      console.log('Successfully loaded meta data: ', trackMetaData);
       this.setState({
         trackMetaData: trackMetaData,
         charts: charts,
-        currentDate: Object.keys(charts)[0],
-        nextChartDate: Object.keys(charts)[1],
-        currentTrackURL: trackMetaData[Object.keys(charts)[0]]['previewUrl']
+        currentDate: this.getDate(charts, 0),
+        nextChartDate: this.getDate(charts, 1),
+        currentTrackURL: trackMetaData[this.getDate(charts, 0)]['previewUrl']
       });
+
       this.incrementCharts();
     });
   }
@@ -45,47 +48,54 @@ class Home extends React.Component {
     let i = 1;
     const nextDate = setInterval(() => {
       this.setState({
-        currentDate: Object.keys(this.state.charts)[i],
-        nextChartDate: Object.keys(this.state.charts)[i + 1],
-        currentTrackURL: this.state.trackMetaData[Object.keys(this.state.charts)[i]]['previewUrl']
+        currentDate: this.getDate(this.state.charts, i),
+        nextChartDate: this.getDate(this.state.charts, i + 1),
+        currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, i)]['previewUrl']
       });
+
       i += 1;
-      if ( i === Object.keys(this.state.charts).length - 1) {
+      if ( i === Object.keys(this.state.charts).length - 2) { // Stop incrementing on second to last date
         clearInterval(nextDate);
       }
     }, 3000);
   }
 
-  toggleSound(e) {
-    e.preventDefault();
+  getDate(charts, index) {
+    return Object.keys(charts)[index];
+  }
+
+  toggleSound() {
     this.setState({ soundPlaying: !this.state.soundPlaying });
   }
 
   render() {
-    let graph;
-    let audio;
+    let graphComponent;
+    let audioComponent;
+
     if (!this.state.charts) {
-      graph = <div>Loading...</div>;
+      graphComponent = <div>Loading...</div>;
     } else {
-      graph = <Graph
+      graphComponent = <Graph
         date={this.state.currentDate}
         chart={this.state.charts[this.state.currentDate]}
         nextChart={this.state.charts[this.state.nextChartDate]}
         />;
+
       if (this.state.currentTrackURL) {
         let volume = this.state.soundPlaying ? 100 : 0;
-        let pausePlay = this.state.soundPlaying ? "Mute" : "Play";
-        audio =
+        let pausePlay = this.state.soundPlaying ? 'Mute' : 'Play';
+
+        audioComponent =
          <div>
            <Sound playStatus={Sound.status.PLAYING} volume={volume} url={this.state.currentTrackURL}/>
-           <div onClick={this.toggleSound} className="toggle-sound">{pausePlay}</div>
+           <div onClick={this.toggleSound} className='toggle-sound'>{pausePlay}</div>
          </div>;
       }
     }
     return (
       <div>
-        {graph}
-        {audio}
+        {graphComponent}
+        {audioComponent}
       </div>
     );
   }

@@ -1,33 +1,37 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 class Track extends React.Component{
 
   constructor(props) {
     super(props);
-    this.state = {top: this.props.track.rank * 55 + 25};
+    this.calculateDistanceFromTop = this.calculateDistanceFromTop.bind(this);
+    this.state = { top: this.calculateDistanceFromTop(this.props.track.rank) };
+  }
+
+  calculateDistanceFromTop(rank) {
+    return (Number(rank) * 55) + 25;
   }
 
   componentDidMount() {
-    this.setState({top: this.props.track.rank * 55 + 25 });
+    this.setState({ top: this.calculateDistanceFromTop(this.props.track.rank) });
   }
 
   componentDidUpdate() {
-    var self = this;
-    window.setTimeout(function() {
-      if (self.state.top !== self.props.nextTrackRank * 55 + 25) {
-        self.setState({top: self.props.nextTrackRank * 55 + 25 });
+    window.setTimeout(() => {
+      if (this.state.top !== this.calculateDistanceFromTop(this.props.nextTrackRank)) {
+        this.setState({ top: this.calculateDistanceFromTop(this.props.nextTrackRank) });
       }
-    } , 1000);
+    } , 1000); // this plus css transition time must equal setIntervalTime from #incrementCharts
   }
 
   render() {
-    const top = this.state.top;
-    const left = this.props.left;
+    const distanceFromTop = this.state.top;
+
     return (
-      <div className="trackBox"
+      <div className='trackBox'
         style={{
-          top: top,
+          top: distanceFromTop,
           position: 'absolute'
         }}>
         {this.props.track.title}
