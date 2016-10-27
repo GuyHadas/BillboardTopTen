@@ -18,10 +18,9 @@ class Track extends React.Component{
   }
 
   componentDidUpdate() {
-    var self = this;
-    window.setTimeout(function() {
-      if (self.state.top !== self.calculateDistanceFromTop(self.props.nextTrackRank)) {
-        self.setState({ top: self.calculateDistanceFromTop(self.props.nextTrackRank) });
+    window.setTimeout(() => {
+      if (this.state.top !== this.calculateDistanceFromTop(this.props.nextTrackRank)) {
+        this.setState({ top: this.calculateDistanceFromTop(this.props.nextTrackRank) });
       }
     } , 1000); // this plus css transition time must equal setIntervalTime from #incrementCharts
   }
