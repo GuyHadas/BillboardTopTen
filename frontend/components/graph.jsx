@@ -17,6 +17,7 @@ class Graph extends React.Component{
   }
 
   render() {
+    const stagingAreaRank = 11;
     const currentTracks = _.map(this.props.chart, 'title'); // title must act as primary key
     const nextChartTracks = _.map(this.props.nextChart, 'title'); // title must act as primary key
 
@@ -24,7 +25,7 @@ class Graph extends React.Component{
       let nextTrackRank = nextChartTracks.indexOf(track.title) + 1; // index 0 should be rank 1, etc...
 
       if (nextTrackRank === 0) {
-        nextTrackRank = 13; // if track is not in next week's charts, animate to bottom of list
+        nextTrackRank = stagingAreaRank; // if track is not in next week's charts, animate to bottom of list
       }
 
       return <Track key={track.title} track={track} nextTrackRank={nextTrackRank}/>;
@@ -38,7 +39,7 @@ class Graph extends React.Component{
       // renders the track to the staging area at the bottom of the list
       const dummyTrack = {
         title: trackOnDeck.title,
-        rank: 13
+        rank: stagingAreaRank
       };
 
       return <Track key={trackOnDeck.title} track={dummyTrack} nextTrackRank={trackOnDeck.rank}/>;
@@ -51,6 +52,7 @@ class Graph extends React.Component{
           {trackComponents}
           {trackOnDeckComponents}
         </ul>
+        <div id='stagingArea'/>
       </div>
     );
   }
