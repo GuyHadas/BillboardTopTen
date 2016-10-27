@@ -63,6 +63,10 @@ class Home extends React.Component {
   }
 
   handleSongFinishedPlaying() {
+    // resets the states currentTrackURL value if the song sample is finished
+    // before incrementCharts updates the currentTrackURL
+    // resting the track currentTrackURL triggers a rerender and plays the
+    // same song from the start 
     this.setState({ currentTrackURL: this.state.currentTrackURL });
   }
 
