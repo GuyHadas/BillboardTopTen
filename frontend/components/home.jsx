@@ -1,7 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { hashHistory } from 'react-router';
+import moment from 'moment';
+
 import Graph from './graph.jsx';
+import { Title } from './title.jsx';
+import DatePicker from './datePicker.jsx';
 import Sound from 'react-sound';
 
 class Home extends React.Component {
@@ -13,7 +17,7 @@ class Home extends React.Component {
       trackMetaData: null,
       currentDate: null,
       currentTrackURL: null,
-      soundPlaying: true,
+      soundPlaying: false,
       nextChartDate: null
     };
 
@@ -21,6 +25,7 @@ class Home extends React.Component {
     this.incrementCharts = this.incrementCharts.bind(this);
     this.handleSongFinishedPlaying = this.handleSongFinishedPlaying.bind(this);
     this.getDate = this.getDate.bind(this);
+    this.formatDate = this.formatDate.bind(this);
   }
 
   componentDidMount() {
@@ -71,19 +76,27 @@ class Home extends React.Component {
 
   handleSongFinishedPlaying() {
     // resets the states currentTrackURL value if the song sample is finished
-    // before incrementCharts updates the currentTrackURL
-    // resting the track currentTrackURL triggers a rerender and plays the
-    // same song from the start
     this.setState({ currentTrackURL: this.state.currentTrackURL });
+  }
+
+  formatDate(date) {
+    return moment(date).format('MMMM D, YYYY');
   }
 
   render() {
     let graphComponent;
     let audioComponent;
+    let datePickerComponent;
+    let titleBoxComponent;
 
     if (!this.state.charts) {
       graphComponent = <div>Loading...</div>;
     } else {
+      titleBoxComponent = <Title
+        date={this.formatDate(this.state.currentDate)}
+        artist={this.state.charts[this.state.currentDate][0].artist}
+        />;
+
       graphComponent = <Graph
         date={this.state.currentDate}
         chart={this.state.charts[this.state.currentDate]}
@@ -106,10 +119,14 @@ class Home extends React.Component {
             </div>
          </div>;
       }
+      datePickerComponent = <DatePicker charts={this.state.charts}/>;
+
     }
     return (
       <div>
+        {titleBoxComponent}
         {graphComponent}
+        {datePickerComponent}
         {audioComponent}
       </div>
     );

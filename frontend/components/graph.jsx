@@ -1,19 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
-import moment from 'moment';
 
 import Track from './track.jsx';
-import { Title } from './title.jsx';
 
 class Graph extends React.Component{
   constructor(props){
     super(props);
-    this.formatDate = this.formatDate.bind(this);
-  }
-
-  formatDate(date) {
-    return moment(date).format('MMMM D, YYYY');
   }
 
   render() {
@@ -47,12 +40,10 @@ class Graph extends React.Component{
 
     return (
       <div id='graph'>
-        <Title date={this.formatDate(this.props.date)} artist={this.props.chart[0].artist}/>
         <ul id='trackList'>
           {trackComponents}
           {trackOnDeckComponents}
         </ul>
-        <div id='stagingArea'/>
       </div>
     );
   }
