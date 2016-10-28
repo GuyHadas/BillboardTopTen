@@ -17,7 +17,6 @@ class Decade extends React.Component{
 
   showYears() {
     if (this.state.showYears === false) {
-      console.log('changing');
       this.setState({ showYears: true });
       this.animateYears(this.props.years.slice());
     }
