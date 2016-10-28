@@ -125,8 +125,11 @@ class Home extends React.Component {
     return (
       <div>
         {titleBoxComponent}
-        {graphComponent}
-        {datePickerComponent}
+        <section id="mainContainer">
+          {datePickerComponent}
+          {graphComponent}
+        </section>
+        <div id="stagingArea"/>
         {audioComponent}
       </div>
     );

@@ -53,3 +53,10 @@ body {
    background-color: black;
    border: 1px solid black;
  }
+
+#mainContainer {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+}
