@@ -19,6 +19,7 @@ class Home extends React.Component {
 
     this.toggleSound = this.toggleSound.bind(this);
     this.incrementCharts = this.incrementCharts.bind(this);
+    this.handleSongFinishedPlaying = this.handleSongFinishedPlaying.bind(this);
     this.getDate = this.getDate.bind(this);
   }
 
@@ -68,6 +69,14 @@ class Home extends React.Component {
     this.setState({ soundPlaying: !this.state.soundPlaying });
   }
 
+  handleSongFinishedPlaying() {
+    // resets the states currentTrackURL value if the song sample is finished
+    // before incrementCharts updates the currentTrackURL
+    // resting the track currentTrackURL triggers a rerender and plays the
+    // same song from the start
+    this.setState({ currentTrackURL: this.state.currentTrackURL });
+  }
+
   render() {
     let graphComponent;
     let audioComponent;
@@ -87,8 +96,14 @@ class Home extends React.Component {
 
         audioComponent =
          <div>
-           <Sound playStatus={Sound.status.PLAYING} volume={volume} url={this.state.currentTrackURL}/>
-           <div onClick={this.toggleSound} className='toggle-sound'>{pausePlay}</div>
+           <Sound playStatus={Sound.status.PLAYING}
+                  volume={volume}
+                  url={this.state.currentTrackURL}
+                  onFinishedPlaying={this.handleSongFinishedPlaying}/>
+           <div onClick={this.toggleSound}
+                className="toggle-sound">
+                {pausePlay}
+            </div>
          </div>;
       }
     }
