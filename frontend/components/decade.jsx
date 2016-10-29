@@ -3,23 +3,66 @@ import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import moment from 'moment';
 
+import Year from './year.jsx';
+
 class Decade extends React.Component{
   constructor(props){
     super(props);
     this.showYears = this.showYears.bind(this);
     this.hideYears = this.hideYears.bind(this);
     this.animateYears = this.animateYears.bind(this);
+    this.getDatesForYear = this.getDatesForYear.bind(this);
+
+    this.showMonths = this.showMonths.bind(this);
+    this.hideMonths = this.hideMonths.bind(this);
+    this.animateMonths = this.animateMonths.bind(this);
+    this.getMonths = this.getMonths.bind(this);
+
     this.state = {
       showYears: false,
-      years: []
+      showMonths: false,
+      years: [],
+      months: []
     };
   }
 
   showYears() {
     if (this.state.showYears === false) {
+      this.hideMonths();
       this.setState({ showYears: true });
       this.animateYears(this.props.years.slice());
     }
+  }
+
+  showMonths(year) {
+    if (this.state.showMonths === false) {
+      this.hideYears();
+      this.setState({ showMonths: true });
+      this.animateMonths(this.getMonths(year).slice());
+    }
+  }
+
+  getMonths(year) {
+    let months = {};
+    _.each(this.getDatesForYear(year), date => {
+      months[moment(date).format('MMMM')] = true;
+    });
+
+    return _.keys(months);
+  }
+
+  animateMonths(_months) {
+    if (_months.length > 0) {
+      this.timeout = setTimeout(() => {
+        this.setState({ months: this.state.months.concat(_months.shift()) });
+        this.animateMonths(_months);
+      }, 40);
+    }
+  }
+
+  hideMonths() {
+    clearTimeout(this.timeout);
+    this.setState({ showMonths: false, months: [] });
   }
 
   animateYears(_years) {
@@ -34,18 +77,34 @@ class Decade extends React.Component{
   hideYears() {
     clearTimeout(this.timeout);
     this.setState({ showYears: false, years: [] });
+    this.hideMonths();
+  }
+
+  getDatesForYear(year) {
+    return _.filter(this.props.dates, date => {
+      return date.slice(0, 4) === year.toString();
+    }).reverse();
   }
 
   render() {
     let years;
+    let months;
     let headerColor = 'white';
 
     if (this.state.showYears) {
       headerColor = 'rgba(255, 123, 109, 0.5)';
 
       years = _.map(this.state.years, year => {
-        return <span key={year} className="decadeYear">{year}</span>;
-        });
+        return <Year key={year} year={year} showMonths={this.showMonths}/>;
+      });
+    }
+
+    if (this.state.showMonths) {
+      headerColor = 'rgba(255, 123, 109, 0.5)';
+
+      months = _.map(this.state.months, month => {
+        return <div key={month} className="month">{month}</div>;
+      });
     }
 
     return (
@@ -53,6 +112,9 @@ class Decade extends React.Component{
           <span className="decadeHeader" onMouseEnter={this.showYears} style={{ color: headerColor }}>{this.props.decade}</span>
           <div className="decadeYears">
             {years}
+          </div>
+          <div className="months">
+            {months}
           </div>
       </div>
     );

@@ -44,3 +44,24 @@
   transition: color .2s;
   cursor: pointer;
 }
+
+.months {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-content: flex-start;
+  height: 100px;
+}
+
+.month:hover {
+  color: rgba(255, 123, 109, 0.5);
+  transition: color .2s;
+  cursor: pointer;
+}
+
+.month {
+  margin: 0px 5px;
+  margin-bottom: 6px;
+}
