@@ -17,7 +17,7 @@ class Home extends React.Component {
       trackMetaData: null,
       currentDate: null,
       currentTrackURL: null,
-      soundPlaying: false,
+      soundPlaying: true,
       nextChartDate: null
     };
 
@@ -53,7 +53,7 @@ class Home extends React.Component {
 
   incrementCharts() {
     this.i = 1;
-    const nextDate = setInterval(() => {
+    this.nextDate = setInterval(() => {
       this.setState({
         currentDate: this.getDate(this.state.charts, this.i),
         nextChartDate: this.getDate(this.state.charts, this.i + 1),
@@ -62,20 +62,32 @@ class Home extends React.Component {
 
       this.i += 1;
       if ( this.i === Object.keys(this.state.charts).length - 2) { // Stop incrementing on second to last date
-        clearInterval(nextDate);
+        clearInterval(this.nextDate);
       }
     }, 3000);
   }
 
   setChartDate(date) {
     this.i = Object.keys(this.state.charts).indexOf(date);
+    clearInterval(this.nextDate);
     this.setState({
-      currentDate: date,
+      currentDate: this.getDate(this.state.charts, this.i),
       nextChartDate: this.getDate(this.state.charts, this.i + 1),
       currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl']
     });
     this.i += 1;
-    // FINAL THING LEFT TO DO OTHER THAN FINAL STYLING AND REFACTORING
+    this.nextDate = setInterval(() => {
+      this.setState({
+        currentDate: this.getDate(this.state.charts, this.i),
+        nextChartDate: this.getDate(this.state.charts, this.i + 1),
+        currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl']
+      });
+
+      this.i += 1;
+      if ( this.i === Object.keys(this.state.charts).length - 2) { // Stop incrementing on second to last date
+        clearInterval(this.nextDate);
+      }
+    }, 3000);
   }
 
   getDate(charts, index) {
