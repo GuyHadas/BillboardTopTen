@@ -27,6 +27,7 @@ class Home extends React.Component {
     this.getDate = this.getDate.bind(this);
     this.formatDate = this.formatDate.bind(this);
     this.setChartDate = this.setChartDate.bind(this);
+    this.createInterval = this.createInterval.bind(this);
   }
 
   componentDidMount() {
@@ -53,6 +54,10 @@ class Home extends React.Component {
 
   incrementCharts() {
     this.i = 1;
+    this.createInterval();
+  }
+
+  createInterval() {
     this.nextDate = setInterval(() => {
       this.setState({
         currentDate: this.getDate(this.state.charts, this.i),
@@ -76,18 +81,7 @@ class Home extends React.Component {
       currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl']
     });
     this.i += 1;
-    this.nextDate = setInterval(() => {
-      this.setState({
-        currentDate: this.getDate(this.state.charts, this.i),
-        nextChartDate: this.getDate(this.state.charts, this.i + 1),
-        currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl']
-      });
-
-      this.i += 1;
-      if ( this.i === Object.keys(this.state.charts).length - 2) { // Stop incrementing on second to last date
-        clearInterval(this.nextDate);
-      }
-    }, 3000);
+    this.createInterval();
   }
 
   getDate(charts, index) {
