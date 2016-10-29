@@ -84,6 +84,7 @@ class Decade extends React.Component{
 
   getDatesForYear(year) {
     return _.filter(this.props.dates, date => {
+      // date format is YYYY-MM-DD
       return date.slice(0, 4) === year.toString();
     }).reverse();
   }
