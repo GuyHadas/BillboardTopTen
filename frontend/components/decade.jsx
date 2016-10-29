@@ -4,6 +4,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import Year from './year.jsx';
+import Month from './month.jsx';
 
 class Decade extends React.Component{
   constructor(props){
@@ -103,7 +104,7 @@ class Decade extends React.Component{
       headerColor = 'rgba(255, 123, 109, 0.5)';
 
       months = _.map(this.state.months, month => {
-        return <div key={month} className="month">{month}</div>;
+        return <Month key={month} month={month}/>;
       });
     }
 
