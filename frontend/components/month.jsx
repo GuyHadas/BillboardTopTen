@@ -1,0 +1,35 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import _ from 'lodash';
+import moment from 'moment';
+
+class Month extends React.Component{
+  constructor(props){
+    super(props);
+    this.playFromMonth = this.playFromMonth.bind(this);
+    this.getMonthDates = this.getMonthDates.bind(this);
+  }
+
+  getMonthDates() {
+    let yearMonthDate = `${this.props.year}-${moment().month(this.props.month).format('MM')}`;
+
+    return _.filter(this.props.dates, date => {
+      return date.slice(0, 7) === yearMonthDate;
+    }).reverse();
+  }
+
+  playFromMonth() {
+    let monthDates = this.getMonthDates();
+    this.props.setChartDate(monthDates[0]);
+  }
+
+  render() {
+    return (
+        <div className="month" onClick={this.playFromMonth}>
+          {this.props.month}
+        </div>
+    );
+  }
+}
+
+export default Month;
