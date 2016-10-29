@@ -11,7 +11,7 @@ class Year extends React.Component{
 
   playFromYear() {
     this.props.showMonths(this.props.year);
-    // this.showMonths();
+    this.props.setChartDate(this.props.yearDates[0]);
   }
 
   render() {

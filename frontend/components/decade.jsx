@@ -23,7 +23,8 @@ class Decade extends React.Component{
       showYears: false,
       showMonths: false,
       years: [],
-      months: []
+      months: [],
+      year: null
     };
   }
 
@@ -38,7 +39,7 @@ class Decade extends React.Component{
   showMonths(year) {
     if (this.state.showMonths === false) {
       this.hideYears();
-      this.setState({ showMonths: true });
+      this.setState({ showMonths: true, year: year });
       this.animateMonths(this.getMonths(year).slice());
     }
   }
@@ -63,7 +64,7 @@ class Decade extends React.Component{
 
   hideMonths() {
     clearTimeout(this.timeout);
-    this.setState({ showMonths: false, months: [] });
+    this.setState({ showMonths: false, months: [], year: null });
   }
 
   animateYears(_years) {
@@ -96,7 +97,7 @@ class Decade extends React.Component{
       headerColor = 'rgba(255, 123, 109, 0.5)';
 
       years = _.map(this.state.years, year => {
-        return <Year key={year} year={year} showMonths={this.showMonths}/>;
+        return <Year key={year} year={year} yearDates={this.getDatesForYear(year)} showMonths={this.showMonths} setChartDate={this.props.setChartDate}/>;
       });
     }
 
@@ -104,7 +105,7 @@ class Decade extends React.Component{
       headerColor = 'rgba(255, 123, 109, 0.5)';
 
       months = _.map(this.state.months, month => {
-        return <Month key={month} month={month}/>;
+        return <Month key={month} month={month} dates={this.props.dates} year={this.state.year} setChartDate={this.props.setChartDate}/>;
       });
     }
 

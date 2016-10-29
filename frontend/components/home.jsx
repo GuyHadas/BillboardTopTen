@@ -26,6 +26,7 @@ class Home extends React.Component {
     this.handleSongFinishedPlaying = this.handleSongFinishedPlaying.bind(this);
     this.getDate = this.getDate.bind(this);
     this.formatDate = this.formatDate.bind(this);
+    this.setChartDate = this.setChartDate.bind(this);
   }
 
   componentDidMount() {
@@ -51,19 +52,30 @@ class Home extends React.Component {
   }
 
   incrementCharts() {
-    let i = 1;
+    this.i = 1;
     const nextDate = setInterval(() => {
       this.setState({
-        currentDate: this.getDate(this.state.charts, i),
-        nextChartDate: this.getDate(this.state.charts, i + 1),
-        currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, i)]['previewUrl']
+        currentDate: this.getDate(this.state.charts, this.i),
+        nextChartDate: this.getDate(this.state.charts, this.i + 1),
+        currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl']
       });
 
-      i += 1;
-      if ( i === Object.keys(this.state.charts).length - 2) { // Stop incrementing on second to last date
+      this.i += 1;
+      if ( this.i === Object.keys(this.state.charts).length - 2) { // Stop incrementing on second to last date
         clearInterval(nextDate);
       }
     }, 3000);
+  }
+
+  setChartDate(date) {
+    this.i = Object.keys(this.state.charts).indexOf(date);
+    this.setState({
+      currentDate: date,
+      nextChartDate: this.getDate(this.state.charts, this.i + 1),
+      currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl']
+    });
+    this.i += 1;
+    // FINAL THING LEFT TO DO OTHER THAN FINAL STYLING AND REFACTORING
   }
 
   getDate(charts, index) {
@@ -119,7 +131,7 @@ class Home extends React.Component {
             </div>
          </div>;
       }
-      datePickerComponent = <DatePicker charts={this.state.charts}/>;
+      datePickerComponent = <DatePicker charts={this.state.charts} setChartDate={this.setChartDate.bind(this)}/>;
 
     }
     return (
