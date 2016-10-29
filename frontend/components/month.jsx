@@ -11,6 +11,7 @@ class Month extends React.Component{
   }
 
   getMonthDates() {
+    // formats as YYYY-MM to find dates that belong to this month in this year
     let yearMonthDate = `${this.props.year}-${moment().month(this.props.month).format('MM')}`;
 
     return _.filter(this.props.dates, date => {
