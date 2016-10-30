@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
-import moment from 'moment';
 
 class Year extends React.Component{
   constructor(props){

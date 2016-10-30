@@ -55,7 +55,7 @@ class Decade extends React.Component{
 
   animateMonths(_months) {
     if (_months.length > 0) {
-      this.timeout = setTimeout(() => {
+      this.monthAnimations = setTimeout(() => {
         this.setState({ months: this.state.months.concat(_months.shift()) });
         this.animateMonths(_months);
       }, 40);
@@ -63,13 +63,13 @@ class Decade extends React.Component{
   }
 
   hideMonths() {
-    clearTimeout(this.timeout);
+    clearTimeout(this.monthAnimations);
     this.setState({ showMonths: false, months: [], year: null });
   }
 
   animateYears(_years) {
     if (_years.length > 0) {
-      this.timeout = setTimeout(() => {
+      this.yearAnimations = setTimeout(() => {
         this.setState({ years: this.state.years.concat(_years.shift()) });
         this.animateYears(_years);
       }, 40);
@@ -77,7 +77,7 @@ class Decade extends React.Component{
   }
 
   hideYears() {
-    clearTimeout(this.timeout);
+    clearTimeout(this.yearAnimations);
     this.setState({ showYears: false, years: [] });
     this.hideMonths();
   }
@@ -90,14 +90,14 @@ class Decade extends React.Component{
   }
 
   render() {
-    let years;
-    let months;
+    let yearComponents;
+    let monthComponents;
     let headerColor = 'white';
 
     if (this.state.showYears) {
       headerColor = 'rgba(255, 123, 109, 0.5)';
 
-      years = _.map(this.state.years, year => {
+      yearComponents = _.map(this.state.years, year => {
         return <Year key={year} year={year} yearDates={this.getDatesForYear(year)} showMonths={this.showMonths} setChartDate={this.props.setChartDate}/>;
       });
     }
@@ -105,7 +105,7 @@ class Decade extends React.Component{
     if (this.state.showMonths) {
       headerColor = 'rgba(255, 123, 109, 0.5)';
 
-      months = _.map(this.state.months, month => {
+      monthComponents = _.map(this.state.months, month => {
         return <Month key={month} month={month} dates={this.props.dates} year={this.state.year} setChartDate={this.props.setChartDate}/>;
       });
     }
@@ -114,10 +114,10 @@ class Decade extends React.Component{
       <div className="decade" onMouseLeave={this.hideYears}>
           <span className="decadeHeader" onMouseEnter={this.showYears} style={{ color: headerColor }}>{this.props.decade}</span>
           <div className="decadeYears">
-            {years}
+            {yearComponents}
           </div>
           <div className="months">
-            {months}
+            {monthComponents}
           </div>
       </div>
     );
