@@ -21,7 +21,7 @@ class Month extends React.Component{
 
   playFromMonth() {
     let monthDates = this.getMonthDates();
-    this.props.setChartDate(monthDates[0]);
+    this.props.setChartDate(monthDates[monthDates.length - 1]); // play from last song in month
   }
 
   render() {

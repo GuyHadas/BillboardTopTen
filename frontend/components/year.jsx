@@ -11,7 +11,7 @@ class Year extends React.Component{
 
   playFromYear() {
     this.props.showMonths(this.props.year);
-    this.props.setChartDate(this.props.yearDates[0]);
+    this.props.setChartDate(this.props.yearDates[this.props.yearDates.length - 1]); // play from last song in year
   }
 
   render() {
