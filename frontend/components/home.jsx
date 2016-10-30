@@ -1,7 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { hashHistory } from 'react-router';
+import moment from 'moment';
+
 import Graph from './graph.jsx';
+import { Title } from './title.jsx';
+import DatePicker from './datePicker.jsx';
 import Sound from 'react-sound';
 
 class Home extends React.Component {
@@ -21,6 +25,9 @@ class Home extends React.Component {
     this.incrementCharts = this.incrementCharts.bind(this);
     this.handleSongFinishedPlaying = this.handleSongFinishedPlaying.bind(this);
     this.getDate = this.getDate.bind(this);
+    this.formatDate = this.formatDate.bind(this);
+    this.setChartDate = this.setChartDate.bind(this);
+    this.createInterval = this.createInterval.bind(this);
   }
 
   componentDidMount() {
@@ -46,19 +53,35 @@ class Home extends React.Component {
   }
 
   incrementCharts() {
-    let i = 1;
-    const nextDate = setInterval(() => {
+    this.i = 1;
+    this.createInterval();
+  }
+
+  createInterval() {
+    this.nextDate = setInterval(() => {
       this.setState({
-        currentDate: this.getDate(this.state.charts, i),
-        nextChartDate: this.getDate(this.state.charts, i + 1),
-        currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, i)]['previewUrl']
+        currentDate: this.getDate(this.state.charts, this.i),
+        nextChartDate: this.getDate(this.state.charts, this.i + 1),
+        currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl']
       });
 
-      i += 1;
-      if ( i === Object.keys(this.state.charts).length - 2) { // Stop incrementing on second to last date
-        clearInterval(nextDate);
+      this.i += 1;
+      if ( this.i === Object.keys(this.state.charts).length - 2) { // Stop incrementing on second to last date
+        clearInterval(this.nextDate);
       }
     }, 3000);
+  }
+
+  setChartDate(date) {
+    this.i = Object.keys(this.state.charts).indexOf(date);
+    clearInterval(this.nextDate);
+    this.setState({
+      currentDate: this.getDate(this.state.charts, this.i),
+      nextChartDate: this.getDate(this.state.charts, this.i + 1),
+      currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl']
+    });
+    this.i += 1;
+    this.createInterval();
   }
 
   getDate(charts, index) {
@@ -71,19 +94,27 @@ class Home extends React.Component {
 
   handleSongFinishedPlaying() {
     // resets the states currentTrackURL value if the song sample is finished
-    // before incrementCharts updates the currentTrackURL
-    // resting the track currentTrackURL triggers a rerender and plays the
-    // same song from the start
     this.setState({ currentTrackURL: this.state.currentTrackURL });
+  }
+
+  formatDate(date) {
+    return moment(date).format('MMMM D, YYYY');
   }
 
   render() {
     let graphComponent;
     let audioComponent;
+    let datePickerComponent;
+    let titleBoxComponent;
 
     if (!this.state.charts) {
       graphComponent = <div>Loading...</div>;
     } else {
+      titleBoxComponent = <Title
+        date={this.formatDate(this.state.currentDate)}
+        artist={this.state.charts[this.state.currentDate][0].artist}
+        />;
+
       graphComponent = <Graph
         date={this.state.currentDate}
         chart={this.state.charts[this.state.currentDate]}
@@ -106,10 +137,17 @@ class Home extends React.Component {
             </div>
          </div>;
       }
+      datePickerComponent = <DatePicker charts={this.state.charts} setChartDate={this.setChartDate.bind(this)}/>;
+
     }
     return (
       <div>
-        {graphComponent}
+        {titleBoxComponent}
+        <section id="mainContainer">
+          {datePickerComponent}
+          {graphComponent}
+        </section>
+        <div id="stagingArea"/>
         {audioComponent}
       </div>
     );
