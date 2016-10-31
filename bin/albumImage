@@ -1,0 +1,60 @@
+require 'json'
+require 'http'
+
+$defaultImageUrl = "http://24.media.tumblr.com/tumblr_m3j315A5l31r6luwpo1_500.png"
+
+$not_found = []
+
+def get_last_fm(query)
+  track = JSON.parse(HTTP.get("http://ws.audioscrobbler.com/2.0/?method=track.search&track=#{query}&api_key=b25b959554ed76058ac220b7b2e0a026&format=json&callback="))
+  if track['results']['trackmatches']['track'].empty?
+    $not_found << query
+    p 'Track not found in Last FM'
+    return $defaultImageUrl
+  end
+
+  return track['results']['trackmatches']['track'][0]['image'][-1]["#text"]
+end
+
+def get_itunes_track(song)
+  title = song['title'].gsub(/[^0-9a-zA-Z ]/, "").split(' ').join('+')
+  artist = song['artist'].gsub(/[^0-9a-zA-Z ]/, "").split(' ').join('+')
+
+  query = [title, artist].join("+")
+
+  track = JSON.parse(HTTP.get("https://itunes.apple.com/search?term=#{query}&country=us&limit=1&media=music"))
+  if track['resultCount'] == 0
+    p 'Track not found in Itunes'
+    return get_last_fm(query)
+  end
+  return track['results'][0]['artworkUrl100']
+end
+
+def get_spotify_track(song, spotify_id)
+  track = JSON.parse(HTTP.get("https://api.spotify.com/v1/tracks/#{spotify_id}").to_s)
+  if !track['album'] || !track['album']['images'] || track['album']['images'].empty?
+    p song["title"]
+    p 'Track not found in spotify'
+    return get_itunes_track(song)
+  end
+  image = track['album']['images'][1] || track['album']['images'][0]
+  return image['url']
+end
+
+track_images = {}
+
+charts = JSON.parse(File.read("public/billboard-data.json"))
+charts.each do |date, chart|
+  p date
+  chart.each do |song|
+    artist = song['artist']
+    title = song['title']
+    next if track_images["#{artist}/#{title}"]
+    imageUrl = get_spotify_track(song, song['spotify_id'])
+    track_images["#{artist}/#{title}"] = imageUrl
+  end
+end
+
+p $not_found
+p ["length", $not_found.length]
+File.write("./track-images.json", JSON.generate(track_images))
