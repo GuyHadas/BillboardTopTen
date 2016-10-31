@@ -15,6 +15,9 @@ module.exports = {
           presets: ['react', 'es2015']
         }
       }
+    ],
+    postLoaders: [
+      { loader: "transform?brfs" }
     ]
   },
   devtool: 'source-map',

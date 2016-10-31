@@ -19,13 +19,16 @@
     "babel-preset-react": "^6.11.1",
     "babel-preset-stage-2": "^6.13.0",
     "bluebird": "^3.4.6",
+    "brfs": "^1.4.3",
     "flux": "^2.1.1",
     "lodash": "^4.15.0",
     "moment": "^2.15.2",
     "react": "^15.3.1",
+    "react-canvas": "^1.2.1",
     "react-dom": "^15.3.1",
     "react-router": "^2.7.0",
     "react-sound": "^0.5.0",
+    "transform-loader": "^0.2.3",
     "webpack": "^1.13.2"
   }
 }

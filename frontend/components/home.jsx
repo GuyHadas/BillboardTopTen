@@ -7,6 +7,7 @@ import Graph from './graph.jsx';
 import { Title } from './title.jsx';
 import DatePicker from './datePicker.jsx';
 import Sound from 'react-sound';
+import Chart from './chart.jsx';
 
 class Home extends React.Component {
   constructor(props) {
@@ -17,7 +18,7 @@ class Home extends React.Component {
       trackMetaData: null,
       currentDate: null,
       currentTrackURL: null,
-      soundPlaying: true,
+      soundPlaying: false,
       nextChartDate: null
     };
 
@@ -106,6 +107,7 @@ class Home extends React.Component {
     let audioComponent;
     let datePickerComponent;
     let titleBoxComponent;
+    let chartComponent;
 
     if (!this.state.charts) {
       graphComponent = <div>Loading...</div>;
@@ -138,13 +140,14 @@ class Home extends React.Component {
          </div>;
       }
       datePickerComponent = <DatePicker charts={this.state.charts} setChartDate={this.setChartDate.bind(this)}/>;
-
+      chartComponent = <Chart chart={this.state.charts[this.state.currentDate]} nextChart={this.state.charts[this.state.nextChartDate]}/>;
     }
     return (
       <div>
         {titleBoxComponent}
         <section id="mainContainer">
           {datePickerComponent}
+          {chartComponent}
           {graphComponent}
         </section>
         <div id="stagingArea"/>
