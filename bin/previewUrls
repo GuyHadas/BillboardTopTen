@@ -24,7 +24,6 @@ charts = JSON.parse(File.read("public/billboard-data.json"))
 
 charts.each do |date, chart|
   top_song = chart[0]
-  p date
   query = build_query(chart, top_song['spotify_id'])
   response = get_itunes_track(query)
   i = 1
