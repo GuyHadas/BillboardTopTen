@@ -1,7 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Link, IndexRoute, Route, Router, hashHistory } from 'react-router';
-import Home from "./components/home";
+// import Home from "./components/home";
+import Home from "./components/homeTest";
 
 class Billboard extends React.Component {
   render() {

@@ -4,6 +4,7 @@ import { hashHistory } from 'react-router';
 import moment from 'moment';
 
 import Graph from './graph.jsx';
+import Song from './song.jsx';
 import { Title } from './title.jsx';
 import DatePicker from './datePicker.jsx';
 import Sound from 'react-sound';
@@ -26,17 +27,12 @@ class Home extends React.Component {
       nextTrackPosition: 0
     };
 
-    this.toggleSound = this.toggleSound.bind(this);
     this.incrementCharts = this.incrementCharts.bind(this);
-    this.handleSongFinishedPlaying = this.handleSongFinishedPlaying.bind(this);
     this.getDate = this.getDate.bind(this);
     this.formatDate = this.formatDate.bind(this);
     this.setChartDate = this.setChartDate.bind(this);
     this.createInterval = this.createInterval.bind(this);
-    this.handleCurrentSongPlaying = this.handleCurrentSongPlaying.bind(this);
-    this.handleNextSongPlaying = this.handleNextSongPlaying.bind(this);
-    this.currentSoundComponent = this.currentSoundComponent.bind(this);
-    this.nextSoundComponent = this.nextSoundComponent.bind(this);
+    this.soundComponent = this.soundComponent.bind(this);
   }
 
   componentDidMount() {
@@ -56,8 +52,8 @@ class Home extends React.Component {
         nextChartDate: this.getDate(charts, 5),
         currentTrackURL: trackMetaData[this.getDate(charts, 4)]['previewUrl'],
         nextTrackURL: trackMetaData[this.getDate(charts, 5)]['previewUrl'],
-        volumeCurrentTrack: 100,
-        volumeNextTrack: 100,
+        volumeCurrentTrack: 25,
+        volumeNextTrack: 25,
       });
 
       this.incrementCharts();
@@ -76,7 +72,7 @@ class Home extends React.Component {
           currentDate: this.getDate(this.state.charts, this.i),
           nextChartDate: this.getDate(this.state.charts, this.i + 1),
           currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-          volumeCurrentTrack: 100,
+          volumeCurrentTrack: 25,
           nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
           nextTrackPlayStatus: Sound.status.STOPPED,
           nextTrackPosition: this.nextTrackPosition
@@ -87,7 +83,7 @@ class Home extends React.Component {
           currentDate: this.getDate(this.state.charts, this.i),
           nextChartDate: this.getDate(this.state.charts, this.i + 1),
           currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-          volumeCurrentTrack: 100,
+          volumeCurrentTrack: 25,
           nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl']
         });
       }
@@ -118,66 +114,14 @@ class Home extends React.Component {
     return Object.keys(charts)[index];
   }
 
-  toggleSound() {
-    this.setState({ soundPlaying: !this.state.soundPlaying });
-  }
-
-  handleSongFinishedPlaying() {
-    // restarts current track when sample finished playing
-    this.setState({ currentTrackURL: this.state.currentTrackURL });
-  }
-
   formatDate(date) {
     return moment(date).format('MMMM D, YYYY');
   }
 
-  handleCurrentSongPlaying(args) {
-    // if(this.state.currentTrackURL === "http://a899.phobos.apple.com/us/r1000/132/Music49/v4/d4/5f/9e/d45f9e4b-07fa-aade-12c7-88c976ac0720/mzaf_6123219395441805649.plus.aac.p.m4a"){
-    //   console.log(['currentTrackPosition', args.position]);
-    // }
-    this.currentTrackPosition = args.position;
-    if(this.state.currentTrackURL !== this.state.nextTrackURL){
-      this.setState({ volumeCurrentTrack: this.state.volumeCurrentTrack/4,
-                      nextTrackPlayStatus: Sound.status.PLAYING
-                    });
-    }
-  }
-
-  handleNextSongPlaying(args) {
-    // if(this.state.nextTrackURL === "http://a899.phobos.apple.com/us/r1000/132/Music49/v4/d4/5f/9e/d45f9e4b-07fa-aade-12c7-88c976ac0720/mzaf_6123219395441805649.plus.aac.p.m4a"){
-    //   console.log(["nextpos", args.position]);
-    // }
-    this.nextTrackPosition = args.position;
-  }
-
-  currentSoundComponent(currentTrackURL){
-    if (this.state.nextTrackPosition){
-      return (
-        <Sound playStatus={Sound.status.PLAYING}
-               volume={this.state.volumeCurrentTrack}
-               url={currentTrackURL}
-               onPlaying={this.handleCurrentSongPlaying}
-               onFinishedPlaying={this.handleSongFinishedPlaying}
-               playFromPosition={this.state.nextTrackPosition}/>
-      );
-    } else {
-      return (
-        <Sound playStatus={Sound.status.PLAYING}
-               volume={this.state.volumeCurrentTrack}
-               url={currentTrackURL}
-               onPlaying={this.handleCurrentSongPlaying}
-               onFinishedPlaying={this.handleSongFinishedPlaying}/>
-      );
-    }
-  }
-
-  nextSoundComponent(){
-    return (
-      <Sound playStatus={this.state.nextTrackPlayStatus}
-             volume={this.state.volumeNextTrack}
-             url={this.state.nextTrackURL}
-             onPlaying={this.handleNextSongPlaying}/>
-    );
+  soundComponent(url, volume) {
+    return <Song url={url}
+                 volume={volume}
+                 />;
   }
 
   render() {
@@ -199,17 +143,12 @@ class Home extends React.Component {
         nextChart={this.state.charts[this.state.nextChartDate]}
         />;
       const currentTrackURL = this.state.currentTrackURL;
+      const nextTrackURL = this.state.nextTrackURL;
       if (currentTrackURL) {
-        this.volumeCurrentTracks = this.state.soundPlaying ? 100 : 0;
-          let pausePlay = this.state.soundPlaying ? 'Mute' : 'Play';
+        this.volumeCurrentTracks = this.state.soundPlaying ? 25 : 0;
           audioComponent =
            <div>
-           {this.currentSoundComponent(currentTrackURL)}
-           {this.nextSoundComponent()}
-             <div onClick={this.toggleSound}
-                  className="toggle-sound">
-                  {pausePlay}
-              </div>
+           {this.soundComponent(currentTrackURL, this.volumeCurrentTracks)}
            </div>;
       }
       datePickerComponent = <DatePicker charts={this.state.charts} setChartDate={this.setChartDate.bind(this)}/>;
