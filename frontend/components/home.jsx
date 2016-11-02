@@ -12,6 +12,7 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
 
+    this.nextTrackPosition = 0;
     this.state = {
       charts: null,
       trackMetaData: null,
@@ -24,7 +25,7 @@ class Home extends React.Component {
       nextTrackPlayStatus: Sound.status.STOPPED,
       nextTrackPosition: 0
     };
-    // this.volumeCurrentTrack = 100;
+
     this.toggleSound = this.toggleSound.bind(this);
     this.incrementCharts = this.incrementCharts.bind(this);
     this.handleSongFinishedPlaying = this.handleSongFinishedPlaying.bind(this);
@@ -80,6 +81,7 @@ class Home extends React.Component {
           nextTrackPlayStatus: Sound.status.STOPPED,
           nextTrackPosition: this.nextTrackPosition
         });
+        this.nextTrackPosition = undefined;
       } else {
         this.setState({
           currentDate: this.getDate(this.state.charts, this.i),
@@ -88,7 +90,6 @@ class Home extends React.Component {
           volumeCurrentTrack: 100,
           nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
           nextTrackPlayStatus: Sound.status.STOPPED,
-          nextTrackPosition: 0
         });
       }
       this.i += 1;
@@ -132,27 +133,24 @@ class Home extends React.Component {
   }
 
   handleCurrentSongPlaying(args) {
+    this.currentTrackPosition = args.position;
     if(this.state.currentTrackURL !== this.state.nextTrackURL){
-      this.nextTrackPosition = 0;
-      setInterval(() => {this.nextTrackPosition += 1;}, 0.1);
       this.setState({ volumeCurrentTrack: this.state.volumeCurrentTrack/4,
                       nextTrackPlayStatus: Sound.status.PLAYING
                     });
-      // setInterval(() => {this.volumeCurrentTrack -= 1;}, 100);
     }
   }
-
-  handleNextSongPlaying(args){
-    // console.log(args.position);
-    // this.setState({ nextTrackPosition: args.position });
+  handleNextSongPlaying(args) {
+    // console.log(["nextpos", args.position]);
+    this.nextTrackPosition = args.position;
   }
 
-  currentSoundComponent(){
-    if (this.state.nextTrackPosition) {
+  currentSoundComponent(currentTrackURL){
+    if (this.state.nextTrackPosition){
       return (
         <Sound playStatus={Sound.status.PLAYING}
         volume={this.state.volumeCurrentTrack}
-        url={this.state.currentTrackURL}
+        url={currentTrackURL}
         onPlaying={this.handleCurrentSongPlaying}
         onFinishedPlaying={this.handleSongFinishedPlaying}
         playFromPosition={this.state.nextTrackPosition}/>
@@ -161,7 +159,7 @@ class Home extends React.Component {
       return (
         <Sound playStatus={Sound.status.PLAYING}
         volume={this.state.volumeCurrentTrack}
-        url={this.state.currentTrackURL}
+        url={currentTrackURL}
         onPlaying={this.handleCurrentSongPlaying}
         onFinishedPlaying={this.handleSongFinishedPlaying}/>
       );
@@ -173,7 +171,7 @@ class Home extends React.Component {
       <Sound playStatus={this.state.nextTrackPlayStatus}
              volume={this.state.volumeNextTrack}
              url={this.state.nextTrackURL}
-             onFinishedPlaying={this.handleNextSongPlaying}/>
+             onPlaying={this.handleNextSongPlaying}/>
     );
   }
 
@@ -195,13 +193,13 @@ class Home extends React.Component {
         chart={this.state.charts[this.state.currentDate]}
         nextChart={this.state.charts[this.state.nextChartDate]}
         />;
-
-      if (this.state.currentTrackURL) {
+      const currentTrackURL = this.state.currentTrackURL;
+      if (currentTrackURL) {
         this.volumeCurrentTracks = this.state.soundPlaying ? 100 : 0;
           let pausePlay = this.state.soundPlaying ? 'Mute' : 'Play';
           audioComponent =
            <div>
-           {this.currentSoundComponent()}
+           {this.currentSoundComponent(currentTrackURL)}
            {this.nextSoundComponent()}
              <div onClick={this.toggleSound}
                   className="toggle-sound">
