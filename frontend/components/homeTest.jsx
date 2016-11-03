@@ -18,13 +18,15 @@ class Home extends React.Component {
       charts: null,
       trackMetaData: null,
       currentDate: null,
-      currentTrackURL: null,
-      soundPlaying: true,
       nextChartDate: null,
-      volumeCurrentTrack: 0,
-      volumeNextTrack: 0,
-      nextTrackPlayStatus: Sound.status.STOPPED,
-      nextTrackPosition: 0
+      currentTrackURL: null,
+      nextTrackUrl: null,
+      oneURL: null,
+      twoURL: null,
+      onePlayStatus: Sound.status.PLAYING,
+      twoPlayStatus: Sound.status.STOPPED,
+      volOne: 25,
+      volTwo: 25
     };
 
     this.incrementCharts = this.incrementCharts.bind(this);
@@ -32,12 +34,13 @@ class Home extends React.Component {
     this.formatDate = this.formatDate.bind(this);
     this.setChartDate = this.setChartDate.bind(this);
     this.createInterval = this.createInterval.bind(this);
-    this.soundComponent = this.soundComponent.bind(this);
+    this.songComponentOne = this.songComponentOne.bind(this);
+    this.songComponentTwo = this.songComponentTwo.bind(this);
   }
-
+// follow the steps
   componentDidMount() {
     let charts;
-
+// save the chart
     $.get('billboard-data-synced.json')
     .then(_charts => {
       charts = _charts;
@@ -45,15 +48,18 @@ class Home extends React.Component {
       return $.get('track-meta.json');
     })
     .then(trackMetaData => {
+      // set the currentDate, nextdate
+      // set the track urls for current and next
+      // set songone to current and two to next
       this.setState({
         trackMetaData: trackMetaData,
         charts: charts,
         currentDate: this.getDate(charts, 4),
         nextChartDate: this.getDate(charts, 5),
         currentTrackURL: trackMetaData[this.getDate(charts, 4)]['previewUrl'],
-        nextTrackURL: trackMetaData[this.getDate(charts, 5)]['previewUrl'],
-        volumeCurrentTrack: 25,
-        volumeNextTrack: 25,
+        nextTrackUrl: trackMetaData[this.getDate(charts, 5)]['previewUrl'],
+        oneURL: trackMetaData[this.getDate(charts, 4)]['previewUrl'],
+        twoURL: trackMetaData[this.getDate(charts, 5)]['previewUrl'],
       });
 
       this.incrementCharts();
@@ -65,26 +71,42 @@ class Home extends React.Component {
     this.createInterval();
   }
 
+  oneIsCurrent(){
+    this.setStat({
+      volOne: this.state.voleOne / 4,
+      twoPlayStatus: Sound.status.PLAYING
+    });
+    // this is only called when one is the current track
+    // and two is set to the next track
+    // when the incrementing happens the first song should
+    // stop while the second song should keep playing
+    this.stopOne = true;
+  }
+
+  twoIsCurrent(){
+    this.setStat({
+      volOne: this.state.voleOne / 4,
+      twoPlayStatus: Sound.status.PLAYING
+    });
+    // the logic for when the second song is the current song
+    // and the next track is the playing on the one
+    // at the interval the songComponentTwo should
+    // stop playing and the songCompnentOne should start
+    this.stopTwo = true;
+  }
+
   createInterval() {
     this.nextDate = setInterval(() => {
-      if(this.state.nextTrackURL !== this.state.currentTrackURL){
+      if (this.stopOne) {
         this.setState({
           currentDate: this.getDate(this.state.charts, this.i),
           nextChartDate: this.getDate(this.state.charts, this.i + 1),
           currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-          volumeCurrentTrack: 25,
           nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
-          nextTrackPlayStatus: Sound.status.STOPPED,
-          nextTrackPosition: this.nextTrackPosition
-        });
-        this.nextTrackPosition = undefined;
-      } else {
-        this.setState({
-          currentDate: this.getDate(this.state.charts, this.i),
-          nextChartDate: this.getDate(this.state.charts, this.i + 1),
-          currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-          volumeCurrentTrack: 25,
-          nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl']
+          oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
+          twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+          onePlayStatus: Sound.status.STOPPED,
+          twoPlayStatus: Sound.status.STOPPED
         });
       }
       this.i += 1;
@@ -97,15 +119,15 @@ class Home extends React.Component {
   setChartDate(date) {
     this.i = Object.keys(this.state.charts).indexOf(date);
     clearInterval(this.nextDate);
-    if (this.state.nextTrackPlayStatus === Sound.status.PLAYING){
-      this.setState({
-        currentDate: this.getDate(this.state.charts, this.i),
-        nextChartDate: this.getDate(this.state.charts, this.i + 1),
-        currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-        nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
-        nextTrackPlayStatus: Sound.status.STOPPED
-      });
-    }
+    this.setState({
+      currentDate: this.getDate(this.state.charts, this.i),
+      nextChartDate: this.getDate(this.state.charts, this.i + 1),
+      currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
+      nextTrackUrl: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+      oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
+      twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+      twoPlayStatus: Sound.status.STOPPED
+    });
     this.i += 1;
     this.createInterval();
   }
@@ -118,10 +140,47 @@ class Home extends React.Component {
     return moment(date).format('MMMM D, YYYY');
   }
 
-  soundComponent(url, volume) {
+  songComponentOne(url, status, volOne) {
+    // set up the sound components with the
+    // the necessary props
+    // here the url sound status vol
+    // current track next track
+    // and the callback to handle the next song are
+    // passed in
     return <Song url={url}
-                 volume={volume}
-                 />;
+                 playStatus={status}
+                 volume={volOne}
+                 currentTrackURL={this.state.currentTrackURL}
+                 nextTrackURL={this.state.nextTrackURL}
+                 playNextTrack={this.playNextTrack}/>;
+  }
+
+  songComponentTwo(url, status, volTwo) {
+    return <Song url={url}
+                 playStatus={status}
+                 volume={volTwo}
+                 currentTrackURL={this.state.currentTrackURL}
+                 nextTrackURL={this.state.nextTrackURL}
+                 playNextTrack={this.playNextTrack}/>;
+  }
+
+  playNextTrack(url) {
+    // this is a callback passed in as a prop to the
+    // song components
+    if (url === this.state.oneURL) {
+      // maybe change the name of the method
+      // if the url passed from the song comp
+      // is the same as the the first song's
+      // url then call on the oneIsCurrent method
+      // the result is to play the next track in
+      // songtwo
+      this.oneIsCurrent();
+    } else {
+      // this is for the case when the second song is the
+      // going to be the current track
+      // the result is to play the next track on song comp one
+      this.twoIsCurrent();
+    }
   }
 
   render() {
@@ -142,17 +201,20 @@ class Home extends React.Component {
         chart={this.state.charts[this.state.currentDate]}
         nextChart={this.state.charts[this.state.nextChartDate]}
         />;
-      const currentTrackURL = this.state.currentTrackURL;
-      const nextTrackURL = this.state.nextTrackURL;
-      if (currentTrackURL) {
-        this.volumeCurrentTracks = this.state.soundPlaying ? 25 : 0;
-          audioComponent =
-           <div>
-           {this.soundComponent(currentTrackURL, this.volumeCurrentTracks)}
-           </div>;
-      }
+      const oneURL = this.state.oneURL;
+      const twoURL = this.state.twoURL;
+      // if there is a url then render both of the
+      // sound components
+      // in the constructor the state is set such that
+      // the One is playing and Two is STOPPED
+      if (oneURL) {
+        audioComponent =
+        <div>
+          {this.songComponentOne(oneURL, this.state.onePlayStatus, this.state.volOne)}
+          {this.songComponentTwo(twoURL, this.state.twoPlayStatus, this.state.volTwo)}
+        </div>;
+     }
       datePickerComponent = <DatePicker charts={this.state.charts} setChartDate={this.setChartDate.bind(this)}/>;
-
     }
     return (
       <div>
