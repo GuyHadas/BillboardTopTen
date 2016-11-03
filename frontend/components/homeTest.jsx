@@ -98,17 +98,63 @@ class Home extends React.Component {
   createInterval() {
     this.nextDate = setInterval(() => {
       if (this.stopOne) {
+        // stop the first track since it was the old track
+        // keep the second track
+        // set one to the next track
+        this.stopOne = false;
         this.setState({
           currentDate: this.getDate(this.state.charts, this.i),
           nextChartDate: this.getDate(this.state.charts, this.i + 1),
           currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
           nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
-          oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-          twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+          oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
           onePlayStatus: Sound.status.STOPPED,
-          twoPlayStatus: Sound.status.STOPPED
         });
+      } else if (this.stopTwo) {
+        this.stopTwo = false;
+        this.setState({
+          currentDate: this.getDate(this.state.charts, this.i),
+          nextChartDate: this.getDate(this.state.charts, this.i + 1),
+          currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
+          nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+          twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+          twoPlayStatus: Sound.status.STOPPED,
+        });
+        // this is the case where both stopOne and stopTwo
+        // are false
+        // this means that for this case current track
+        // is the same as the next track from the previous
+        // increment
+        // so find which component is the current component
+        // and increment it to this.i
+        // while for the other increment is to this.i + 1
+      } else if ( !this.stopTwo && !this.stopOne) {
+        if (this.state.currentTrackURL === this.state.oneURL){
+          // if the current track is the song
+          // playing in songCompnentOne
+          // AND the next track is going to be the same as the current
+          // increment the One and set Two to the next increment
+          this.setState({
+            currentDate: this.getDate(this.state.charts, this.i),
+            nextChartDate: this.getDate(this.state.charts, this.i + 1),
+            currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
+            nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+            oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
+            twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl']
+          });
+        } else {
+          this.setState({
+            currentDate: this.getDate(this.state.charts, this.i),
+            nextChartDate: this.getDate(this.state.charts, this.i + 1),
+            currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
+            nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+            oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+            twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl']
+          });
+        }
       }
+
+
       this.i += 1;
       if ( this.i === Object.keys(this.state.charts).length - 2) { // Stop incrementing on second to last date
         clearInterval(this.nextDate);
