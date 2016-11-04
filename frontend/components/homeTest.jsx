@@ -13,14 +13,13 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
 
-    this.nextTrackPosition = 0;
     this.state = {
       charts: null,
       trackMetaData: null,
       currentDate: null,
       nextChartDate: null,
       currentTrackURL: null,
-      nextTrackUrl: null,
+      nextTrackURL: null,
       oneURL: null,
       twoURL: null,
       onePlayStatus: Sound.status.PLAYING,
@@ -36,9 +35,19 @@ class Home extends React.Component {
     this.createInterval = this.createInterval.bind(this);
     this.songComponentOne = this.songComponentOne.bind(this);
     this.songComponentTwo = this.songComponentTwo.bind(this);
+    this.toggleSoundOne = this.toggleSoundOne.bind(this);
+    this.toggleSoundTwo = this.toggleSoundTwo.bind(this);
+    this.handleSongFinishedPlayingOne = this.handleSongFinishedPlayingOne.bind(this);
+    this.handleSongFinishedPlayingTwo = this.handleSongFinishedPlayingTwo.bind(this);
+    this.handleNextSongPlayingOne = this.handleNextSongPlayingOne.bind(this);
+    this.handleNextSongPlayingTwo = this.handleNextSongPlayingTwo.bind(this);
+    this.isCurrentNext = this.isCurrentNext.bind(this);
+    this.areBothPlaying = this.areBothPlaying.bind(this);
   }
+
 // follow the steps
   componentDidMount() {
+    console.log("mount");
     let charts;
 // save the chart
     $.get('billboard-data-synced.json')
@@ -48,112 +57,85 @@ class Home extends React.Component {
       return $.get('track-meta.json');
     })
     .then(trackMetaData => {
-      // set the currentDate, nextdate
-      // set the track urls for current and next
-      // set songone to current and two to next
       this.setState({
         trackMetaData: trackMetaData,
         charts: charts,
-        currentDate: this.getDate(charts, 4),
-        nextChartDate: this.getDate(charts, 5),
-        currentTrackURL: trackMetaData[this.getDate(charts, 4)]['previewUrl'],
-        nextTrackUrl: trackMetaData[this.getDate(charts, 5)]['previewUrl'],
-        oneURL: trackMetaData[this.getDate(charts, 4)]['previewUrl'],
-        twoURL: trackMetaData[this.getDate(charts, 5)]['previewUrl'],
+        currentDate: this.getDate(charts, 3),
+        nextChartDate: this.getDate(charts, 4),
+        currentTrackURL: trackMetaData[this.getDate(charts, 3)]['previewUrl'],
+        nextTrackURL: trackMetaData[this.getDate(charts, 4)]['previewUrl'],
+        oneURL: trackMetaData[this.getDate(charts, 3)]['previewUrl'],
+        twoURL: trackMetaData[this.getDate(charts, 4)]['previewUrl']
       });
 
+      this.currentTrack = "one";
       this.incrementCharts();
     });
   }
 
   incrementCharts() {
-    this.i = 5;
+    this.i = 4;
     this.createInterval();
   }
 
-  oneIsCurrent(){
-    this.setStat({
-      volOne: this.state.voleOne / 4,
-      twoPlayStatus: Sound.status.PLAYING
-    });
-    // this is only called when one is the current track
-    // and two is set to the next track
-    // when the incrementing happens the first song should
-    // stop while the second song should keep playing
-    this.stopOne = true;
-  }
-
-  twoIsCurrent(){
-    this.setStat({
-      volOne: this.state.voleOne / 4,
-      twoPlayStatus: Sound.status.PLAYING
-    });
-    // the logic for when the second song is the current song
-    // and the next track is the playing on the one
-    // at the interval the songComponentTwo should
-    // stop playing and the songCompnentOne should start
-    this.stopTwo = true;
-  }
-
   createInterval() {
+    console.log("intervalStart");
     this.nextDate = setInterval(() => {
-      if (this.stopOne) {
-        // stop the first track since it was the old track
-        // keep the second track
-        // set one to the next track
-        this.stopOne = false;
+      if (this.currentTrack === "one" && this.state.currentTrackURL !== this.state.nextTrackURL) {
+        console.log("increment for the case of song one current and the next track not the same ");
+        this.currentTrack = "two";
         this.setState({
-          currentDate: this.getDate(this.state.charts, this.i),
-          nextChartDate: this.getDate(this.state.charts, this.i + 1),
-          currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-          nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
-          oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
-          onePlayStatus: Sound.status.STOPPED,
-        });
-      } else if (this.stopTwo) {
-        this.stopTwo = false;
+            currentDate: this.getDate(this.state.charts, this.i),
+            nextChartDate: this.getDate(this.state.charts, this.i + 1),
+            currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
+            nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+            twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
+            oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+            onePlayStatus: Sound.status.STOPPED,
+            volOne: 25,
+            volTwo: 25
+          });
+
+      } else if (this.currentTrack === "two" && this.state.currentTrackURL !== this.state.nextTrackURL) {
+        this.currentTrack = "one";
         this.setState({
-          currentDate: this.getDate(this.state.charts, this.i),
-          nextChartDate: this.getDate(this.state.charts, this.i + 1),
-          currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-          nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
-          twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
-          twoPlayStatus: Sound.status.STOPPED,
-        });
-        // this is the case where both stopOne and stopTwo
-        // are false
-        // this means that for this case current track
-        // is the same as the next track from the previous
-        // increment
-        // so find which component is the current component
-        // and increment it to this.i
-        // while for the other increment is to this.i + 1
-      } else if ( !this.stopTwo && !this.stopOne) {
-        if (this.state.currentTrackURL === this.state.oneURL){
-          // if the current track is the song
-          // playing in songCompnentOne
-          // AND the next track is going to be the same as the current
-          // increment the One and set Two to the next increment
-          this.setState({
             currentDate: this.getDate(this.state.charts, this.i),
             nextChartDate: this.getDate(this.state.charts, this.i + 1),
             currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
             nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
             oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-            twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl']
+            twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+            twoPlayStatus: Sound.status.STOPPED,
+            volOne: 25,
+            volTwo: 25
           });
-        } else {
-          this.setState({
+      } else if (this.currentTrack === "one" && this.state.currentTrackURL === this.state.nextTrackURL) {
+        this.currentTrack = "one";
+        this.setState({
             currentDate: this.getDate(this.state.charts, this.i),
             nextChartDate: this.getDate(this.state.charts, this.i + 1),
             currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
             nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
-            oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
-            twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl']
+            oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
+            twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+            twoPlayStatus: Sound.status.STOPPED,
+            volOne: 25,
+            volTwo: 25
           });
-        }
+      } else if (this.currentTrack === "two" && this.state.currentTrackURL === this.state.nextTrackURL) {
+        this.currentTrack = "two";
+        this.setState({
+            currentDate: this.getDate(this.state.charts, this.i),
+            nextChartDate: this.getDate(this.state.charts, this.i + 1),
+            currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
+            nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+            twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
+            oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+            onePlayStatus: Sound.status.STOPPED,
+            volOne: 25,
+            volTwo: 25
+          });
       }
-
 
       this.i += 1;
       if ( this.i === Object.keys(this.state.charts).length - 2) { // Stop incrementing on second to last date
@@ -169,11 +151,15 @@ class Home extends React.Component {
       currentDate: this.getDate(this.state.charts, this.i),
       nextChartDate: this.getDate(this.state.charts, this.i + 1),
       currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-      nextTrackUrl: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+      nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
       oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
       twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
-      twoPlayStatus: Sound.status.STOPPED
+      onePlayStatus: Sound.status.PLAYING,
+      twoPlayStatus: Sound.status.STOPPED,
+      volOne: 25,
+      volTwo: 25
     });
+
     this.i += 1;
     this.createInterval();
   }
@@ -186,46 +172,81 @@ class Home extends React.Component {
     return moment(date).format('MMMM D, YYYY');
   }
 
-  songComponentOne(url, status, volOne) {
-    // set up the sound components with the
-    // the necessary props
-    // here the url sound status vol
-    // current track next track
-    // and the callback to handle the next song are
-    // passed in
-    return <Song url={url}
-                 playStatus={status}
-                 volume={volOne}
-                 currentTrackURL={this.state.currentTrackURL}
-                 nextTrackURL={this.state.nextTrackURL}
-                 playNextTrack={this.playNextTrack}/>;
+  isCurrentNext(){
+    return this.state.currentTrackURL === this.state.nextTrackURL;
   }
 
-  songComponentTwo(url, status, volTwo) {
-    return <Song url={url}
-                 playStatus={status}
-                 volume={volTwo}
-                 currentTrackURL={this.state.currentTrackURL}
-                 nextTrackURL={this.state.nextTrackURL}
-                 playNextTrack={this.playNextTrack}/>;
+  areBothPlaying(){
+    return this.state.twoPlayStatus === Sound.status.PLAYING && this.state.onePlayStatus === Sound.status.PLAYING;
   }
 
-  playNextTrack(url) {
-    // this is a callback passed in as a prop to the
-    // song components
-    if (url === this.state.oneURL) {
-      // maybe change the name of the method
-      // if the url passed from the song comp
-      // is the same as the the first song's
-      // url then call on the oneIsCurrent method
-      // the result is to play the next track in
-      // songtwo
-      this.oneIsCurrent();
+  handleNextSongPlayingOne() {
+    console.log('handleOne');
+    if (this.currentTrack === "one" && !this.isCurrentNext() && !this.areBothPlaying()) {
+        this.setState({
+          twoURL: this.state.nextTrackURL,
+          oneURL: this.state.currentTrackURL,
+          volTwo: 25,
+          volOne: this.state.volOne / 4,
+          twoPlayStatus: Sound.status.PLAYING
+        });
+      }
+  }
+
+  handleNextSongPlayingTwo() {
+    console.log('handleTwo');
+    if (this.currentTrack === "two" && !this.isCurrentNext() && !this.areBothPlaying()) {
+        this.setState({
+          oneURL: this.state.nextTrackURL,
+          twoURL: this.state.currentTrackURL,
+          volOne: 25,
+          volTwo: this.state.volTwo / 4,
+          onePlayStatus: Sound.status.PLAYING
+        });
+      }
+  }
+
+  handleSongFinishedPlayingOne() {
+    this.setState({ oneURL: this.state.oneURL});
+  }
+
+  handleSongFinishedPlayingTwo() {
+    this.setState({ twoURL: this.state.twoURL});
+  }
+
+  songComponentOne(oneURL) {
+    if(oneURL){
+      return <Sound playStatus={this.state.onePlayStatus}
+                    volume={this.state.volOne}
+                    url={this.state.oneURL}
+                    onPlaying={this.handleNextSongPlayingOne}
+                    onFinishedPlaying={this.handleSongFinishedPlayingOne}/>;
+    }
+  }
+
+  songComponentTwo(twoURL) {
+    if(twoURL){
+      return <Sound playStatus={this.state.twoPlayStatus}
+                    url={this.state.twoURL}
+                    volume={this.state.volTwo}
+                    onPlaying={this.handleNextSongPlayingTwo}
+                    onFinishedPlaying={this.handleSongFinishedPlayingTwo}/>;
+    }
+  }
+
+  toggleSoundOne() {
+    if (this.state.onePlayStatus === Sound.status.PLAYING){
+      this.setState({ playStatus: Sound.status.STOPPED });
     } else {
-      // this is for the case when the second song is the
-      // going to be the current track
-      // the result is to play the next track on song comp one
-      this.twoIsCurrent();
+      this.setState({ playStatus: Sound.status.PLAYING });
+    }
+  }
+
+  toggleSoundTwo() {
+    if (this.state.twoPlayStatus === Sound.status.PLAYING){
+      this.setState({ twoPlayStatus: Sound.status.STOPPED });
+    } else {
+      this.setState({ twoPlayStatus: Sound.status.PLAYING });
     }
   }
 
@@ -249,17 +270,21 @@ class Home extends React.Component {
         />;
       const oneURL = this.state.oneURL;
       const twoURL = this.state.twoURL;
-      // if there is a url then render both of the
-      // sound components
-      // in the constructor the state is set such that
-      // the One is playing and Two is STOPPED
-      if (oneURL) {
+      let toggleOne = this.state.onePlayStatus;
+      let toggleTwo = this.state.twoPlayStatus;
         audioComponent =
         <div>
-          {this.songComponentOne(oneURL, this.state.onePlayStatus, this.state.volOne)}
-          {this.songComponentTwo(twoURL, this.state.twoPlayStatus, this.state.volTwo)}
+          {this.songComponentOne(oneURL)}
+          <div onClick={this.toggleSoundOne}
+               className="toggle-sound">
+               {toggleOne}
+          </div>
+          {this.songComponentTwo(twoURL)}
+          <div onClick={this.toggleSoundTwo}
+               className="toggle-sound">
+               {toggleTwo}
+          </div>
         </div>;
-     }
       datePickerComponent = <DatePicker charts={this.state.charts} setChartDate={this.setChartDate.bind(this)}/>;
     }
     return (

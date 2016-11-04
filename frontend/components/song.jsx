@@ -6,21 +6,20 @@ class Song extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      status: this.props.status,
-      url: this.props.url
+      playStatus: null,
+      url: null
     };
-    this.toggleSound = this.toggleSound.bind(this);
-    this.handleSongFinishedPlaying = this.handleSongFinishedPlaying.bind(this);
-    this.handleNextSongPlaying = this.handleNextSongPlaying.bind(this);
+
   }
 
   toggleSound() {
-    if (this.state.status === Sound.status.PLAYING){
-      this.setState({ status: Sound.status.STOPPED });
+    if (this.state.playStatus === Sound.status.PLAYING){
+      this.setState({ playStatus: Sound.status.STOPPED });
     } else {
-      this.setState({ status: Sound.status.PLAYING });
+      this.setState({ playStatus: Sound.status.PLAYING });
     }
   }
+
 
   handleNextSongPlaying() {
     // when the component is playing
@@ -41,20 +40,24 @@ class Song extends React.Component{
 
   render(){
     let toggle = this.state.status;
-    return (
-      <div>
-        <Sound playStatus={this.props.status}
-               volume={this.props.volume}
-               url={this.state.url}
-               onFinishedPlaying={this.handleSongFinishedPlaying}
-               onPlaying={this.handleNextSongPlaying}/>
-        <div onClick={this.toggleSound}
-             className="toggle-sound">
-             {toggle}
-        </div>
+    if (this.state.url) {
+      return (
+        <div>
+          <Sound playStatus={this.props.playStatus}
+                 volume={this.props.volume}
+                 url={this.state.url}
+                 onFinishedPlaying={this.handleSongFinishedPlaying}
+                 onPlaying={this.handleNextSongPlaying}/>
+          <div onClick={this.toggleSound}
+               className="toggle-sound">
+               {toggle}
+          </div>
 
-      </div>
-    );
+        </div>
+      );
+    } else {
+      return <div></div>;
+    }
   }
 }
 
