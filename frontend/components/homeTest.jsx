@@ -146,7 +146,7 @@ class Home extends React.Component {
 
       this.i += 1;
       if ( this.i === Object.keys(this.state.charts).length - 2) { // Stop incrementing on second to last date
-        clearInterval(this.nextDate);
+        this.i = 0;
       }
     }, 3000);
   }
@@ -154,13 +154,19 @@ class Home extends React.Component {
   setChartDate(date) {
     this.i = Object.keys(this.state.charts).indexOf(date);
     clearInterval(this.nextDate);
+
+    if ( this.i === Object.keys(this.state.charts).length - 1) { // Last song was chosen
+      this.i -= 3;
+    }
+
+    this.currentTrack = "one";
     this.setState({
       currentDate: this.getDate(this.state.charts, this.i),
       nextChartDate: this.getDate(this.state.charts, this.i + 1),
       currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
       nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
       oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-      twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+      twoURL: this.state.trackMetaData[this.getDate(this.state.charts, (this.i + 1))]['previewUrl'],
       onePlayStatus: Sound.status.PLAYING,
       twoPlayStatus: Sound.status.STOPPED,
       volOne: 25,
@@ -189,6 +195,7 @@ class Home extends React.Component {
 
   componentDidUpdate() {
     if (this.isNextSongDifferent() && !this.areBothPlaying()) {
+      console.log('log here');
       if (this.currentTrack === 'one') {
         this.setState({
           twoURL: this.state.nextTrackURL,
@@ -203,7 +210,7 @@ class Home extends React.Component {
           twoURL: this.state.currentTrackURL,
           volOne: 25,
           volTwo: this.state.volTwo / 4,
-          onePlayStatus: Sound.status.PLAYING
+          onePlayStatus: Sound.status.PLAYING,
         });
       }
     }
