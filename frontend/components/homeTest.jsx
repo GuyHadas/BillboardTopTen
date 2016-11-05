@@ -39,8 +39,6 @@ class Home extends React.Component {
     this.toggleSoundTwo = this.toggleSoundTwo.bind(this);
     this.handleSongFinishedPlayingOne = this.handleSongFinishedPlayingOne.bind(this);
     this.handleSongFinishedPlayingTwo = this.handleSongFinishedPlayingTwo.bind(this);
-    this.handleNextSongPlayingOne = this.handleNextSongPlayingOne.bind(this);
-    this.handleNextSongPlayingTwo = this.handleNextSongPlayingTwo.bind(this);
     this.isNextSongDifferent = this.isNextSongDifferent.bind(this);
     this.areBothPlaying = this.areBothPlaying.bind(this);
     this.playNextSongSame = this.playNextSongSame.bind(this);
@@ -49,7 +47,6 @@ class Home extends React.Component {
 
 // follow the steps
   componentDidMount() {
-    console.log("mount");
     let charts;
 // save the chart
     $.get('billboard-data-synced.json')
@@ -190,8 +187,9 @@ class Home extends React.Component {
     return this.state.twoPlayStatus === Sound.status.PLAYING && this.state.onePlayStatus === Sound.status.PLAYING;
   }
 
-  handleNextSongPlayingOne() {
-    if (this.currentTrack === "one" && this.isNextSongDifferent() && !this.areBothPlaying()) {
+  componentDidUpdate() {
+    if (this.isNextSongDifferent() && !this.areBothPlaying()) {
+      if (this.currentTrack === 'one') {
         this.setState({
           twoURL: this.state.nextTrackURL,
           oneURL: this.state.currentTrackURL,
@@ -199,11 +197,7 @@ class Home extends React.Component {
           volOne: this.state.volOne / 4,
           twoPlayStatus: Sound.status.PLAYING
         });
-      }
-  }
-
-  handleNextSongPlayingTwo() {
-    if (this.currentTrack === "two" && this.isNextSongDifferent() && !this.areBothPlaying()) {
+      } else {
         this.setState({
           oneURL: this.state.nextTrackURL,
           twoURL: this.state.currentTrackURL,
@@ -212,6 +206,7 @@ class Home extends React.Component {
           onePlayStatus: Sound.status.PLAYING
         });
       }
+    }
   }
 
   handleSongFinishedPlayingOne() {
@@ -227,7 +222,6 @@ class Home extends React.Component {
       return <Sound playStatus={this.state.onePlayStatus}
                     volume={this.state.volOne}
                     url={this.state.oneURL}
-                    onPlaying={this.handleNextSongPlayingOne}
                     onFinishedPlaying={this.handleSongFinishedPlayingOne}/>;
     }
   }
@@ -237,7 +231,6 @@ class Home extends React.Component {
       return <Sound playStatus={this.state.twoPlayStatus}
                     url={this.state.twoURL}
                     volume={this.state.volTwo}
-                    onPlaying={this.handleNextSongPlayingTwo}
                     onFinishedPlaying={this.handleSongFinishedPlayingTwo}/>;
     }
   }
