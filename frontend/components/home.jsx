@@ -202,14 +202,14 @@ class Home extends React.Component {
           volOne: this.state.volOne - 1,
           volTwo: this.state.volTwo + 1
         });
-      }, 30);
+      }, (1000 / 30));
     } else {
       this.fadeOutTwoInOne = setInterval(() => {
         this.setState({
           volOne: this.state.volOne + 1,
           volTwo: this.state.volTwo - 1
         });
-      }, 30);
+      }, (1000 / 30));
     }
   }
 
