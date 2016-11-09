@@ -43,6 +43,7 @@ class Home extends React.Component {
     this.areBothPlaying = this.areBothPlaying.bind(this);
     this.playNextSongSame = this.playNextSongSame.bind(this);
     this.playNextSongDifferent = this.playNextSongDifferent.bind(this);
+    this.fadeInFadeOut = this.fadeInFadeOut.bind(this);
   }
 
 // follow the steps
