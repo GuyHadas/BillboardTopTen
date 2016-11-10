@@ -162,21 +162,47 @@ class Home extends React.Component {
       this.i -= 3;
     }
 
-    this.currentTrack = "one";
-    this.setState({
-      currentDate: this.getDate(this.state.charts, this.i),
-      nextChartDate: this.getDate(this.state.charts, this.i + 1),
-      currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-      nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
-      oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-      twoURL: this.state.trackMetaData[this.getDate(this.state.charts, (this.i + 1))]['previewUrl'],
-      onePlayStatus: Sound.status.PLAYING,
-      twoPlayStatus: Sound.status.STOPPED,
-      volOne: 100,
-      volTwo: 0
-    });
+    if (this.currentTrack === "one") {
+      this.currentTrack = "two";
+      this.setState({
+          currentDate: this.getDate(this.state.charts, this.i),
+          nextChartDate: this.getDate(this.state.charts, this.i + 1),
+          currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
+          nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+          oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+          twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
+          onePlayStatus: Sound.status.STOPPED,
+          twoPlayStatus: Sound.status.PLAYING,
+          volOne: 0,
+          volTwo: 100
+        });
+    } else {
+      this.currentTrack = "one";
+      this.setState({
+          currentDate: this.getDate(this.state.charts, this.i),
+          nextChartDate: this.getDate(this.state.charts, this.i + 1),
+          currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
+          nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+          oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
+          twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+          onePlayStatus: Sound.status.PLAYING,
+          twoPlayStatus: Sound.status.STOPPED,
+          volOne: 100,
+          volTwo: 0
+        });
+    }
+
+
+
+    // window.setTimeout(() => {
+    //   this.setState({
+    //     onePlayStatus: Sound.status.PLAYING,
+    //     twoPlayStatus: Sound.status.STOPPED
+    //   });
+    // }, 30)
 
     this.i += 1;
+    this.fadeInFadeOut();
     this.createInterval();
   }
 
@@ -192,44 +218,47 @@ class Home extends React.Component {
     return this.state.currentTrackURL !== this.state.nextTrackURL;
   }
 
-  areBothPlaying(){
-    return this.state.twoPlayStatus === Sound.status.PLAYING && this.state.onePlayStatus === Sound.status.PLAYING;
+  areBothPlaying() {
+    return (this.state.twoPlayStatus === Sound.status.PLAYING) && (this.state.onePlayStatus === Sound.status.PLAYING);
   }
 
   fadeInFadeOut() {
-    if (this.currentTrack === 'one') {
-      this.fadeOutOneInTwo = setInterval(() => {
-        this.setState({
-          volOne: this.state.volOne - 1,
-          volTwo: this.state.volTwo + 1
-        });
-      }, (1000 / 30));
-    } else {
-      this.fadeOutTwoInOne = setInterval(() => {
-        this.setState({
-          volOne: this.state.volOne + 1,
-          volTwo: this.state.volTwo - 1
-        });
-      }, (1000 / 30));
+    if (this.isNextSongDifferent()) {
+      if (this.currentTrack === 'one') {
+        console.log("fadeOne");
+        this.fadeOutOneInTwo = setInterval(() => {
+          this.setState({
+            volOne: this.state.volOne - 1,
+            volTwo: this.state.volTwo + 1
+          });
+        }, (1000 / 30));
+      } else {
+        console.log("fadeTwo");
+        this.fadeOutTwoInOne = setInterval(() => {
+          this.setState({
+            volOne: this.state.volOne + 1,
+            volTwo: this.state.volTwo - 1
+          });
+        }, (1000 / 30));
+      }
     }
   }
 
   componentDidUpdate() {
-    if (this.isNextSongDifferent() && !this.areBothPlaying()) {
+    if ((this.isNextSongDifferent() && !this.areBothPlaying())) {
+      this.fadeInFadeOut();
       if (this.currentTrack === 'one') {
         this.setState({
           twoURL: this.state.nextTrackURL,
           oneURL: this.state.currentTrackURL,
           twoPlayStatus: Sound.status.PLAYING
         });
-        this.fadeInFadeOut();
       } else {
         this.setState({
           oneURL: this.state.nextTrackURL,
           twoURL: this.state.currentTrackURL,
           onePlayStatus: Sound.status.PLAYING,
         });
-        this.fadeInFadeOut();
       }
     }
   }
