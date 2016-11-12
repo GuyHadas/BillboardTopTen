@@ -79,7 +79,7 @@ class Home extends React.Component {
   }
 
   playNextSongDifferent() {
-    console.log('Next song is different');
+    // console.log('Next song is different');
     if (this.currentTrack === "one") {
       this.currentTrack = "two";
       this.setState({
@@ -110,7 +110,7 @@ class Home extends React.Component {
   }
 
   playNextSongSame() {
-    console.log('next song is same');
+    // console.log('next song is same');
     if (this.currentTrack === "one") {
       this.setState({
           currentDate: this.getDate(this.state.charts, this.i),
@@ -157,6 +157,13 @@ class Home extends React.Component {
   setChartDate(date) {
     this.i = Object.keys(this.state.charts).indexOf(date);
     clearInterval(this.nextDate);
+
+    if (this.fadeOutOneInTwo) {
+      clearInterval(this.fadeOutOneInTwo);
+    }
+    if (this.fadeOutTwoInOne) {
+      clearInterval(this.fadeOutTwoInOne);
+    }
 
     if ( this.i === Object.keys(this.state.charts).length - 1) { // Last song was chosen
       this.i -= 3;
@@ -225,7 +232,13 @@ class Home extends React.Component {
   fadeInFadeOut() {
     if (this.isNextSongDifferent()) {
       if (this.currentTrack === 'one') {
-        console.log("fadeOne");
+        // console.log("fadeOne");
+        if (this.fadeOutOneInTwo) {
+          clearInterval(this.fadeOutOneInTwo);
+        }
+        if (this.fadeOutTwoInOne) {
+          clearInterval(this.fadeOutTwoInOne);
+        }
         this.fadeOutOneInTwo = setInterval(() => {
           this.setState({
             volOne: this.state.volOne - 1,
@@ -233,7 +246,13 @@ class Home extends React.Component {
           });
         }, (1000 / 30));
       } else {
-        console.log("fadeTwo");
+        // console.log("fadeTwo");
+        if (this.fadeOutTwoInOne) {
+          clearInterval(this.fadeOutTwoInOne);
+        }
+        if (this.fadeOutOneInTwo) {
+          clearInterval(this.fadeOutOneInTwo);
+        }
         this.fadeOutTwoInOne = setInterval(() => {
           this.setState({
             volOne: this.state.volOne + 1,
