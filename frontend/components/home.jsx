@@ -25,7 +25,8 @@ class Home extends React.Component {
       onePlayStatus: Sound.status.PLAYING,
       twoPlayStatus: Sound.status.STOPPED,
       volOne: 100,
-      volTwo: 0
+      volTwo: 0,
+      isSoundOn: true
     };
 
     this.incrementCharts = this.incrementCharts.bind(this);
@@ -35,8 +36,8 @@ class Home extends React.Component {
     this.createInterval = this.createInterval.bind(this);
     this.songComponentOne = this.songComponentOne.bind(this);
     this.songComponentTwo = this.songComponentTwo.bind(this);
-    this.toggleSoundOne = this.toggleSoundOne.bind(this);
-    this.toggleSoundTwo = this.toggleSoundTwo.bind(this);
+    this.toggleSound = this.toggleSound.bind(this);
+    // this.toggleSoundTwo = this.toggleSoundTwo.bind(this);
     this.handleSongFinishedPlayingOne = this.handleSongFinishedPlayingOne.bind(this);
     this.handleSongFinishedPlayingTwo = this.handleSongFinishedPlayingTwo.bind(this);
     this.isNextSongDifferent = this.isNextSongDifferent.bind(this);
@@ -178,11 +179,15 @@ class Home extends React.Component {
           nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
           oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
           twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-          onePlayStatus: Sound.status.STOPPED,
-          twoPlayStatus: Sound.status.PLAYING,
           volOne: 0,
           volTwo: 100
         });
+        if(this.state.isSoundOn) {
+          this.setState({
+              onePlayStatus: Sound.status.STOPPED,
+              twoPlayStatus: Sound.status.PLAYING
+          });
+        }
     } else {
       this.currentTrack = "one";
       this.setState({
@@ -192,21 +197,16 @@ class Home extends React.Component {
           nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
           oneURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
           twoURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
-          onePlayStatus: Sound.status.PLAYING,
-          twoPlayStatus: Sound.status.STOPPED,
           volOne: 100,
           volTwo: 0
         });
+      if(this.state.isSoundOn) {
+        this.setState({
+          onePlayStatus: Sound.status.PLAYING,
+          twoPlayStatus: Sound.status.STOPPED
+        });
+      }
     }
-
-
-
-    // window.setTimeout(() => {
-    //   this.setState({
-    //     onePlayStatus: Sound.status.PLAYING,
-    //     twoPlayStatus: Sound.status.STOPPED
-    //   });
-    // }, 30)
 
     this.i += 1;
     this.fadeInFadeOut();
@@ -232,7 +232,6 @@ class Home extends React.Component {
   fadeInFadeOut() {
     if (this.isNextSongDifferent()) {
       if (this.currentTrack === 'one') {
-        // console.log("fadeOne");
         if (this.fadeOutOneInTwo) {
           clearInterval(this.fadeOutOneInTwo);
         }
@@ -241,12 +240,11 @@ class Home extends React.Component {
         }
         this.fadeOutOneInTwo = setInterval(() => {
           this.setState({
-            volOne: this.state.volOne - 1,
-            volTwo: this.state.volTwo + 1
+            volOne: this.state.volOne - 1.5,
+            volTwo: this.state.volTwo + 1.5
           });
         }, (1000 / 30));
       } else {
-        // console.log("fadeTwo");
         if (this.fadeOutTwoInOne) {
           clearInterval(this.fadeOutTwoInOne);
         }
@@ -255,8 +253,8 @@ class Home extends React.Component {
         }
         this.fadeOutTwoInOne = setInterval(() => {
           this.setState({
-            volOne: this.state.volOne + 1,
-            volTwo: this.state.volTwo - 1
+            volOne: this.state.volOne + 1.5,
+            volTwo: this.state.volTwo - 1.5
           });
         }, (1000 / 30));
       }
@@ -264,7 +262,7 @@ class Home extends React.Component {
   }
 
   componentDidUpdate() {
-    if ((this.isNextSongDifferent() && !this.areBothPlaying())) {
+    if ((this.isNextSongDifferent() && !this.areBothPlaying()) && this.state.isSoundOn) {
       this.fadeInFadeOut();
       if (this.currentTrack === 'one') {
         this.setState({
@@ -308,19 +306,25 @@ class Home extends React.Component {
     }
   }
 
-  toggleSoundOne() {
-    if (this.state.onePlayStatus === Sound.status.PLAYING){
-      this.setState({ playStatus: Sound.status.STOPPED });
+  toggleSound() {
+    if (this.state.isSoundOn) {
+      this.setState({
+        onePlayStatus: Sound.status.PAUSED,
+        twoPlayStatus: Sound.status.PAUSED,
+        isSoundOn: false
+      });
     } else {
-      this.setState({ playStatus: Sound.status.PLAYING });
-    }
-  }
-
-  toggleSoundTwo() {
-    if (this.state.twoPlayStatus === Sound.status.PLAYING){
-      this.setState({ twoPlayStatus: Sound.status.STOPPED });
-    } else {
-      this.setState({ twoPlayStatus: Sound.status.PLAYING });
+      if (this.currentTrack === 'one') {
+        this.setState({
+          onePlayStatus: Sound.status.PLAYING,
+          isSoundOn: true
+        });
+      } else {
+        this.setState({
+          twoPlayStatus: Sound.status.PLAYING,
+          isSoundOn: true
+        });
+      }
     }
   }
 
@@ -349,15 +353,11 @@ class Home extends React.Component {
         audioComponent =
         <div>
           {this.songComponentOne(oneURL)}
-          <div onClick={this.toggleSoundOne}
+          <div onClick={this.toggleSound}
                className="toggle-sound">
-               {toggleOne}
+               {this.state.isSoundOn ? 'PLAYING' : 'MUTE'}
           </div>
           {this.songComponentTwo(twoURL)}
-          <div onClick={this.toggleSoundTwo}
-               className="toggle-sound">
-               {toggleTwo}
-          </div>
         </div>;
       datePickerComponent = <DatePicker charts={this.state.charts} setChartDate={this.setChartDate.bind(this)}/>;
     }
