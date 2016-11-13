@@ -94,8 +94,8 @@ class Home extends React.Component {
         trackURLSoundComponentTwo: trackURLSoundComponentTwo,
         soundComponentOneStatus: soundComponentOneStatus,
         soundComponentTwoStatus: soundComponentTwoStatus,
-        volOne: 0,
-        volTwo: 100
+        volOne: volOne,
+        volTwo: volTwo
       });
   }
 
