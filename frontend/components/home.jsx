@@ -75,6 +75,9 @@ class Home extends React.Component {
   }
 
   incrementDifferentTrack() {
+    if (this.fadeOutOneFadeInTwoInterval) clearInterval(this.fadeOutOneFadeInTwoInterval);
+    if (this.fadeOutTwoFadeInOneInterval) clearInterval(this.fadeOutTwoFadeInOneInterval);
+
     let volOne = this.activeSoundComponent === "one" ? 0 : 100;
     let volTwo = this.activeSoundComponent === "one" ? 100 : 0;
     let soundComponentOneStatus = this.activeSoundComponent === "one" ? Sound.status.STOPPED : this.state.soundComponentOneStatus;
@@ -100,6 +103,9 @@ class Home extends React.Component {
   }
 
   incrementSameTrack() {
+    if (this.fadeOutOneFadeInTwoInterval) clearInterval(this.fadeOutOneFadeInTwoInterval);
+    if (this.fadeOutTwoFadeInOneInterval) clearInterval(this.fadeOutTwoFadeInOneInterval);
+
     let volOne = this.activeSoundComponent === "one" ? 100 : 0;
     let volTwo = this.activeSoundComponent === "one" ? 0 : 100;
     let trackURLSoundComponentOne = this.activeSoundComponent === "one" ? this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'] :
@@ -185,7 +191,7 @@ class Home extends React.Component {
     }
 
     this.i += 1;
-    this.fadeInFadeOut();
+    // this.fadeInFadeOut();
     this.createInterval();
   }
 
@@ -206,10 +212,10 @@ class Home extends React.Component {
   }
 
   fadeInFadeOut() {
-    if (this.isNextSongDifferent()) {
-      if (this.fadeOutOneFadeInTwoInterval) clearInterval(this.fadeOutOneFadeInTwoInterval);
-      if (this.fadeOutTwoFadeInOneInterval) clearInterval(this.fadeOutTwoFadeInOneInterval);
+    if (this.fadeOutOneFadeInTwoInterval) clearInterval(this.fadeOutOneFadeInTwoInterval);
+    if (this.fadeOutTwoFadeInOneInterval) clearInterval(this.fadeOutTwoFadeInOneInterval);
 
+    if (this.isNextSongDifferent()) {
       if (this.activeSoundComponent === 'one') {
         this.fadeOutOneFadeInTwoInterval = setInterval(() => {
           this.setState({
