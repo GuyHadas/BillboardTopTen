@@ -138,7 +138,7 @@ class Home extends React.Component {
 
   setChartDate(date) {
     this.i = Object.keys(this.state.charts).indexOf(date);
-    if(this.nextDateInterval) clearInterval(this.nextDateInterval);
+    if (this.nextDateInterval) clearInterval(this.nextDateInterval);
     if (this.fadeOutOneFadeInTwoInterval) clearInterval(this.fadeOutOneFadeInTwoInterval);
     if (this.fadeOutTwoFadeInOneInterval) clearInterval(this.fadeOutTwoFadeInOneInterval);
 
