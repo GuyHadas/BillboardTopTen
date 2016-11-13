@@ -120,9 +120,9 @@ class Home extends React.Component {
   }
 
   createInterval() {
-    this.nextDate = setInterval(() => {
-      clearInterval(this.fadeOutOneInTwo);
-      clearInterval(this.fadeOutTwoInOne);
+    this.nextDateInterval = setInterval(() => {
+      clearInterval(this.fadeOutOneFadeInTwoInterval);
+      clearInterval(this.fadeOutTwoFadeInOneInterval);
       if (this.isNextSongDifferent()) {
         this.incrementDifferentTrack();
       } else {
@@ -138,13 +138,13 @@ class Home extends React.Component {
 
   setChartDate(date) {
     this.i = Object.keys(this.state.charts).indexOf(date);
-    clearInterval(this.nextDate);
+    clearInterval(this.nextDateInterval);
 
-    if (this.fadeOutOneInTwo) {
-      clearInterval(this.fadeOutOneInTwo);
+    if (this.fadeOutOneFadeInTwoInterval) {
+      clearInterval(this.fadeOutOneFadeInTwoInterval);
     }
-    if (this.fadeOutTwoInOne) {
-      clearInterval(this.fadeOutTwoInOne);
+    if (this.fadeOutTwoFadeInOneInterval) {
+      clearInterval(this.fadeOutTwoFadeInOneInterval);
     }
 
     if ( this.i === Object.keys(this.state.charts).length - 1) { // Last song was chosen
@@ -212,27 +212,18 @@ class Home extends React.Component {
 
   fadeInFadeOut() {
     if (this.isNextSongDifferent()) {
+      if (this.fadeOutOneFadeInTwoInterval) clearInterval(this.fadeOutOneFadeInTwoInterval);
+      if (this.fadeOutTwoFadeInOneInterval) clearInterval(this.fadeOutTwoFadeInOneInterval);
+
       if (this.activeSoundComponent === 'one') {
-        if (this.fadeOutOneInTwo) {
-          clearInterval(this.fadeOutOneInTwo);
-        }
-        if (this.fadeOutTwoInOne) {
-          clearInterval(this.fadeOutTwoInOne);
-        }
-        this.fadeOutOneInTwo = setInterval(() => {
+        this.fadeOutOneFadeInTwoInterval = setInterval(() => {
           this.setState({
             volOne: this.state.volOne - 1.5,
             volTwo: this.state.volTwo + 1.5
           });
         }, (1000 / 30));
       } else {
-        if (this.fadeOutTwoInOne) {
-          clearInterval(this.fadeOutTwoInOne);
-        }
-        if (this.fadeOutOneInTwo) {
-          clearInterval(this.fadeOutOneInTwo);
-        }
-        this.fadeOutTwoInOne = setInterval(() => {
+        this.fadeOutTwoFadeInOneInterval = setInterval(() => {
           this.setState({
             volOne: this.state.volOne + 1.5,
             volTwo: this.state.volTwo - 1.5
