@@ -322,7 +322,7 @@ class Home extends React.Component {
           {this.songComponentOne(trackURLSoundComponentOne)}
           <div onClick={this.toggleSound}
                className="toggle-sound">
-               {this.state.isSoundOn ? 'PLAYING' : 'MUTE'}
+               {this.state.isSoundOn ? 'Mute' : 'Play'}
           </div>
           {this.songComponentTwo(trackURLSoundComponentTwo)}
         </div>;
