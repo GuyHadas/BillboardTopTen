@@ -138,14 +138,9 @@ class Home extends React.Component {
 
   setChartDate(date) {
     this.i = Object.keys(this.state.charts).indexOf(date);
-    clearInterval(this.nextDateInterval);
-
-    if (this.fadeOutOneFadeInTwoInterval) {
-      clearInterval(this.fadeOutOneFadeInTwoInterval);
-    }
-    if (this.fadeOutTwoFadeInOneInterval) {
-      clearInterval(this.fadeOutTwoFadeInOneInterval);
-    }
+    if(this.nextDateInterval) clearInterval(this.nextDateInterval);
+    if (this.fadeOutOneFadeInTwoInterval) clearInterval(this.fadeOutOneFadeInTwoInterval);
+    if (this.fadeOutTwoFadeInOneInterval) clearInterval(this.fadeOutTwoFadeInOneInterval);
 
     if ( this.i === Object.keys(this.state.charts).length - 1) { // Last song was chosen
       this.i -= 3;
@@ -305,6 +300,7 @@ class Home extends React.Component {
     let audioComponent;
     let datePickerComponent;
     let titleBoxComponent;
+
     if (!this.state.charts) {
       graphComponent = <div>Loading...</div>;
     } else {
@@ -320,9 +316,8 @@ class Home extends React.Component {
         />;
       const trackURLSoundComponentOne = this.state.trackURLSoundComponentOne;
       const trackURLSoundComponentTwo = this.state.trackURLSoundComponentTwo;
-      let toggleOne = this.state.soundComponentOneStatus;
-      let toggleTwo = this.state.soundComponentTwoStatus;
-        audioComponent =
+
+      audioComponent =
         <div>
           {this.songComponentOne(trackURLSoundComponentOne)}
           <div onClick={this.toggleSound}
