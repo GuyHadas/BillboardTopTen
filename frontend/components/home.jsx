@@ -86,17 +86,17 @@ class Home extends React.Component {
     this.activeSoundComponent = this.activeSoundComponent === "one" ? "two" : "one";
 
     this.setState({
-        currentDate: this.getDate(this.state.charts, this.i),
-        nextChartDate: this.getDate(this.state.charts, this.i + 1),
-        currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-        nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
-        trackURLSoundComponentOne: trackURLSoundComponentOne,
-        trackURLSoundComponentTwo: trackURLSoundComponentTwo,
-        soundComponentOneStatus: soundComponentOneStatus,
-        soundComponentTwoStatus: soundComponentTwoStatus,
-        volOne: volOne,
-        volTwo: volTwo
-      });
+      currentDate: this.getDate(this.state.charts, this.i),
+      nextChartDate: this.getDate(this.state.charts, this.i + 1),
+      currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
+      nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+      trackURLSoundComponentOne: trackURLSoundComponentOne,
+      trackURLSoundComponentTwo: trackURLSoundComponentTwo,
+      soundComponentOneStatus: soundComponentOneStatus,
+      soundComponentTwoStatus: soundComponentTwoStatus,
+      volOne: volOne,
+      volTwo: volTwo
+    });
   }
 
   incrementSameTrack() {
@@ -108,15 +108,15 @@ class Home extends React.Component {
                                               this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'];
 
     this.setState({
-        currentDate: this.getDate(this.state.charts, this.i),
-        nextChartDate: this.getDate(this.state.charts, this.i + 1),
-        currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-        nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
-        trackURLSoundComponentOne: trackURLSoundComponentOne,
-        trackURLSoundComponentTwo: trackURLSoundComponentTwo,
-        volOne: volOne,
-        volTwo: volTwo
-      });
+      currentDate: this.getDate(this.state.charts, this.i),
+      nextChartDate: this.getDate(this.state.charts, this.i + 1),
+      currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
+      nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+      trackURLSoundComponentOne: trackURLSoundComponentOne,
+      trackURLSoundComponentTwo: trackURLSoundComponentTwo,
+      volOne: volOne,
+      volTwo: volTwo
+    });
   }
 
   createInterval() {
@@ -145,6 +145,7 @@ class Home extends React.Component {
     if ( this.i === Object.keys(this.state.charts).length - 1) { // Last song was chosen
       this.i -= 3;
     }
+
 
     if (this.activeSoundComponent === "one") {
       this.activeSoundComponent = "two";
