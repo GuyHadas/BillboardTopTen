@@ -53,6 +53,10 @@ class Chart extends React.Component{
     return colors[hash % colors.length];
   }
 
+  getPositionForRank(rank) {
+    return rank * 55;
+  }
+
   getLinesForSection(sectionNum, startingChart, endingChart) {
     const STAGING_AREA_RANK = 11;
     const startingTracks = _.map(startingChart, 'title');
@@ -73,8 +77,8 @@ class Chart extends React.Component{
         color={this.getColorForTitle(track.title)}
         key={track.title + sectionNum}
         weekPosition={sectionNum}
-        y1={track.rank * 55}
-        y2={nextTrackRank * 55}/>;
+        y1={this.getPositionForRank(track.rank)}
+        y2={this.getPositionForRank(nextTrackRank)}/>;
     });
 
     const tracksOnDeckLines = tracksOnDeck.map(trackOnDeck => {
@@ -83,9 +87,8 @@ class Chart extends React.Component{
         color={this.getColorForTitle(trackOnDeck.title)}
         key={trackOnDeck.title}
         weekPosition={sectionNum}
-        y1={STAGING_AREA_RANK * 55}
-        y2={trackOnDeck.rank * 55}
-        />;
+        y1={this.getPositionForRank(STAGING_AREA_RANK)}
+        y2={this.getPositionForRank(trackOnDeck.rank)}/>;
     });
 
     return lines.concat(tracksOnDeckLines);
