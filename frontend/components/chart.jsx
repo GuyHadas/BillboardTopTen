@@ -96,8 +96,8 @@ class Chart extends React.Component{
 
   render() {
     const sectionZero = this.getLinesForSection(0, this.props.chart, this.props.nextChart);
-    const sectionOne = this.getLinesForSection(1, this.props.lastChart, this.props.chart);
-    const sectionTwo = this.getLinesForSection(2, this.props.twoWeeksBackChart, this.props.lastChart);
+    const sectionOne = this.getLinesForSection(1, this.props.prevChart, this.props.chart);
+    const sectionTwo = this.getLinesForSection(2, this.props.twoWeeksBackChart, this.props.prevChart);
     const sectionThree = this.getLinesForSection(3, this.props.threeWeeksBackChart, this.props.twoWeeksBackChart);
     const sectionFour = this.getLinesForSection(4, this.props.fourWeeksBackChart, this.props.threeWeeksBackChart);
 

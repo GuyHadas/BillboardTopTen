@@ -335,7 +335,7 @@ class Home extends React.Component {
       chartComponent = <Chart
         chart={this.state.charts[this.state.currentDate]}
         nextChart={this.state.charts[this.state.nextChartDate]}
-        lastChart={this.state.charts[this.state.lastChartDate]}
+        prevChart={this.state.charts[this.state.lastChartDate]}
         twoWeeksBackChart={this.state.charts[this.state.twoWeeksBackChartDate]}
         threeWeeksBackChart={this.state.charts[this.state.threeWeeksBackChartDate]}
         fourWeeksBackChart={this.state.charts[this.state.fourWeeksBackChartDate]}/>;
