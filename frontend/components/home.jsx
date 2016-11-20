@@ -176,6 +176,9 @@ class Home extends React.Component {
     this.activeSoundComponent = this.activeSoundComponent === 'one' ? 'two' : 'one';
 
     this.setState({
+      fourWeeksBackChartDate: this.getDate(this.state.charts, this.i - 4),
+      threeWeeksBackChartDate: this.getDate(this.state.charts, this.i - 3),
+      twoWeeksBackChartDate: this.getDate(this.state.charts, this.i - 2),
       lastChartDate: this.getDate(this.state.charts, this.i - 1),
       currentDate: this.getDate(this.state.charts, this.i),
       nextChartDate: this.getDate(this.state.charts, this.i + 1),

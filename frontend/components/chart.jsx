@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
+import StringHash from 'string-hash';
 
 import Line from './line.jsx';
 
@@ -9,7 +10,9 @@ class Chart extends React.Component{
     super(props);
   }
 
-  getRandomColor() {
+  getColorForTitle(trackTitle) {
+    let hash = StringHash(trackTitle);
+    console.log(hash);
     let colors = [
       '#FEF59E', // pastel yellow
       '#98CC9F', // pastel lime green
@@ -20,12 +23,11 @@ class Chart extends React.Component{
       '#C897C0', // pastel light purple
       '#98CC9F', // pastel dark green
       '#F19A7B', // pastel orange
-      '#B1E2DA' // pastel teal
+      '#B1E2DA', // pastel teal
+      '#FF6961'  // pastel red
     ];
 
-    let randIdx = Math.floor(Math.random() * 10);
-
-    return colors[randIdx];
+    return colors[hash % colors.length];
   }
 
   getLinesForSection(sectionNum, startingChart, endingChart, color) {
@@ -44,7 +46,7 @@ class Chart extends React.Component{
       }
 
       return <Line
-        color={color}
+        color={this.getColorForTitle(track.title)}
         key={track.title + sectionNum}
         weekPosition={sectionNum}
         y1={track.rank * 55}
@@ -53,7 +55,7 @@ class Chart extends React.Component{
 
     const tracksOnDeckLines = tracksOnDeck.map(trackOnDeck => {
       return <Line
-        color={color}
+        color={this.getColorForTitle(trackOnDeck.title)}
         key={trackOnDeck.title}
         weekPosition={sectionNum}
         y1={STAGING_AREA_RANK * 55}
