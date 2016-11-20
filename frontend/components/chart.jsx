@@ -28,140 +28,56 @@ class Chart extends React.Component{
     return colors[randIdx];
   }
 
-  render() {
-    const stagingAreaRank = 11;
-    const threeWeeksBackTracks = _.map(this.props.threeWeeksBackChart, 'title');
-    const twoWeeksBackTracks = _.map(this.props.twoWeeksBackChart, 'title'); // title must act as primary key
-    const lastWeekTracks = _.map(this.props.lastChart, 'title'); // title must act as primary key
-    const currentTracks = _.map(this.props.chart, 'title'); // title must act as primary key
-    const nextChartTracks = _.map(this.props.nextChart, 'title'); // title must act as primary key
-
-    const tracksOnDeckSectionOne = _.filter(this.props.nextChart, trackOnDeck => {
-      return !(_.includes(currentTracks, trackOnDeck.title));
-    });
-    const tracksOnDeckSectionTwo = _.filter(this.props.chart, trackOnDeck => {
-      return !(_.includes(lastWeekTracks, trackOnDeck.title));
-    });
-    const tracksOnDeckSectionThree = _.filter(this.props.lastChart, trackOnDeck => {
-      return !(_.includes(twoWeeksBackTracks, trackOnDeck.title));
-    });
-    const tracksOnDeckSectionFour = _.filter(this.props.twoWeeksBackChart, trackOnDeck => {
-      return !(_.includes(threeWeeksBackTracks, trackOnDeck.title));
+  getLinesForSection(sectionNum, startingChart, endingChart, color) {
+    const STAGING_AREA_RANK = 11;
+    const startingTracks = _.map(startingChart, 'title');
+    const endingTracks = _.map(endingChart, 'title');
+    const tracksOnDeck = _.filter(endingChart, trackOnDeck => {
+      return !(_.includes(startingTracks, trackOnDeck.title));
     });
 
-    const lineComponentsSectionOne = _.map(this.props.chart, track => {
-      let nextTrackRank = nextChartTracks.indexOf(track.title) + 1; // index 0 should be rank 1, etc...
+    let lines = _.map(startingChart, track => {
+      let nextTrackRank = endingTracks.indexOf(track.title) + 1; // index 0 should be rank 1, etc...
 
       if (nextTrackRank === 0) {
-        nextTrackRank = stagingAreaRank; // if track is not in next week's charts, animate to bottom of list
+        nextTrackRank = STAGING_AREA_RANK; // if track is not in next week's charts, animate to bottom of list
       }
 
       return <Line
-        color='#FEF59E'
-        key={track.title + '0'}
-        weekPosition={0}
+        color={color}
+        key={track.title + sectionNum}
+        weekPosition={sectionNum}
         y1={track.rank * 55}
         y2={nextTrackRank * 55}/>;
     });
 
-    const trackOnDeckSectionOneComponents = tracksOnDeckSectionOne.map(trackOnDeck => {
-      // renders the track to the staging area at the bottom of the list
-      const dummyTrack = {
-        rank: stagingAreaRank
-      };
-
+    const tracksOnDeckLines = tracksOnDeck.map(trackOnDeck => {
       return <Line
-        color='white'
+        color={color}
         key={trackOnDeck.title}
-        weekPosition={0}
-        y1={stagingAreaRank * 55}
+        weekPosition={sectionNum}
+        y1={STAGING_AREA_RANK * 55}
         y2={trackOnDeck.rank * 55}
         />;
     });
 
-    const lineComponentsSectionTwo = _.map(this.props.lastChart, track => {
-      let nextTrackRank = currentTracks.indexOf(track.title) + 1;
+    return lines.concat(tracksOnDeckLines);
+  }
 
-      if (nextTrackRank === 0) {
-        nextTrackRank = stagingAreaRank;
-      }
-
-      return <Line
-        color='#998AC0'
-        key={track.title + '1'}
-        weekPosition={1}
-        y1={track.rank * 55}
-        y2={nextTrackRank * 55}/>;
-    });
-
-    const trackOnDeckSectionTwoComponents = tracksOnDeckSectionTwo.map(trackOnDeck => {
-
-      return <Line
-        color='#998AC0'
-        key={trackOnDeck.title}
-        weekPosition={1}
-        y1={stagingAreaRank * 55}
-        y2={trackOnDeck.rank * 55}/>;
-    });
-
-    const lineComponentsSectionThree = _.map(this.props.twoWeeksBackChart, track => {
-      let nextTrackRank = lastWeekTracks.indexOf(track.title) + 1;
-
-      if (nextTrackRank === 0) {
-        nextTrackRank = stagingAreaRank;
-      }
-
-      return <Line
-          color='#B1E2DA'
-          key={track.title + '2'}
-          weekPosition={2}
-          y1={track.rank * 55}
-          y2={nextTrackRank * 55}/>;
-      });
-
-      const trackOnDeckSectionThreeComponents = tracksOnDeckSectionThree.map(trackOnDeck => {
-        return <Line
-          color='#B1E2DA'
-          key={trackOnDeck.title}
-          weekPosition={2}
-          y1={stagingAreaRank * 55}
-          y2={trackOnDeck.rank * 55}/>;
-      });
-
-      const lineComponentsSectionFour = _.map(this.props.threeWeeksBackChart, track => {
-        let nextTrackRank = twoWeeksBackTracks.indexOf(track.title) + 1;
-
-        if (nextTrackRank === 0) {
-          nextTrackRank = stagingAreaRank;
-        }
-
-        return <Line
-            color='#98CC9F'
-            key={track.title + '3'}
-            weekPosition={3}
-            y1={track.rank * 55}
-            y2={nextTrackRank * 55}/>;
-        });
-
-      const trackOnDeckSectionFourComponents = tracksOnDeckSectionFour.map(trackOnDeck => {
-        return <Line
-          color='#98CC9F'
-          key={trackOnDeck.title}
-          weekPosition={3}
-          y1={stagingAreaRank * 55}
-          y2={trackOnDeck.rank * 55}/>;
-      });
+  render() {
+    const sectionZero = this.getLinesForSection(0, this.props.chart, this.props.nextChart, '#FEF59E');
+    const sectionOne = this.getLinesForSection(1, this.props.lastChart, this.props.chart, '#98CC9F');
+    const sectionTwo = this.getLinesForSection(2, this.props.twoWeeksBackChart, this.props.lastChart, '#998AC0');
+    const sectionThree = this.getLinesForSection(3, this.props.threeWeeksBackChart, this.props.twoWeeksBackChart, '#8AD2F4');
+    const sectionFour = this.getLinesForSection(4, this.props.fourWeeksBackChart, this.props.threeWeeksBackChart, '#F4B589');
 
     return (
       <svg width={700} height={579} style={{border: '1px solid white', backgroundColor: 'black'}}>
-        {lineComponentsSectionOne}
-        {trackOnDeckSectionOneComponents}
-        {lineComponentsSectionTwo}
-        {trackOnDeckSectionTwoComponents}
-        {lineComponentsSectionThree}
-        {trackOnDeckSectionThreeComponents}
-        {lineComponentsSectionFour}
-        {trackOnDeckSectionFourComponents}
+        {sectionZero}
+        {sectionOne}
+        {sectionTwo}
+        {sectionThree}
+        {sectionFour}
       </svg>
     );
   }
