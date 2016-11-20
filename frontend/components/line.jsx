@@ -8,15 +8,29 @@ class Line extends React.Component{
     super(props);
     this.LINE_LENGTH = 175;
     this.state = {
-      x1: this.props.startingX,
-      x2: this.props.startingX + this.LINE_LENGTH,
+      x1: this.calculateStartingX(this.props.weekPosition),
+      x2: this.calculateStartingX(this.props.weekPosition) + this.LINE_LENGTH,
     };
 
     this.moveLine = this.moveLine.bind(this);
+    this.calculateStartingX = this.calculateStartingX.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.weekPosition !== this.props.weekPosition) {
+      this.setState({
+        x1: this.calculateStartingX(nextProps.weekPosition),
+        x2: this.calculateStartingX(nextProps.weekPosition) + this.LINE_LENGTH
+      });
+    }
+  }
+
+  calculateStartingX(weekPosition) {
+    return 700 - (weekPosition * this.LINE_LENGTH);
   }
 
   componentDidMount() {
-    this.moveLine();
+    //this.moveLine();
   }
 
   moveLine() {
@@ -31,7 +45,7 @@ class Line extends React.Component{
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+    // clearInterval(this.interval);
   }
 
   render() {
