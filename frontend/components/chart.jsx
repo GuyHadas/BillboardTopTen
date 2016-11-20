@@ -12,19 +12,20 @@ class Chart extends React.Component{
 
   getColorForTitle(trackTitle) {
     let hash = StringHash(trackTitle);
-    console.log(hash);
+
     let colors = [
-      '#FEF59E', // pastel yellow
-      '#98CC9F', // pastel lime green
-      '#998AC0', // pastel dark purple
-      '#8AD2F4', // pastel turquoise
-      '#F4B589', // pastel orange
-      '#F3ECDC', // pastel white
-      '#C897C0', // pastel light purple
-      '#98CC9F', // pastel dark green
-      '#F19A7B', // pastel orange
-      '#B1E2DA', // pastel teal
-      '#FF6961'  // pastel red
+      '#FEF59E', // yellow
+      '#98CC9F', // lime green
+      '#998AC0', // dark purple
+      '#8AD2F4', // turquoise
+      '#F4B589', // orange
+      '#C897C0', // light purple
+      '#FFB347', // orange
+      '#B1E2DA', // teal
+      '#FF6961', // red
+      '#779ECB', // navy blue
+      '#DEA5A4', // light red
+      '#CBFFCB',  // light green
     ];
 
     return colors[hash % colors.length];
@@ -74,7 +75,7 @@ class Chart extends React.Component{
     const sectionFour = this.getLinesForSection(4, this.props.fourWeeksBackChart, this.props.threeWeeksBackChart, '#F4B589');
 
     return (
-      <svg width={700} height={579} style={{border: '1px solid white', backgroundColor: 'black'}}>
+      <svg width={700} height={579} style={{borderLeft: '1px solid white', backgroundColor: 'black'}}>
         {sectionZero}
         {sectionOne}
         {sectionTwo}
