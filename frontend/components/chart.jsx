@@ -14,6 +14,8 @@ class Chart extends React.Component{
   }
 
   componentDidMount() {
+    // This is called 150 times throughout a chart interval
+    // Line must move 175 pixels every chart interval
     const VELOCITY = (175 / 150);
     this.offsetInterval = setInterval(() => {
       this.setState({ offset: this.state.offset + VELOCITY });
@@ -38,7 +40,7 @@ class Chart extends React.Component{
       '#98CC9F', // lime green
       '#998AC0', // dark purple
       '#8AD2F4', // turquoise
-      '#F4B589', // orange
+      '#F4B589', // red orange
       '#C897C0', // light purple
       '#FFB347', // orange
       '#B1E2DA', // teal
