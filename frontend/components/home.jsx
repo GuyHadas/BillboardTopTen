@@ -26,11 +26,11 @@ class Home extends React.Component {
       nextTrackURL: null, //next track to be cached
       trackURLSoundComponentOne: null, //track url set on Sound component one
       trackURLSoundComponentTwo: null, //track url set on Sound component two
-      soundComponentOneStatus: Sound.status.STOPPED,
+      soundComponentOneStatus: Sound.status.PLAYING,
       soundComponentTwoStatus: Sound.status.STOPPED,
       volOne: 100,
       volTwo: 0,
-      isSoundOn: false
+      isSoundOn: true
     };
 
     this.incrementCharts = this.incrementCharts.bind(this);
