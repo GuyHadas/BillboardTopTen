@@ -95,7 +95,7 @@ class Decade extends React.Component{
     let headerColor = 'white';
 
     if (this.state.showYears) {
-      headerColor = 'rgba(255, 123, 109, 0.5)';
+      headerColor = 'mediumaquamarine';
 
       yearComponents = _.map(this.state.years, year => {
         return <Year key={year} year={year} yearDates={this.getDatesForYear(year)} showMonths={this.showMonths} setChartDate={this.props.setChartDate}/>;
@@ -103,7 +103,7 @@ class Decade extends React.Component{
     }
 
     if (this.state.showMonths) {
-      headerColor = 'rgba(255, 123, 109, 0.5)';
+      headerColor = 'mediumaquamarine';
 
       monthComponents = _.map(this.state.months, month => {
         return <Month key={month} month={month} dates={this.props.dates} year={this.state.year} setChartDate={this.props.setChartDate}/>;

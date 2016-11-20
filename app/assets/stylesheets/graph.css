@@ -13,9 +13,10 @@
   align-items: center;
   width: 100%;
   height: 50px;
-  background-color: white;
+  background-color: black;
   border-bottom: 1px solid #ccc;
-  color: rgba(255, 123, 109, 1);
+  color: white;
+  font-family: 'Roboto', sans-serif;
 }
 
 #titleArtist {
@@ -51,7 +52,7 @@
 #stagingArea {
   width: 100%;
   height: 53px;
-  background: rgb(155, 221, 185);
+  background: rgb(0, 0, 0);
   position: relative;
   border-top: 1px solid black;
 }

@@ -40,7 +40,7 @@
 }
 
 .decadeYear:hover {
-  color: rgba(255, 123, 109, 0.5);
+  color: mediumaquamarine;
   transition: color .2s;
   cursor: pointer;
 }
@@ -56,7 +56,7 @@
 }
 
 .month:hover {
-  color: rgba(255, 123, 109, 0.5);
+  color: mediumaquamarine;
   transition: color .2s;
   cursor: pointer;
 }

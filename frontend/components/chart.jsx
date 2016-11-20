@@ -8,6 +8,26 @@ import Line from './line.jsx';
 class Chart extends React.Component{
   constructor(props){
     super(props);
+    this.state = {
+      offset: 0
+    };
+  }
+
+  componentDidMount() {
+    const VELOCITY = (175 / 150);
+    this.offsetInterval = setInterval(() => {
+      this.setState({ offset: this.state.offset + VELOCITY });
+    }, 20);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.chart !== this.props.chart) {
+      this.setState({ offset: 0 });
+    }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.offsetInterval);
   }
 
   getColorForTitle(trackTitle) {
@@ -31,7 +51,7 @@ class Chart extends React.Component{
     return colors[hash % colors.length];
   }
 
-  getLinesForSection(sectionNum, startingChart, endingChart, color) {
+  getLinesForSection(sectionNum, startingChart, endingChart) {
     const STAGING_AREA_RANK = 11;
     const startingTracks = _.map(startingChart, 'title');
     const endingTracks = _.map(endingChart, 'title');
@@ -47,6 +67,7 @@ class Chart extends React.Component{
       }
 
       return <Line
+        offset={this.state.offset}
         color={this.getColorForTitle(track.title)}
         key={track.title + sectionNum}
         weekPosition={sectionNum}
@@ -56,6 +77,7 @@ class Chart extends React.Component{
 
     const tracksOnDeckLines = tracksOnDeck.map(trackOnDeck => {
       return <Line
+        offset={this.state.offset}
         color={this.getColorForTitle(trackOnDeck.title)}
         key={trackOnDeck.title}
         weekPosition={sectionNum}
@@ -68,14 +90,14 @@ class Chart extends React.Component{
   }
 
   render() {
-    const sectionZero = this.getLinesForSection(0, this.props.chart, this.props.nextChart, '#FEF59E');
-    const sectionOne = this.getLinesForSection(1, this.props.lastChart, this.props.chart, '#98CC9F');
-    const sectionTwo = this.getLinesForSection(2, this.props.twoWeeksBackChart, this.props.lastChart, '#998AC0');
-    const sectionThree = this.getLinesForSection(3, this.props.threeWeeksBackChart, this.props.twoWeeksBackChart, '#8AD2F4');
-    const sectionFour = this.getLinesForSection(4, this.props.fourWeeksBackChart, this.props.threeWeeksBackChart, '#F4B589');
+    const sectionZero = this.getLinesForSection(0, this.props.chart, this.props.nextChart);
+    const sectionOne = this.getLinesForSection(1, this.props.lastChart, this.props.chart);
+    const sectionTwo = this.getLinesForSection(2, this.props.twoWeeksBackChart, this.props.lastChart);
+    const sectionThree = this.getLinesForSection(3, this.props.threeWeeksBackChart, this.props.twoWeeksBackChart);
+    const sectionFour = this.getLinesForSection(4, this.props.fourWeeksBackChart, this.props.threeWeeksBackChart);
 
     return (
-      <svg width={700} height={579} style={{borderLeft: '1px solid white', backgroundColor: 'black'}}>
+      <svg width={700} height={579} style={{borderLeft: '1px solid white', borderBottom: '1px solid white', backgroundColor: 'black'}}>
         {sectionZero}
         {sectionOne}
         {sectionTwo}
