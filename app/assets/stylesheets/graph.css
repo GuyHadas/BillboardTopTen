@@ -35,18 +35,24 @@
   height: 100%;
 }
 
+.albumImage {
+  width: 50px;
+  height: 50px;
+  margin-right: 30px;
+  border-radius: 25px;
+}
+
 .trackBox {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-start;;
   align-items: center;
   height: 50px;
-  background-color: rgba(255, 123, 109, 0.5);
-  border: 1px solid white;
   border-radius: 5px;
   width: inherit;
   margin-bottom: 15px;
   transition: all 2930ms linear;
+  font-family: 'Roboto', sans-serif;
 }
 
 #stagingArea {

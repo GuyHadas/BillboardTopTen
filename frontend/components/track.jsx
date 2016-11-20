@@ -25,6 +25,7 @@ class Track extends React.Component{
     } , 70); // this plus css transition time must equal setIntervalTime from #incrementCharts
   }
 
+
   render() {
     const distanceFromTop = this.state.top;
 
@@ -34,6 +35,9 @@ class Track extends React.Component{
           top: distanceFromTop,
           position: 'absolute'
         }}>
+        <img className='albumImage'
+             src={this.props.albumImage}
+             style={{border: `1px solid ${this.props.getColorForTitle(this.props.track.title)}`}}></img>
         {this.props.track.title}
       </div>
     );

@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { hashHistory } from 'react-router';
 import moment from 'moment';
+import StringHash from 'string-hash';
 
 import Graph from './graph.jsx';
 import { Title } from './title.jsx';
@@ -14,6 +15,7 @@ class Home extends React.Component {
     super(props);
 
     this.state = {
+      albumImages: null,
       charts: null,
       trackMetaData: null,
       lastChartDate: null,
@@ -49,17 +51,23 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    let charts;
+    let charts, albumImages;
 
     $.get('billboard-data-synced.json')
     .then(_charts => {
       charts = _charts;
+
+      return $.get('track-images.json');
+    })
+    .then(_albumImages => {
+      albumImages = _albumImages;
 
       return $.get('track-meta.json');
     })
     .then(trackMetaData => {
       this.setState({
         trackMetaData: trackMetaData,
+        albumImages: albumImages,
         charts: charts,
         currentDate: this.getDate(charts, 0),
         nextChartDate: this.getDate(charts, 1),
@@ -299,6 +307,27 @@ class Home extends React.Component {
     }
   }
 
+  getColorForTitle(trackTitle) {
+    let hash = StringHash(trackTitle);
+
+    let colors = [
+      '#FEF59E', // yellow
+      '#98CC9F', // lime green
+      '#998AC0', // dark purple
+      '#8AD2F4', // turquoise
+      '#F4B589', // red orange
+      '#C897C0', // light purple
+      '#FFB347', // orange
+      '#B1E2DA', // teal
+      '#FF6961', // red
+      '#779ECB', // navy blue
+      '#DEA5A4', // light red
+      '#CBFFCB',  // light green
+    ];
+
+    return colors[hash % colors.length];
+  }
+
   render() {
     let graphComponent;
     let audioComponent;
@@ -318,6 +347,8 @@ class Home extends React.Component {
         date={this.state.currentDate}
         chart={this.state.charts[this.state.currentDate]}
         nextChart={this.state.charts[this.state.nextChartDate]}
+        albumImages={this.state.albumImages}
+        getColorForTitle={this.getColorForTitle}
         />;
       const trackURLSoundComponentOne = this.state.trackURLSoundComponentOne;
       const trackURLSoundComponentTwo = this.state.trackURLSoundComponentTwo;
@@ -338,7 +369,8 @@ class Home extends React.Component {
         prevChart={this.state.charts[this.state.lastChartDate]}
         twoWeeksBackChart={this.state.charts[this.state.twoWeeksBackChartDate]}
         threeWeeksBackChart={this.state.charts[this.state.threeWeeksBackChartDate]}
-        fourWeeksBackChart={this.state.charts[this.state.fourWeeksBackChartDate]}/>;
+        fourWeeksBackChart={this.state.charts[this.state.fourWeeksBackChartDate]}
+        getColorForTitle={this.getColorForTitle}/>;
     }
     return (
       <div>

@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
-import StringHash from 'string-hash';
 
 import Line from './line.jsx';
 
@@ -32,27 +31,6 @@ class Chart extends React.Component{
     clearInterval(this.offsetInterval);
   }
 
-  getColorForTitle(trackTitle) {
-    let hash = StringHash(trackTitle);
-
-    let colors = [
-      '#FEF59E', // yellow
-      '#98CC9F', // lime green
-      '#998AC0', // dark purple
-      '#8AD2F4', // turquoise
-      '#F4B589', // red orange
-      '#C897C0', // light purple
-      '#FFB347', // orange
-      '#B1E2DA', // teal
-      '#FF6961', // red
-      '#779ECB', // navy blue
-      '#DEA5A4', // light red
-      '#CBFFCB',  // light green
-    ];
-
-    return colors[hash % colors.length];
-  }
-
   getPositionForRank(rank) {
     return rank * 55;
   }
@@ -74,7 +52,7 @@ class Chart extends React.Component{
 
       return <Line
         offset={this.state.offset}
-        color={this.getColorForTitle(track.title)}
+        color={this.props.getColorForTitle(track.title)}
         key={track.title + sectionNum}
         weekPosition={sectionNum}
         y1={this.getPositionForRank(track.rank)}
@@ -84,7 +62,7 @@ class Chart extends React.Component{
     const tracksOnDeckLines = tracksOnDeck.map(trackOnDeck => {
       return <Line
         offset={this.state.offset}
-        color={this.getColorForTitle(trackOnDeck.title)}
+        color={this.props.getColorForTitle(trackOnDeck.title)}
         key={trackOnDeck.title}
         weekPosition={sectionNum}
         y1={this.getPositionForRank(STAGING_AREA_RANK)}

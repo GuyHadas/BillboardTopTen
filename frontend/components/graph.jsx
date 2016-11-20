@@ -20,8 +20,8 @@ class Graph extends React.Component{
       if (nextTrackRank === 0) {
         nextTrackRank = stagingAreaRank; // if track is not in next week's charts, animate to bottom of list
       }
-
-      return <Track key={track.title} track={track} nextTrackRank={nextTrackRank}/>;
+      let artistSlashTitle = `${track.artist}/${track.title}`;
+      return <Track key={track.title} track={track} nextTrackRank={nextTrackRank} albumImage={this.props.albumImages[artistSlashTitle]} getColorForTitle={this.props.getColorForTitle}/>;
     });
 
     let tracksOnDeck = _.filter(this.props.nextChart, trackOnDeck => {
@@ -35,7 +35,8 @@ class Graph extends React.Component{
         rank: stagingAreaRank
       };
 
-      return <Track key={trackOnDeck.title} track={dummyTrack} nextTrackRank={trackOnDeck.rank}/>;
+      let artistSlashTitleOnDeck = `${trackOnDeck.artist}/${trackOnDeck.title}`;
+      return <Track key={trackOnDeck.title} track={dummyTrack} nextTrackRank={trackOnDeck.rank} albumImage={this.props.albumImages[artistSlashTitleOnDeck]} getColorForTitle={this.props.getColorForTitle}/>;
     });
 
     return (
