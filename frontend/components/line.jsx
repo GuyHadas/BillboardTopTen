@@ -12,40 +12,11 @@ class Line extends React.Component{
       x2: this.calculateStartingX(this.props.weekPosition) + this.LINE_LENGTH,
     };
 
-    this.moveLine = this.moveLine.bind(this);
     this.calculateStartingX = this.calculateStartingX.bind(this);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.weekPosition !== this.props.weekPosition) {
-      this.setState({
-        x1: this.calculateStartingX(nextProps.weekPosition),
-        x2: this.calculateStartingX(nextProps.weekPosition) + this.LINE_LENGTH
-      });
-    }
   }
 
   calculateStartingX(weekPosition) {
     return 700 - (weekPosition * this.LINE_LENGTH);
-  }
-
-  componentDidMount() {
-    //this.moveLine();
-  }
-
-  moveLine() {
-    // Render is called 150 times every 3 seconds
-    // Lines need to move a total of 175px every 3 seconds
-    const VELOCITY = -(175 / 150);
-    this.interval = setInterval(() => {
-      if (_.max([this.state.x1, this.state.x2]) > 0) {
-        this.setState({ x1: this.state.x1 + VELOCITY, x2: this.state.x2 + VELOCITY });
-      }
-    }, 20);
-  }
-
-  componentWillUnmount() {
-    // clearInterval(this.interval);
   }
 
   render() {
@@ -57,7 +28,10 @@ class Line extends React.Component{
     };
 
     return (
-      <line {...coords} stroke={this.props.color} strokeWidth={3}/>
+      <line {...coords} stroke={this.props.color} strokeWidth={3}>
+        <animate attributeName="x1" from={this.state.x1} to={this.state.x1 - this.LINE_LENGTH} dur="3s" begin="0s" repeatCount="indefinite"/>
+        <animate attributeName="x2" from={this.state.x2} to={this.state.x1} dur="3s" begin="0s" repeatCount="indefinite"/>
+      </line>
     );
   }
 }
