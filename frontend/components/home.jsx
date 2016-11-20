@@ -7,6 +7,7 @@ import Graph from './graph.jsx';
 import { Title } from './title.jsx';
 import DatePicker from './datePicker.jsx';
 import Sound from 'react-sound';
+import Chart from './chart.jsx';
 
 class Home extends React.Component {
   constructor(props) {
@@ -15,6 +16,10 @@ class Home extends React.Component {
     this.state = {
       charts: null,
       trackMetaData: null,
+      lastChartDate: null,
+      twoWeeksBackChartDate: null,
+      threeWeeksBackChartDate: null,
+      fourWeeksBackChartDate: null,
       currentDate: null,
       nextChartDate: null,
       currentTrackURL: null, //current track playing
@@ -86,6 +91,10 @@ class Home extends React.Component {
     this.activeSoundComponent = this.activeSoundComponent === 'one' ? 'two' : 'one';
 
     this.setState({
+      fourWeeksBackChartDate: this.getDate(this.state.charts, this.i - 4),
+      threeWeeksBackChartDate: this.getDate(this.state.charts, this.i - 3),
+      twoWeeksBackChartDate: this.getDate(this.state.charts, this.i - 2),
+      lastChartDate: this.getDate(this.state.charts, this.i - 1),
       currentDate: this.getDate(this.state.charts, this.i),
       nextChartDate: this.getDate(this.state.charts, this.i + 1),
       currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
@@ -108,6 +117,10 @@ class Home extends React.Component {
                                               this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'];
 
     this.setState({
+      fourWeeksBackChartDate: this.getDate(this.state.charts, this.i - 4),
+      threeWeeksBackChartDate: this.getDate(this.state.charts, this.i - 3),
+      twoWeeksBackChartDate: this.getDate(this.state.charts, this.i - 2),
+      lastChartDate: this.getDate(this.state.charts, this.i - 1),
       currentDate: this.getDate(this.state.charts, this.i),
       nextChartDate: this.getDate(this.state.charts, this.i + 1),
       currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
@@ -163,6 +176,10 @@ class Home extends React.Component {
     this.activeSoundComponent = this.activeSoundComponent === 'one' ? 'two' : 'one';
 
     this.setState({
+      fourWeeksBackChartDate: this.getDate(this.state.charts, this.i - 4),
+      threeWeeksBackChartDate: this.getDate(this.state.charts, this.i - 3),
+      twoWeeksBackChartDate: this.getDate(this.state.charts, this.i - 2),
+      lastChartDate: this.getDate(this.state.charts, this.i - 1),
       currentDate: this.getDate(this.state.charts, this.i),
       nextChartDate: this.getDate(this.state.charts, this.i + 1),
       currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
@@ -287,6 +304,7 @@ class Home extends React.Component {
     let audioComponent;
     let datePickerComponent;
     let titleBoxComponent;
+    let chartComponent;
 
     if (!this.state.charts) {
       graphComponent = <div>Loading...</div>;
@@ -314,12 +332,20 @@ class Home extends React.Component {
           {this.songComponentTwo(trackURLSoundComponentTwo)}
         </div>;
       datePickerComponent = <DatePicker charts={this.state.charts} setChartDate={this.setChartDate.bind(this)}/>;
+      chartComponent = <Chart
+        chart={this.state.charts[this.state.currentDate]}
+        nextChart={this.state.charts[this.state.nextChartDate]}
+        prevChart={this.state.charts[this.state.lastChartDate]}
+        twoWeeksBackChart={this.state.charts[this.state.twoWeeksBackChartDate]}
+        threeWeeksBackChart={this.state.charts[this.state.threeWeeksBackChartDate]}
+        fourWeeksBackChart={this.state.charts[this.state.fourWeeksBackChartDate]}/>;
     }
     return (
       <div>
         {titleBoxComponent}
         <section id='mainContainer'>
           {datePickerComponent}
+          {chartComponent}
           {graphComponent}
         </section>
         <div id='stagingArea'/>
