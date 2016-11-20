@@ -6,17 +6,17 @@ class Line extends React.Component{
 
   constructor(props){
     super(props);
-    this.LINE_LENGTH = 175;
+    this.SECTION_LENGTH = 175;
     this.state = {
       x1: this.calculateStartingX(this.props.weekPosition),
-      x2: this.calculateStartingX(this.props.weekPosition) + this.LINE_LENGTH,
+      x2: this.calculateStartingX(this.props.weekPosition) + this.SECTION_LENGTH,
     };
 
     this.calculateStartingX = this.calculateStartingX.bind(this);
   }
 
   calculateStartingX(weekPosition) {
-    return 700 - (weekPosition * this.LINE_LENGTH);
+    return 700 - (weekPosition * this.SECTION_LENGTH);
   }
 
   render() {
