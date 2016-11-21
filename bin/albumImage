@@ -3,6 +3,8 @@ require 'http'
 
 $defaultImageUrl = "http://24.media.tumblr.com/tumblr_m3j315A5l31r6luwpo1_500.png"
 
+old_track_images = JSON.parse(File.read("track-images.json"))
+
 $not_found = []
 
 def get_last_fm(query)
@@ -43,18 +45,22 @@ end
 
 track_images = {}
 
-charts = JSON.parse(File.read("public/billboard-data.json"))
+charts = JSON.parse(File.read("billboard-data-11-20-2016.json"))
 charts.each do |date, chart|
   p date
   chart.each do |song|
     artist = song['artist']
     title = song['title']
     next if track_images["#{artist}/#{title}"]
-    imageUrl = get_spotify_track(song, song['spotify_id'])
-    track_images["#{artist}/#{title}"] = imageUrl
+    if old_track_images["#{artist}/#{title}"]
+      track_images["#{artist}/#{title}"]
+    else
+      imageUrl = get_spotify_track(song, song['spotify_id'])
+      track_images["#{artist}/#{title}"] = imageUrl
+    end
   end
 end
 
 p $not_found
 p ["length", $not_found.length]
-File.write("./track-images.json", JSON.generate(track_images))
+File.write("./track-images-11-20-2016.json", JSON.generate(track_images))
