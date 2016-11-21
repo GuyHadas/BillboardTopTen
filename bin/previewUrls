@@ -1,8 +1,16 @@
 require 'json'
 require 'http'
 
+oldTrackMeta = JSON.parse(File.read("public/track-meta.json"))
+
 def get_itunes_track(query)
-  JSON.parse(HTTP.get("https://itunes.apple.com/search?term=#{query}&country=us&limit=1&media=music"))
+  res = HTTP.get("https://itunes.apple.com/search?term=#{query}&country=us&limit=1&media=music")
+  if res.code == 200
+    JSON.parse(res)
+  else
+    p "GOT 403"
+    return {"resultCount" => 0}
+  end
 end
 
 def build_query(chart, spotify_id)
@@ -20,24 +28,30 @@ end
 
 trackMeta = {}
 
-charts = JSON.parse(File.read("public/billboard-data.json"))
+charts = JSON.parse(File.read("billboard-data-11-20-2016.json"))
 
 charts.each do |date, chart|
-  top_song = chart[0]
-  query = build_query(chart, top_song['spotify_id'])
-  response = get_itunes_track(query)
-  i = 1
-  until response["resultCount"] != 0 || i == 10
-    query = build_query(chart, chart[i])
+  p date
+  
+  if oldTrackMeta[date]
+    trackMeta[date] = oldTrackMeta[date]
+  else
+    top_song = chart[0]
+    query = build_query(chart, top_song['spotify_id'])
     response = get_itunes_track(query)
-    i += 1
-  end
-  if (response["resultCount"] > 0)
-    itunes_track = response["results"][0]
-    unless trackMeta[itunes_track['trackId']]
-      trackMeta[date] = { 'previewUrl' => itunes_track['previewUrl'], 'albumImg' => itunes_track['artworkUrl100'] }
+    i = 1
+    until response["resultCount"] != 0 || i == 10
+      query = build_query(chart, chart[i])
+      response = get_itunes_track(query)
+      i += 1
+    end
+    if (response["resultCount"] > 0)
+      itunes_track = response["results"][0]
+      unless trackMeta[itunes_track['trackId']]
+        trackMeta[date] = { 'previewUrl' => itunes_track['previewUrl'], 'albumImg' => itunes_track['artworkUrl100'] }
+      end
     end
   end
 end
 
-File.write("./track-meta.json", JSON.generate(trackMeta))
+File.write("./track-meta-11-20-2016.json", JSON.generate(trackMeta))

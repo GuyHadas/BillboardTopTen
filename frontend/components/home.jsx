@@ -53,31 +53,32 @@ class Home extends React.Component {
   componentDidMount() {
     let charts, albumImages;
 
-    $.get('billboard-data-synced.json')
+    $.get('11-20-2016/billboard-data-11-20-2016-synced.json')
     .then(_charts => {
       charts = _charts;
 
-      return $.get('track-images.json');
+      return $.get('11-20-2016/track-images-11-20-2016.json');
     })
     .then(_albumImages => {
       albumImages = _albumImages;
 
-      return $.get('track-meta.json');
+      return $.get('11-20-2016/track-meta-11-20-2016.json');
     })
     .then(trackMetaData => {
       this.setState({
         trackMetaData: trackMetaData,
         albumImages: albumImages,
-        charts: charts,
-        currentDate: this.getDate(charts, 0),
-        nextChartDate: this.getDate(charts, 1),
-        currentTrackURL: trackMetaData[this.getDate(charts, 0)]['previewUrl'],
-        nextTrackURL: trackMetaData[this.getDate(charts, 1)]['previewUrl'],
-        trackURLSoundComponentOne: trackMetaData[this.getDate(charts, 0)]['previewUrl'],
-        trackURLSoundComponentTwo: trackMetaData[this.getDate(charts, 1)]['previewUrl']
+        charts: charts
       });
-
+      this.i = 0;
       this.activeSoundComponent = 'one';
+
+      if (trackMetaData[this.getDate(charts, 0)]['previewUrl'] !== trackMetaData[this.getDate(charts, 1)]['previewUrl']) {
+        this.incrementDifferentTrack();
+      } else {
+        this.incrementSameTrack();
+      }
+
       this.incrementCharts();
     });
   }
@@ -90,8 +91,8 @@ class Home extends React.Component {
   incrementDifferentTrack() {
     let volOne = this.activeSoundComponent === 'one' ? 0 : 100;
     let volTwo = this.activeSoundComponent === 'one' ? 100 : 0;
-    let soundComponentOneStatus = this.activeSoundComponent === 'one' ? Sound.status.STOPPED : this.state.soundComponentOneStatus;
-    let soundComponentTwoStatus = this.activeSoundComponent === 'one' ?  this.state.soundComponentTwoStatus: Sound.status.STOPPED;
+    let soundComponentOneStatus = this.activeSoundComponent === 'one' ? Sound.status.STOPPED : Sound.status.PLAYING;
+    let soundComponentTwoStatus = this.activeSoundComponent === 'one' ?  Sound.status.PLAYING : Sound.status.STOPPED;
     let trackURLSoundComponentOne = this.activeSoundComponent === 'one' ? this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'] :
                                               this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'];
     let trackURLSoundComponentTwo = this.activeSoundComponent === 'one' ? this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'] :
@@ -335,7 +336,7 @@ class Home extends React.Component {
     let titleBoxComponent;
     let chartComponent;
 
-    if (!this.state.charts) {
+    if (!this.state.charts || !this.state.currentTrackURL) {
       graphComponent = <div>Loading...</div>;
     } else {
       titleBoxComponent = <Title
