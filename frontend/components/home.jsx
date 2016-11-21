@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { hashHistory } from 'react-router';
 import moment from 'moment';
+import StringHash from 'string-hash';
 
 import Graph from './graph.jsx';
 import { Title } from './title.jsx';
@@ -14,6 +15,7 @@ class Home extends React.Component {
     super(props);
 
     this.state = {
+      albumImages: null,
       charts: null,
       trackMetaData: null,
       lastChartDate: null,
@@ -46,20 +48,27 @@ class Home extends React.Component {
     this.incrementSameTrack = this.incrementSameTrack.bind(this);
     this.incrementDifferentTrack = this.incrementDifferentTrack.bind(this);
     this.fadeInFadeOut = this.fadeInFadeOut.bind(this);
+    this.stopInterval = this.stopInterval.bind(this);
   }
 
   componentDidMount() {
-    let charts;
+    let charts, albumImages;
 
     $.get('11-20-2016/billboard-data-11-20-2016-synced.json')
     .then(_charts => {
       charts = _charts;
+
+      return $.get('11-20-2016/track-images-11-20-2016.json');
+    })
+    .then(_albumImages => {
+      albumImages = _albumImages;
 
       return $.get('11-20-2016/track-meta-11-20-2016.json');
     })
     .then(trackMetaData => {
       this.setState({
         trackMetaData: trackMetaData,
+        albumImages: albumImages,
         charts: charts
       });
       this.i = 0;
@@ -83,8 +92,15 @@ class Home extends React.Component {
   incrementDifferentTrack() {
     let volOne = this.activeSoundComponent === 'one' ? 0 : 100;
     let volTwo = this.activeSoundComponent === 'one' ? 100 : 0;
-    let soundComponentOneStatus = this.activeSoundComponent === 'one' ? Sound.status.STOPPED : Sound.status.PLAYING;
-    let soundComponentTwoStatus = this.activeSoundComponent === 'one' ?  Sound.status.PLAYING : Sound.status.STOPPED;
+    let soundComponentOneStatus;
+    let soundComponentTwoStatus;
+    if(this.state.isSoundOn){
+      soundComponentOneStatus = this.activeSoundComponent === 'one' ? Sound.status.STOPPED : Sound.status.PLAYING;
+      soundComponentTwoStatus = this.activeSoundComponent === 'one' ?  Sound.status.PLAYING : Sound.status.STOPPED;
+    } else {
+      soundComponentOneStatus = this.activeSoundComponent === 'one' ? Sound.status.STOPPED : this.state.soundComponentOneStatus;
+      soundComponentTwoStatus = this.activeSoundComponent === 'one' ?  this.state.soundComponentTwoStatus : Sound.status.STOPPED;
+    }
     let trackURLSoundComponentOne = this.activeSoundComponent === 'one' ? this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'] :
                                               this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'];
     let trackURLSoundComponentTwo = this.activeSoundComponent === 'one' ? this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'] :
@@ -300,6 +316,31 @@ class Home extends React.Component {
     }
   }
 
+  getColorForTitle(trackTitle) {
+    let hash = StringHash(trackTitle);
+
+    let colors = [
+      '#FEF59E', // yellow
+      '#98CC9F', // lime green
+      '#998AC0', // dark purple
+      '#8AD2F4', // turquoise
+      '#F4B589', // red orange
+      '#C897C0', // light purple
+      '#FFB347', // orange
+      '#B1E2DA', // teal
+      '#FF6961', // red
+      '#779ECB', // navy blue
+      '#DEA5A4', // light red
+      '#CBFFCB',  // light green
+    ];
+
+    return colors[hash % colors.length];
+  }
+
+  stopInterval() {
+    clearInterval(this.nextDateInterval);
+  }
+
   render() {
     let graphComponent;
     let audioComponent;
@@ -319,6 +360,8 @@ class Home extends React.Component {
         date={this.state.currentDate}
         chart={this.state.charts[this.state.currentDate]}
         nextChart={this.state.charts[this.state.nextChartDate]}
+        albumImages={this.state.albumImages}
+        getColorForTitle={this.getColorForTitle}
         />;
       const trackURLSoundComponentOne = this.state.trackURLSoundComponentOne;
       const trackURLSoundComponentTwo = this.state.trackURLSoundComponentTwo;
@@ -339,7 +382,8 @@ class Home extends React.Component {
         prevChart={this.state.charts[this.state.lastChartDate]}
         twoWeeksBackChart={this.state.charts[this.state.twoWeeksBackChartDate]}
         threeWeeksBackChart={this.state.charts[this.state.threeWeeksBackChartDate]}
-        fourWeeksBackChart={this.state.charts[this.state.fourWeeksBackChartDate]}/>;
+        fourWeeksBackChart={this.state.charts[this.state.fourWeeksBackChartDate]}
+        getColorForTitle={this.getColorForTitle}/>;
     }
     return (
       <div>
@@ -351,6 +395,7 @@ class Home extends React.Component {
         </section>
         <div id='stagingArea'/>
         {audioComponent}
+        <span onClick={this.stopInterval}>STOP</span>
       </div>
     );
   }

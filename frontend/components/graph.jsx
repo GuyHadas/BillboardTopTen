@@ -20,8 +20,9 @@ class Graph extends React.Component{
       if (nextTrackRank === 0) {
         nextTrackRank = stagingAreaRank; // if track is not in next week's charts, animate to bottom of list
       }
-
-      return <Track key={track.title} track={track} nextTrackRank={nextTrackRank}/>;
+      let albumImage = this.props.albumImages[`${track.artist}/${track.title}`];
+      albumImage = albumImage ? albumImage : 'http://24.media.tumblr.com/tumblr_m3j315A5l31r6luwpo1_500.png';
+      return <Track key={track.title} track={track} nextTrackRank={nextTrackRank} albumImage={albumImage} getColorForTitle={this.props.getColorForTitle}/>;
     });
 
     let tracksOnDeck = _.filter(this.props.nextChart, trackOnDeck => {
@@ -35,7 +36,10 @@ class Graph extends React.Component{
         rank: stagingAreaRank
       };
 
-      return <Track key={trackOnDeck.title} track={dummyTrack} nextTrackRank={trackOnDeck.rank}/>;
+      let albumImage = this.props.albumImages[`${trackOnDeck.artist}/${trackOnDeck.title}`];
+      albumImage = albumImage ? albumImage : 'http://24.media.tumblr.com/tumblr_m3j315A5l31r6luwpo1_500.png';
+
+      return <Track key={trackOnDeck.title} track={dummyTrack} nextTrackRank={trackOnDeck.rank} albumImage={albumImage} getColorForTitle={this.props.getColorForTitle}/>;
     });
 
     return (
