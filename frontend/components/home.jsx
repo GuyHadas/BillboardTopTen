@@ -269,11 +269,11 @@ class Home extends React.Component {
   }
 
   handleSongFinishedPlayingOne() {
-    // this.setState({ trackURLSoundComponentOne: this.state.trackURLSoundComponentOne});
+    this.setState({ trackURLSoundComponentOne: this.state.trackURLSoundComponentOne});
   }
 
   handleSongFinishedPlayingTwo() {
-    // this.setState({ trackURLSoundComponentTwo: this.state.trackURLSoundComponentTwo});
+    this.setState({ trackURLSoundComponentTwo: this.state.trackURLSoundComponentTwo});
   }
 
   songComponentOne(trackURLSoundComponentOne) {
