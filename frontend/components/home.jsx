@@ -92,8 +92,15 @@ class Home extends React.Component {
   incrementDifferentTrack() {
     let volOne = this.activeSoundComponent === 'one' ? 0 : 100;
     let volTwo = this.activeSoundComponent === 'one' ? 100 : 0;
-    let soundComponentOneStatus = this.activeSoundComponent === 'one' ? Sound.status.STOPPED : Sound.status.PLAYING;
-    let soundComponentTwoStatus = this.activeSoundComponent === 'one' ?  Sound.status.PLAYING : Sound.status.STOPPED;
+    let soundComponentOneStatus;
+    let soundComponentTwoStatus;
+    if(this.state.isSoundOn){
+      soundComponentOneStatus = this.activeSoundComponent === 'one' ? Sound.status.STOPPED : Sound.status.PLAYING;
+      soundComponentTwoStatus = this.activeSoundComponent === 'one' ?  Sound.status.PLAYING : Sound.status.STOPPED;
+    } else {
+      soundComponentOneStatus = this.activeSoundComponent === 'one' ? Sound.status.STOPPED : this.state.soundComponentOneStatus;
+      soundComponentTwoStatus = this.activeSoundComponent === 'one' ?  this.state.soundComponentTwoStatus : Sound.status.STOPPED;
+    }
     let trackURLSoundComponentOne = this.activeSoundComponent === 'one' ? this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'] :
                                               this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'];
     let trackURLSoundComponentTwo = this.activeSoundComponent === 'one' ? this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'] :
