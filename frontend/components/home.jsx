@@ -51,15 +51,13 @@ class Home extends React.Component {
   componentDidMount() {
     let charts;
 
-    //$.get('original/billboard-data-synced.json')
     $.get('11-20-2016/billboard-data-11-20-2016-synced.json')
     .then(_charts => {
       charts = _charts;
+
       return $.get('11-20-2016/track-meta-11-20-2016.json');
-      //return $.get('original/track-meta.json');
     })
     .then(trackMetaData => {
-
       this.setState({
         trackMetaData: trackMetaData,
         charts: charts
