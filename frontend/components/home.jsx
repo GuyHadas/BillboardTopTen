@@ -48,6 +48,7 @@ class Home extends React.Component {
     this.incrementSameTrack = this.incrementSameTrack.bind(this);
     this.incrementDifferentTrack = this.incrementDifferentTrack.bind(this);
     this.fadeInFadeOut = this.fadeInFadeOut.bind(this);
+    this.stopInterval = this.stopInterval.bind(this);
   }
 
   componentDidMount() {
@@ -261,11 +262,11 @@ class Home extends React.Component {
   }
 
   handleSongFinishedPlayingOne() {
-    this.setState({ trackURLSoundComponentOne: this.state.trackURLSoundComponentOne});
+    // this.setState({ trackURLSoundComponentOne: this.state.trackURLSoundComponentOne});
   }
 
   handleSongFinishedPlayingTwo() {
-    this.setState({ trackURLSoundComponentTwo: this.state.trackURLSoundComponentTwo});
+    // this.setState({ trackURLSoundComponentTwo: this.state.trackURLSoundComponentTwo});
   }
 
   songComponentOne(trackURLSoundComponentOne) {
@@ -329,6 +330,10 @@ class Home extends React.Component {
     return colors[hash % colors.length];
   }
 
+  stopInterval() {
+    clearInterval(this.nextDateInterval);
+  }
+
   render() {
     let graphComponent;
     let audioComponent;
@@ -383,6 +388,7 @@ class Home extends React.Component {
         </section>
         <div id='stagingArea'/>
         {audioComponent}
+        <span onClick={this.stopInterval}>STOP</span>
       </div>
     );
   }

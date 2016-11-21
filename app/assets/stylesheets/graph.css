@@ -36,9 +36,8 @@
 }
 
 .albumImage {
-  width: 50px;
-  height: 50px;
   margin-right: 30px;
+  min-width: 50px;
   border-radius: 25px;
 }
 

@@ -18,26 +18,30 @@ class Track extends React.Component{
   }
 
   componentDidUpdate() {
-    window.setTimeout(() => {
+    this.timeOut = setTimeout(() => {
       if (this.state.top !== this.calculateDistanceFromTop(this.props.nextTrackRank)) {
         this.setState({ top: this.calculateDistanceFromTop(this.props.nextTrackRank) });
       }
     } , 70); // this plus css transition time must equal setIntervalTime from #incrementCharts
   }
 
-
+  componentWillUnmount() {
+    clearTimeout(this.timeOut);
+  }
   render() {
     const distanceFromTop = this.state.top;
 
     return (
-      <div className='trackBox'
-        style={{
+      <div className='trackBox' style={{
           top: distanceFromTop,
           position: 'absolute'
         }}>
         <img className='albumImage'
              src={this.props.albumImage}
-             style={{border: `1px solid ${this.props.getColorForTitle(this.props.track.title)}`}}></img>
+             style={{border: `1px solid ${this.props.getColorForTitle(this.props.track.title)}` }}
+             width='50'
+             height='50'
+             />
         {this.props.track.title}
       </div>
     );

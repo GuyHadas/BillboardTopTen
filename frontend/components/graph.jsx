@@ -20,8 +20,10 @@ class Graph extends React.Component{
       if (nextTrackRank === 0) {
         nextTrackRank = stagingAreaRank; // if track is not in next week's charts, animate to bottom of list
       }
-      let artistSlashTitle = `${track.artist}/${track.title}`;
-      return <Track key={track.title} track={track} nextTrackRank={nextTrackRank} albumImage={this.props.albumImages[artistSlashTitle]} getColorForTitle={this.props.getColorForTitle}/>;
+      let albumImage = this.props.albumImages[`${track.artist}/${track.title}`];
+      albumImage = albumImage ? albumImage : 'http://24.media.tumblr.com/tumblr_m3j315A5l31r6luwpo1_500.png';
+      // console.log(track.title, ": ", albumImage);
+      return <Track key={Math.floor(Math.random() * 1000000000).toString()} track={track} nextTrackRank={nextTrackRank} albumImage={albumImage} getColorForTitle={this.props.getColorForTitle}/>;
     });
 
     let tracksOnDeck = _.filter(this.props.nextChart, trackOnDeck => {
@@ -35,8 +37,11 @@ class Graph extends React.Component{
         rank: stagingAreaRank
       };
 
-      let artistSlashTitleOnDeck = `${trackOnDeck.artist}/${trackOnDeck.title}`;
-      return <Track key={trackOnDeck.title} track={dummyTrack} nextTrackRank={trackOnDeck.rank} albumImage={this.props.albumImages[artistSlashTitleOnDeck]} getColorForTitle={this.props.getColorForTitle}/>;
+      let albumImage = this.props.albumImages[`${trackOnDeck.artist}/${trackOnDeck.title}`];
+      albumImage = albumImage ? albumImage : 'http://24.media.tumblr.com/tumblr_m3j315A5l31r6luwpo1_500.png';
+
+      // console.log(trackOnDeck.title, ": ", albumImage);
+      return <Track key={Math.floor(Math.random() * 1000000000).toString()} track={dummyTrack} nextTrackRank={trackOnDeck.rank} albumImage={albumImage} getColorForTitle={this.props.getColorForTitle}/>;
     });
 
     return (
