@@ -18,7 +18,7 @@ class Track extends React.Component{
   }
 
   componentDidUpdate() {
-    this.timeOut = setTimeout(() => {
+    this.animateTrackTimeout = setTimeout(() => {
       if (this.state.top !== this.calculateDistanceFromTop(this.props.nextTrackRank)) {
         this.setState({ top: this.calculateDistanceFromTop(this.props.nextTrackRank) });
       }
@@ -26,7 +26,7 @@ class Track extends React.Component{
   }
 
   componentWillUnmount() {
-    clearTimeout(this.timeOut);
+    clearTimeout(this.animateTrackTimeout);
   }
   render() {
     const distanceFromTop = this.state.top;
