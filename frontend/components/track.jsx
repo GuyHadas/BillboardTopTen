@@ -22,7 +22,7 @@ class Track extends React.Component{
       if (this.state.top !== this.calculateDistanceFromTop(this.props.nextTrackRank)) {
         this.setState({ top: this.calculateDistanceFromTop(this.props.nextTrackRank) });
       }
-    } , 70); // this plus css transition time must equal setIntervalTime from #incrementCharts
+    } , 80); // this plus css transition time must equal setIntervalTime from #incrementCharts
   }
 
   componentWillUnmount() {
