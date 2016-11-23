@@ -53,7 +53,7 @@ class Chart extends React.Component{
       return <Line
         offset={this.state.offset}
         color={this.props.getColorForTitle(track.title)}
-        key={`${track.title}sec${sectionNum}rank{track.rank}`}
+        key={`${track.title}sec${sectionNum}rank${track.rank}`}
         weekPosition={sectionNum}
         y1={this.getPositionForRank(track.rank)}
         y2={this.getPositionForRank(nextTrackRank)}/>;
@@ -63,7 +63,7 @@ class Chart extends React.Component{
       return <Line
         offset={this.state.offset}
         color={this.props.getColorForTitle(trackOnDeck.title)}
-        key={`${trackOnDeck.title}sec${sectionNum}rank{track.rank}`}
+        key={`${trackOnDeck.title}sec${sectionNum}rank${trackOnDeck.rank}`}
         weekPosition={sectionNum}
         y1={this.getPositionForRank(STAGING_AREA_RANK)}
         y2={this.getPositionForRank(trackOnDeck.rank)}/>;
