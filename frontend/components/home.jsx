@@ -5,7 +5,7 @@ import moment from 'moment';
 import StringHash from 'string-hash';
 
 import Graph from './graph.jsx';
-import { Title } from './title.jsx';
+import Title from './title.jsx';
 import DatePicker from './datePicker.jsx';
 import Sound from 'react-sound';
 import Chart from './chart.jsx';
