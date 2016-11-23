@@ -93,7 +93,7 @@ class Chart extends React.Component{
           <li>9 &mdash;</li>
           <li>10 &mdash;</li>
         </ul>
-        <svg width={700} height={579} style={{borderLeft: '1px solid white', borderBottom: '1px solid white', backgroundColor: 'black'}}>
+        <svg width={700} height={579} style={{ borderBottom: '1px solid white', backgroundColor: 'black' }}>
           {sectionZero}
           {sectionOne}
           {sectionTwo}
