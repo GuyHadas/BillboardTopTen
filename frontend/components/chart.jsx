@@ -83,15 +83,15 @@ class Chart extends React.Component{
       <div id="chart-wrap">
         <ul id="chart-y-axis">
           <li>#1 &mdash;</li>
-          <li>#2 &mdash;</li>
-          <li>#3 &mdash;</li>
-          <li>#4 &mdash;</li>
-          <li>#5 &mdash;</li>
-          <li>#6 &mdash;</li>
-          <li>#7 &mdash;</li>
-          <li>#8 &mdash;</li>
-          <li>#9 &mdash;</li>
-          <li>#10 &mdash;</li>
+          <li>2 &mdash;</li>
+          <li>3 &mdash;</li>
+          <li>4 &mdash;</li>
+          <li>5 &mdash;</li>
+          <li>6 &mdash;</li>
+          <li>7 &mdash;</li>
+          <li>8 &mdash;</li>
+          <li>9 &mdash;</li>
+          <li>10 &mdash;</li>
         </ul>
         <svg width={700} height={579} style={{borderLeft: '1px solid white', borderBottom: '1px solid white', backgroundColor: 'black'}}>
           {sectionZero}
