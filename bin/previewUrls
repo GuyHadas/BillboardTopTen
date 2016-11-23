@@ -1,7 +1,7 @@
 require 'json'
 require 'http'
 
-oldTrackMeta = JSON.parse(File.read("public/track-meta.json"))
+oldTrackMeta = JSON.parse(File.read("old-track-meta-alternative-11-23-2016.json"))
 
 def get_itunes_track(query)
   res = HTTP.get("https://itunes.apple.com/search?term=#{query}&country=us&limit=1&media=music")
@@ -28,11 +28,11 @@ end
 
 trackMeta = {}
 
-charts = JSON.parse(File.read("billboard-data-11-20-2016.json"))
+charts = JSON.parse(File.read("public/alternative/11-23-2016/billboard-data-alternative-11-23-2016.json"))
 
 charts.each do |date, chart|
   p date
-  
+
   if oldTrackMeta[date]
     trackMeta[date] = oldTrackMeta[date]
   else
@@ -54,4 +54,4 @@ charts.each do |date, chart|
   end
 end
 
-File.write("./track-meta-11-20-2016.json", JSON.generate(trackMeta))
+File.write("./track-meta-alternative-11-23-2016.json", JSON.generate(trackMeta))
