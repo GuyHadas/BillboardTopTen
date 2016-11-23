@@ -80,19 +80,19 @@ class Chart extends React.Component{
     const sectionFour = this.getLinesForSection(4, this.props.fourWeeksBackChart, this.props.threeWeeksBackChart);
 
     return (
-      // <div id="chart">
-      //   <ul id="chart-y-axis">
-      //     <li>#1</li>
-      //     <li>#2</li>
-      //     <li>#3</li>
-      //     <li>#4</li>
-      //     <li>#5</li>
-      //     <li>#6</li>
-      //     <li>#7</li>
-      //     <li>#8</li>
-      //     <li>#9</li>
-      //     <li>#10</li>
-      //   </ul>
+      <div id="chart-wrap">
+        <ul id="chart-y-axis">
+          <li>#1 &mdash;</li>
+          <li>#2 &mdash;</li>
+          <li>#3 &mdash;</li>
+          <li>#4 &mdash;</li>
+          <li>#5 &mdash;</li>
+          <li>#6 &mdash;</li>
+          <li>#7 &mdash;</li>
+          <li>#8 &mdash;</li>
+          <li>#9 &mdash;</li>
+          <li>#10 &mdash;</li>
+        </ul>
         <svg width={700} height={579} style={{borderLeft: '1px solid white', borderBottom: '1px solid white', backgroundColor: 'black'}}>
           {sectionZero}
           {sectionOne}
@@ -100,7 +100,7 @@ class Chart extends React.Component{
           {sectionThree}
           {sectionFour}
         </svg>
-      // </div>
+      </div>
     );
   }
 }

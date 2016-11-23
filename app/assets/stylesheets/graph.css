@@ -124,18 +124,23 @@
   -webkit-animation-iteration-count: infinite;
   animation-iteration-count: infinite;
 }
-#chart {
+
+#chart-wrap {
   display: flex;
   flex-direction: row;
-  /*justify-content: flex-start;
-  align-items: flex-start;*/
+  border:none;
 }
+
 #chart-y-axis {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;;
   align-items: flex-end;
   height: 529px;
-  margin-top: 45px;
+  margin-top: 46.5px;
   list-style: none;
+}
+
+#chart-y-axis li {
+  margin-bottom: 36px;
 }
