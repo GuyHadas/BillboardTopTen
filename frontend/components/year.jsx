@@ -14,8 +14,10 @@ class Year extends React.Component{
   }
 
   render() {
+    let hvrPulse = this.props.isCurrentYear ? 'hvr-pulse' : '';
+
     return (
-        <div className="decadeYear" onClick={this.playFromYear}>
+        <div className={`${hvrPulse} decadeYear`} onClick={this.playFromYear}>
           {this.props.year}
         </div>
     );

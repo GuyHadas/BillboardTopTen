@@ -375,7 +375,7 @@ class Home extends React.Component {
           </div>
           {this.songComponentTwo(trackURLSoundComponentTwo)}
         </div>;
-      datePickerComponent = <DatePicker charts={this.state.charts} setChartDate={this.setChartDate.bind(this)}/>;
+      datePickerComponent = <DatePicker charts={this.state.charts} setChartDate={this.setChartDate.bind(this)} currentDate={this.state.currentDate}/>;
       chartComponent = <Chart
         chart={this.state.charts[this.state.currentDate]}
         nextChart={this.state.charts[this.state.nextChartDate]}

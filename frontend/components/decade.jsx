@@ -98,7 +98,8 @@ class Decade extends React.Component{
       headerColor = 'mediumaquamarine';
 
       yearComponents = _.map(this.state.years, year => {
-        return <Year key={year} year={year} yearDates={this.getDatesForYear(year)} showMonths={this.showMonths} setChartDate={this.props.setChartDate}/>;
+        let isCurrentYear = this.props.currentDate.slice(0, 4) === year.toString().slice(0, 4);
+        return <Year isCurrentYear={isCurrentYear} key={year} year={year} yearDates={this.getDatesForYear(year)} showMonths={this.showMonths} setChartDate={this.props.setChartDate}/>;
       });
     }
 
@@ -106,7 +107,12 @@ class Decade extends React.Component{
       headerColor = 'mediumaquamarine';
 
       monthComponents = _.map(this.state.months, month => {
-        return <Month key={month} month={month} dates={this.props.dates} year={this.state.year} setChartDate={this.props.setChartDate}/>;
+        let isCurrentMonth;
+
+        if (this.state.year.toString() === this.props.currentDate.slice(0, 4) && month === moment(this.props.currentDate).format('MMMM')) {
+          isCurrentMonth = true;
+        }
+        return <Month key={month} month={month} dates={this.props.dates} year={this.state.year} setChartDate={this.props.setChartDate} isCurrentMonth={isCurrentMonth}/>;
       });
     }
 

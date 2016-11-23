@@ -31,14 +31,15 @@
 }
 
 #titleArtist {
-  color: mediumaquamarine;
+  color: #FF6961;
+  font-weight: bold;
   /*margin-right: auto;*/
   margin-right: 7px;
   /*margin-left: 50px;*/
 }
 
 #titleDate {
-  color: #FF6961;
+  /*color: #FF6961;*/
   margin-left: 7px;
   /*margin-right: 50px;*/
 }
@@ -122,4 +123,19 @@
   animation-timing-function: linear;
   -webkit-animation-iteration-count: infinite;
   animation-iteration-count: infinite;
+}
+#chart {
+  display: flex;
+  flex-direction: row;
+  /*justify-content: flex-start;
+  align-items: flex-start;*/
+}
+#chart-y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 529px;
+  margin-top: 45px;
+  list-style: none;
 }

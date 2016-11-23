@@ -41,7 +41,7 @@ class DatePicker extends React.Component{
 
   render() {
     let decadeComponents = _.map(_.keys(this.state.decades).sort(), decade => {
-      return <Decade key={decade} decade={decade} years={this.state.decades[decade]} dates={_.keys(this.props.charts)} setChartDate={this.props.setChartDate}/>;
+      return <Decade currentDate={this.props.currentDate} key={decade} decade={decade} years={this.state.decades[decade]} dates={_.keys(this.props.charts)} setChartDate={this.props.setChartDate}/>;
     });
 
     return (
