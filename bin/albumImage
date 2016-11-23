@@ -3,31 +3,31 @@ require 'http'
 
 $defaultImageUrl = "http://24.media.tumblr.com/tumblr_m3j315A5l31r6luwpo1_500.png"
 
-old_track_images = JSON.parse(File.read("public/original/track-images.json"))
+old_track_images = JSON.parse(File.read("public/11-20-2016/track-images-11-20-2016.json"))
 
 $not_found = []
 
-def get_last_fm(query)
-  track = JSON.parse(HTTP.get("http://ws.audioscrobbler.com/2.0/?method=track.search&track=#{query}&api_key=b25b959554ed76058ac220b7b2e0a026&format=json&callback="))
-  if track['results']['trackmatches']['track'].empty?
-    $not_found << query
-    p 'Track not found in Last FM'
-    return $defaultImageUrl
-  end
-
-  return track['results']['trackmatches']['track'][0]['image'][-1]["#text"]
-end
-
-def get_itunes_track(song)
+def get_last_fm(song)
   title = song['title'].gsub(/[^0-9a-zA-Z ]/, "").split(' ').join('+')
   artist = song['artist'].gsub(/[^0-9a-zA-Z ]/, "").split(' ').join('+')
 
   query = [title, artist].join("+")
 
+  track = JSON.parse(HTTP.get("http://ws.audioscrobbler.com/2.0/?method=track.search&track=#{query}&api_key=b25b959554ed76058ac220b7b2e0a026&format=json&callback="))
+  if track['results']['trackmatches']['track'].empty?
+    $not_found << query
+    p 'Track not found in Last FM'
+    return get_itunes_track(query)
+  end
+
+  return track['results']['trackmatches']['track'][0]['image'][-1]["#text"]
+end
+
+def get_itunes_track(query)
   track = JSON.parse(HTTP.get("https://itunes.apple.com/search?term=#{query}&country=us&limit=1&media=music"))
   if track['resultCount'] == 0
     p 'Track not found in Itunes'
-    return get_last_fm(query)
+    return $defaultImageUrl
   end
   return track['results'][0]['artworkUrl100']
 end
@@ -37,7 +37,7 @@ def get_spotify_track(song, spotify_id)
   if !track['album'] || !track['album']['images'] || track['album']['images'].empty?
     p song["title"]
     p 'Track not found in spotify'
-    return get_itunes_track(song)
+    return get_last_fm(song)
   end
   image = track['album']['images'][1] || track['album']['images'][0]
   return image['url']
@@ -45,7 +45,7 @@ end
 
 track_images = {}
 
-charts = JSON.parse(File.read("public/11-20-2016/billboard-data-11-20-2016.json"))
+charts = JSON.parse(File.read("public/alternative/11-23-2016/billboard-data-alternative-11-23-2016.json"))
 charts.each do |date, chart|
   p date
   chart.each do |song|
@@ -63,4 +63,4 @@ end
 
 p $not_found
 p ["length", $not_found.length]
-File.write("public/11-20-2016/track-images-11-20-2016.json", JSON.generate(track_images))
+File.write("public/alternative/11-23-2016/track-images-alternative-11-23-2016.json", JSON.generate(track_images))

@@ -54,16 +54,16 @@ class Home extends React.Component {
   componentDidMount() {
     let charts, albumImages;
 
-    $.get('11-20-2016/billboard-data-11-20-2016-synced.json')
+    $.get('charts/hot100/charts.json')
     .then(_charts => {
       charts = _charts;
 
-      return $.get('11-20-2016/track-images-11-20-2016.json');
+      return $.get('charts/hot100/images.json');
     })
     .then(_albumImages => {
       albumImages = _albumImages;
 
-      return $.get('11-20-2016/track-meta-11-20-2016.json');
+      return $.get('charts/hot100/previewUrls.json');
     })
     .then(trackMetaData => {
       this.setState({
