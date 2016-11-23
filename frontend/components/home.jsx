@@ -354,6 +354,8 @@ class Home extends React.Component {
       titleBoxComponent = <Title
         date={this.formatDate(this.state.currentDate)}
         artist={this.state.charts[this.state.currentDate][0].artist}
+        toggleSound={this.toggleSound}
+        isSoundOn={this.state.isSoundOn}
         />;
 
       graphComponent = <Graph
@@ -369,10 +371,6 @@ class Home extends React.Component {
       audioComponent =
         <div>
           {this.songComponentOne(trackURLSoundComponentOne)}
-          <div onClick={this.toggleSound}
-               className='toggle-sound'>
-               {this.state.isSoundOn ? 'Mute' : 'Play'}
-          </div>
           {this.songComponentTwo(trackURLSoundComponentTwo)}
         </div>;
       datePickerComponent = <DatePicker charts={this.state.charts} setChartDate={this.setChartDate.bind(this)} currentDate={this.state.currentDate}/>;
@@ -395,7 +393,6 @@ class Home extends React.Component {
         </section>
         <div id='stagingArea'/>
         {audioComponent}
-        <span onClick={this.stopInterval}>STOP</span>
       </div>
     );
   }

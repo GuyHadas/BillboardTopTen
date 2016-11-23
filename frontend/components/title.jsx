@@ -12,15 +12,23 @@ class Title extends React.Component{
   }
 
   render() {
+    let sound = this.props.isSoundOn ? <i className="fa fa-volume-up" ariaHidden="true"/> : <i className="fa fa-volume-off" ariaHidden="true"/>;
+
     return (
       <div id='titleBox'>
         <div id="navLogo">
           <img id="billboard-logo" src="billboard-logo.png" width='100'/>
           <span id="genre-title">Hot 100</span>
         </div>
-        <span id='titleArtist'>{this.trimArtist(this.props.artist)}</span>
-        <span>was #1 on</span>
-        <span id='titleDate'>{this.props.date}</span>
+        <div id='navHeader'>
+          <span id='titleArtist'>{this.trimArtist(this.props.artist)}</span>
+          <span>was #1 on</span>
+          <span id='titleDate'>{this.props.date}</span>
+        </div>
+        <div onClick={this.props.toggleSound}
+             className='toggle-sound'>
+             {sound}
+        </div>
       </div>
     );
   }
