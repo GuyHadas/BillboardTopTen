@@ -46,6 +46,11 @@ class DatePicker extends React.Component{
 
     return (
       <div id='datePicker'>
+          <div id='datePickerHeader'>
+            <hr/>
+            <span>Choose a date</span>
+            <hr/>
+          </div>
           {decadeComponents}
       </div>
     );

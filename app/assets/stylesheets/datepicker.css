@@ -8,6 +8,26 @@
   margin-left: 25px;
 }
 
+#datePickerHeader {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+}
+
+#datePickerHeader span {
+  margin-left: 8px;
+  margin-right: 8px;
+  font-weight: 300;
+}
+
+hr {
+  border: none;
+  background-color: white;
+  height: 1px;
+  border-color: white;
+  width: 90px;
+}
+
 .decade {
   cursor: default;
   display: flex;
