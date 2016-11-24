@@ -6,9 +6,9 @@ import StringHash from 'string-hash';
 
 import Graph from './graph.jsx';
 import Title from './title.jsx';
-import DatePicker from './datePicker.jsx';
 import Sound from 'react-sound';
 import Chart from './chart.jsx';
+import Tabs from './tabs.jsx';
 
 class Home extends React.Component {
   constructor(props) {
@@ -347,6 +347,7 @@ class Home extends React.Component {
     let datePickerComponent;
     let titleBoxComponent;
     let chartComponent;
+    let tabsComponent;
 
     if (!this.state.charts || !this.state.currentTrackURL) {
       graphComponent = <div>Loading...</div>;
@@ -373,7 +374,9 @@ class Home extends React.Component {
           {this.songComponentOne(trackURLSoundComponentOne)}
           {this.songComponentTwo(trackURLSoundComponentTwo)}
         </div>;
-      datePickerComponent = <DatePicker charts={this.state.charts} setChartDate={this.setChartDate.bind(this)} currentDate={this.state.currentDate}/>;
+
+      tabsComponent = <Tabs charts={this.state.charts} setChartDate={this.setChartDate.bind(this)} currentDate={this.state.currentDate}/>;
+
       chartComponent = <Chart
         chart={this.state.charts[this.state.currentDate]}
         nextChart={this.state.charts[this.state.nextChartDate]}
@@ -387,7 +390,7 @@ class Home extends React.Component {
       <div>
         {titleBoxComponent}
         <section id='mainContainer'>
-          {datePickerComponent}
+          {tabsComponent}
           {chartComponent}
           {graphComponent}
         </section>

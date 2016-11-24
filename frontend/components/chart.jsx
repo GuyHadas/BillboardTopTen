@@ -82,7 +82,7 @@ class Chart extends React.Component{
     return (
       <div id="chart-wrap">
         <ul id="chart-y-axis">
-          <li>#1 &mdash;</li>
+          <li>1 &mdash;</li>
           <li>2 &mdash;</li>
           <li>3 &mdash;</li>
           <li>4 &mdash;</li>

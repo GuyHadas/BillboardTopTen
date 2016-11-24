@@ -12,7 +12,7 @@ class Title extends React.Component{
   }
 
   render() {
-    let sound = this.props.isSoundOn ? <i className="fa fa-volume-up" ariaHidden="true"/> : <i className="fa fa-volume-off" ariaHidden="true"/>;
+    let sound = this.props.isSoundOn ? <i className="fa fa-volume-up"/> : <i className="fa fa-volume-off"/>;
 
     return (
       <div id='titleBox'>

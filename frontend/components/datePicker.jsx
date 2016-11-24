@@ -10,9 +10,11 @@ class DatePicker extends React.Component{
     super(props);
     this.getDecades = this.getDecades.bind(this);
     this.showYears = this.showYears.bind(this);
+
     this.state = {
       decades: this.getDecades(),
-      decade: null
+      decade: null,
+      tab: null
     };
   }
 
@@ -46,11 +48,6 @@ class DatePicker extends React.Component{
 
     return (
       <div id='datePicker'>
-          <div id='datePickerHeader'>
-            <hr/>
-            <span>Choose a date</span>
-            <hr/>
-          </div>
           {decadeComponents}
       </div>
     );

@@ -9,26 +9,33 @@
   margin-right: 10px;
 }
 
-#datePickerHeader {
+#tabs {
+  height: 579px;
+}
+
+#tabHeaders {
   display: flex;
   flex-direction: row;
-  padding-bottom: 25px;
-  margin-top: 46px;
+  justify-content: space-around;
 }
 
-#datePickerHeader span {
-  margin-left: 8px;
-  margin-right: 8px;
-  font-weight: bold;
+.tab {
+  border-bottom: 1px solid white;
+  width: 130px;
+  padding-bottom: 5px;
+  cursor: pointer;
+  text-align: center;
+  margin-top: 30px;
+}
+
+#genreTab:hover {
+  border-color: #FF6961;
+  color: #FF6961;
+}
+
+#datePickerTab:hover {
+  border-color: mediumaquamarine;
   color: mediumaquamarine;
-}
-
-hr {
-  border: none;
-  background-color: white;
-  height: 1px;
-  border-color: white;
-  width: 90px;
 }
 
 .decade {
@@ -87,4 +94,10 @@ hr {
 .month {
   margin: 0px 6px;
   margin-bottom: 6px;
+}
+
+#genres {
+  width: 300px;
+  margin-left: 25px;
+  margin-right: 10px;
 }
