@@ -9,8 +9,8 @@ class Genres extends React.Component{
   render() {
     return (
       <div id='genres'>
-        <div onClick={() => this.props.playGenre('hot100')}>Hot 100</div>
-        <div onClick={() => this.props.playGenre('alternative')}>Alternative</div>
+        <div className='genre' id='hot100Genre' onClick={() => this.props.playGenre('hot100')}></div>
+        <div className='genre' id='alternativeGenre' onClick={() => this.props.playGenre('alternative')}></div>
       </div>
     );
   }
