@@ -384,6 +384,7 @@ class Home extends React.Component {
         artist={this.state.charts[this.state.currentDate][0].artist}
         toggleSound={this.toggleSound}
         isSoundOn={this.state.isSoundOn}
+        genre={this.state.genre}
         />;
 
       graphComponent = <Graph

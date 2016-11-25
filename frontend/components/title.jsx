@@ -5,10 +5,21 @@ import ReactDOM from 'react-dom';
 class Title extends React.Component{
   constructor(props){
     super(props);
+    this.state = {
+      genres: {
+        hot100: 'Hot 100',
+        alternative: 'Alternative'
+      }
+    };
+    this.formatGenre = this.formatGenre.bind(this);
   }
 
   trimArtist(artist) {
     return artist.indexOf('Featuring') === -1 ? artist : artist.substring(0, artist.indexOf(' Featuring'));
+  }
+
+  formatGenre(genre) {
+    return this.state.genres[genre];
   }
 
   render() {
@@ -18,7 +29,7 @@ class Title extends React.Component{
       <div id='titleBox'>
         <div id="navLogo">
           <img id="billboard-logo" src="billboard-logo.png" width='100'/>
-          <span id="genre-title">Hot 100</span>
+          <span id="genre-title">{this.formatGenre(this.props.genre)}</span>
         </div>
         <div id='navHeader'>
           <span id='titleArtist'>{this.trimArtist(this.props.artist)}</span>
