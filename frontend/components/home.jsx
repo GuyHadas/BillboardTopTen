@@ -32,7 +32,8 @@ class Home extends React.Component {
       soundComponentTwoStatus: Sound.status.STOPPED,
       volOne: 100,
       volTwo: 0,
-      isSoundOn: true
+      isSoundOn: true,
+      genre: 'hot100'
     };
 
     this.incrementCharts = this.incrementCharts.bind(this);
@@ -49,30 +50,45 @@ class Home extends React.Component {
     this.incrementDifferentTrack = this.incrementDifferentTrack.bind(this);
     this.fadeInFadeOut = this.fadeInFadeOut.bind(this);
     this.stopInterval = this.stopInterval.bind(this);
+    this.startCharts = this.startCharts.bind(this);
+    this.playGenre = this.playGenre.bind(this);
   }
 
   componentDidMount() {
+    this.startCharts(this.state.genre);
+  }
+
+  startCharts(genre) {
     let charts, albumImages;
 
-    $.get('charts/hot100/charts.json')
+    $.get(`charts/${genre}/charts.json`)
     .then(_charts => {
       charts = _charts;
 
-      return $.get('charts/hot100/images.json');
+      return $.get(`charts/${genre}/images.json`);
     })
     .then(_albumImages => {
       albumImages = _albumImages;
 
-      return $.get('charts/hot100/previewUrls.json');
+      return $.get(`charts/${genre}/previewUrls.json`);
     })
     .then(trackMetaData => {
+      this.i = 0;
+      this.activeSoundComponent = 'one';
+
       this.setState({
         trackMetaData: trackMetaData,
         albumImages: albumImages,
-        charts: charts
+        charts: charts,
+        fourWeeksBackChartDate: this.getDate(charts, this.i - 4),
+        threeWeeksBackChartDate: this.getDate(charts, this.i - 3),
+        twoWeeksBackChartDate: this.getDate(charts, this.i - 2),
+        lastChartDate: this.getDate(charts, this.i - 1),
+        currentDate: this.getDate(charts, this.i),
+        nextChartDate: this.getDate(charts, this.i + 1),
+        currentTrackURL: trackMetaData[this.getDate(charts, this.i)]['previewUrl'],
+        nextTrackURL: trackMetaData[this.getDate(charts, this.i + 1)]['previewUrl']
       });
-      this.i = 0;
-      this.activeSoundComponent = 'one';
 
       if (trackMetaData[this.getDate(charts, 0)]['previewUrl'] !== trackMetaData[this.getDate(charts, 1)]['previewUrl']) {
         this.incrementDifferentTrack();
@@ -150,6 +166,9 @@ class Home extends React.Component {
   }
 
   createInterval() {
+    if (this.nextDateInterval) {
+      clearInterval(this.nextDateInterval);
+    }
     this.nextDateInterval = setInterval(() => {
       clearInterval(this.fadeOutOneFadeInTwoInterval);
       clearInterval(this.fadeOutTwoFadeInOneInterval);
@@ -341,6 +360,14 @@ class Home extends React.Component {
     clearInterval(this.nextDateInterval);
   }
 
+  playGenre(genre) {
+    if (genre !== this.state.genre) {
+      console.log('newgenre', genre);
+      this.setState({ genre: genre });
+      this.startCharts(genre);
+    }
+  }
+
   render() {
     let graphComponent;
     let audioComponent;
@@ -375,7 +402,11 @@ class Home extends React.Component {
           {this.songComponentTwo(trackURLSoundComponentTwo)}
         </div>;
 
-      tabsComponent = <Tabs charts={this.state.charts} setChartDate={this.setChartDate.bind(this)} currentDate={this.state.currentDate}/>;
+      tabsComponent = <Tabs
+        charts={this.state.charts}
+        setChartDate={this.setChartDate.bind(this)}
+        currentDate={this.state.currentDate}
+        playGenre={this.playGenre}/>;
 
       chartComponent = <Chart
         chart={this.state.charts[this.state.currentDate]}

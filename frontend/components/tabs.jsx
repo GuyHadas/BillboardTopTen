@@ -21,7 +21,7 @@ class Tabs extends React.Component{
   render() {
     let renderedTab = [
       <DatePicker charts={this.props.charts} setChartDate={this.props.setChartDate} currentDate={this.props.currentDate}/>,
-      <Genres/>
+      <Genres playGenre={this.props.playGenre}/>
     ][this.state.tabIndex];
 
     return (
