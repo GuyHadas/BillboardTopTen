@@ -10,32 +10,43 @@
 }
 
 #tabs {
-  height: 579px;
+  height: 600px;
+  margin-top: 30px;
 }
 
 #tabHeaders {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  border: 1px solid white;
+  border-radius: 10px;
 }
 
 .tab {
-  border-bottom: 1px solid white;
-  width: 130px;
-  padding-bottom: 5px;
+  width: 50%;
+  padding-top: 10px;
+  padding-bottom: 10px;
   cursor: pointer;
   text-align: center;
-  margin-top: 30px;
+}
+
+#genreTab {
+  border-left: 1px solid white;
+  border-radius: 0px 10px 10px 0px;
+}
+
+#datePickerTab {
+  border-radius: 10px 0px 0px 10px;
 }
 
 #genreTab:hover {
-  border-color: #FF6961;
-  color: #FF6961;
+  background-color: #FF6961;
+  color: black;
 }
 
 #datePickerTab:hover {
-  border-color: mediumaquamarine;
-  color: mediumaquamarine;
+  background-color: #FF6961;
+  color: black;
 }
 
 .decade {
