@@ -55,6 +55,7 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
+    this.activeSoundComponent = 'one';
     this.startCharts(this.state.genre);
   }
 
@@ -74,7 +75,6 @@ class Home extends React.Component {
     })
     .then(trackMetaData => {
       this.i = 0;
-      this.activeSoundComponent = 'one';
 
       this.setState({
         trackMetaData: trackMetaData,
@@ -271,18 +271,16 @@ class Home extends React.Component {
 
   componentDidUpdate() {
     if ((this.isNextSongDifferent() && !this.areBothPlaying()) && this.state.isSoundOn) {
-      this.fadeInFadeOut();
 
+      this.fadeInFadeOut();
       let trackURLSoundComponentOne = this.activeSoundComponent === 'one' ? this.state.currentTrackURL : this.state.nextTrackURL;
       let trackURLSoundComponentTwo = this.activeSoundComponent === 'one' ? this.state.nextTrackURL : this.state.currentTrackURL;
-      let soundComponentOneStatus = this.activeSoundComponent === 'one' ? this.state.soundComponentOneStatus : Sound.status.PLAYING;
-      let soundComponentTwoStatus = this.activeSoundComponent === 'one' ? Sound.status.PLAYING : this.state.soundComponentTwoStatus;
 
       this.setState({
         trackURLSoundComponentOne: trackURLSoundComponentOne,
         trackURLSoundComponentTwo: trackURLSoundComponentTwo,
-        soundComponentOneStatus: soundComponentOneStatus,
-        soundComponentTwoStatus: soundComponentTwoStatus
+        soundComponentOneStatus: Sound.status.PLAYING,
+        soundComponentTwoStatus: Sound.status.PLAYING
       });
     }
   }
@@ -362,7 +360,6 @@ class Home extends React.Component {
 
   playGenre(genre) {
     if (genre !== this.state.genre) {
-      console.log('newgenre', genre);
       this.setState({ genre: genre });
       this.startCharts(genre);
     }
