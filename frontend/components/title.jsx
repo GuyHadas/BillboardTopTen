@@ -8,7 +8,8 @@ class Title extends React.Component{
     this.state = {
       genres: {
         hot100: 'Hot 100',
-        alternative: 'Alternative'
+        alternative: 'Alternative',
+        hiphop: 'Hip Hop'
       }
     };
     this.formatGenre = this.formatGenre.bind(this);
