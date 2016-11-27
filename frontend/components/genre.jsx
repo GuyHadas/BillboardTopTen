@@ -12,6 +12,7 @@ class Genres extends React.Component{
         <div className='genre' id='hot100Genre' onClick={() => this.props.playGenre('hot100')}></div>
         <div className='genre' id='alternativeGenre' onClick={() => this.props.playGenre('alternative')}></div>
         <div className='genre' id='hiphopGenre' onClick={() => this.props.playGenre('hiphop')}></div>
+        <div className='genre' id='countryGenre' onClick={() => this.props.playGenre('country')}></div>
       </div>
     );
   }

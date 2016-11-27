@@ -116,7 +116,7 @@
   height: 140px;
   cursor: pointer;
   background-size: cover;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 #hot100Genre {
@@ -129,4 +129,8 @@
 
 #hiphopGenre {
   background-image: url('HipHop.png');
+}
+
+#countryGenre {
+  background-image: url('Country.png');
 }

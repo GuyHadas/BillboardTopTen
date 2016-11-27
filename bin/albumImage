@@ -45,7 +45,7 @@ end
 
 track_images = {}
 
-charts = JSON.parse(File.read("public/charts/hiphop/billboard-data.json"))
+charts = JSON.parse(File.read("public/charts/country/billboard-data.json"))
 charts.each do |date, chart|
   p date
   chart.each do |song|
@@ -63,4 +63,4 @@ end
 
 p $not_found
 p ["length", $not_found.length]
-File.write("public/charts/hiphop/images.json", JSON.generate(track_images))
+File.write("public/charts/country/images.json", JSON.generate(track_images))

@@ -9,7 +9,8 @@ class Title extends React.Component{
       genres: {
         hot100: 'Hot 100',
         alternative: 'Alternative',
-        hiphop: 'Hip Hop'
+        hiphop: 'Hip Hop',
+        country: 'Country'
       }
     };
     this.formatGenre = this.formatGenre.bind(this);
