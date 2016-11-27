@@ -48,6 +48,7 @@ class Graph extends React.Component{
           {trackComponents}
           {trackOnDeckComponents}
         </ul>
+        <div id='stagingArea'/>
       </div>
     );
   }

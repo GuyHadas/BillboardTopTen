@@ -423,7 +423,6 @@ class Home extends React.Component {
           {chartComponent}
           {graphComponent}
         </section>
-        <div id='stagingArea'/>
         {audioComponent}
       </div>
     );

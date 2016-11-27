@@ -28,10 +28,10 @@ end
 
 trackMeta = {}
 
-charts = JSON.parse(File.read("public/charts/hiphop/billboard-data.json"))
+charts = JSON.parse(File.read("public/charts/country/billboard-data.json"))
 
 charts.each do |date, chart|
-  sleep 2
+  sleep 1
   p date
 
   # if oldTrackMeta[date]
@@ -55,4 +55,4 @@ charts.each do |date, chart|
   # end
 end
 
-File.write("public/charts/hiphop/previewUrls.json", JSON.generate(trackMeta))
+File.write("public/charts/country/previewUrls.json", JSON.generate(trackMeta))
