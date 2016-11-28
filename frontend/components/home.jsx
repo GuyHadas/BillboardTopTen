@@ -418,8 +418,8 @@ class Home extends React.Component {
         nextChartDate={this.state.nextChartDate}
         prevChartDate={this.state.lastChartDate}
         twoWeeksBackChartDate={this.state.twoWeeksBackChartDate}
-        threeWeeksBackChartDate={this.threeWeeksBackChartDate}
-        fourWeeksBackChartDate={this.fourWeeksBackChartDate}
+        threeWeeksBackChartDate={this.state.threeWeeksBackChartDate}
+        fourWeeksBackChartDate={this.state.fourWeeksBackChartDate}
         />;
     }
     return (

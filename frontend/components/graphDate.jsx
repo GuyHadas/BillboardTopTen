@@ -16,11 +16,14 @@ class GraphDate extends React.Component{
   }
 
   calculateStartingX(weekPosition) {
-    return 735 - (weekPosition * this.SECTION_LENGTH);
+    return 660 - (weekPosition * this.SECTION_LENGTH);
   }
 
   formatDate(date) {
-    return moment(date).format('MMM D YYYY');
+    if (!date) {
+      return;
+    }
+    return moment(date).format('MMM D, YYYY');
   }
 
   render() {

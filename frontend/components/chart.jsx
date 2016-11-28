@@ -103,7 +103,7 @@ class Chart extends React.Component{
             {sectionFour}
           </svg>
         </div>
-        <svg width={735} height={50} style={{ backgroundColor: 'rgb(0, 0, 0)', color: 'white' }}>
+        <svg width={700} height={50} style={{ backgroundColor: 'rgb(0, 0, 0)', color: 'white', marginLeft: 'auto' }}>
           <GraphDate offset={this.state.offset} weekPosition={0} date={this.props.currentDate}/>
           <GraphDate offset={this.state.offset} weekPosition={1} date={this.props.prevChartDate}/>
           <GraphDate offset={this.state.offset} weekPosition={2} date={this.props.twoWeeksBackChartDate}/>
