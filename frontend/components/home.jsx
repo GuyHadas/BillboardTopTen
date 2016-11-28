@@ -413,7 +413,14 @@ class Home extends React.Component {
         twoWeeksBackChart={this.state.charts[this.state.twoWeeksBackChartDate]}
         threeWeeksBackChart={this.state.charts[this.state.threeWeeksBackChartDate]}
         fourWeeksBackChart={this.state.charts[this.state.fourWeeksBackChartDate]}
-        getColorForTitle={this.getColorForTitle}/>;
+        getColorForTitle={this.getColorForTitle}
+        currentDate={this.state.currentDate}
+        nextChartDate={this.state.nextChartDate}
+        prevChartDate={this.state.lastChartDate}
+        twoWeeksBackChartDate={this.state.twoWeeksBackChartDate}
+        threeWeeksBackChartDate={this.threeWeeksBackChartDate}
+        fourWeeksBackChartDate={this.fourWeeksBackChartDate}
+        />;
     }
     return (
       <div>

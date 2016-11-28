@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import _ from 'lodash';
 
 import Line from './line.jsx';
+import GraphDate from './graphDate.jsx';
 
 class Chart extends React.Component{
   constructor(props){
@@ -102,7 +103,13 @@ class Chart extends React.Component{
             {sectionFour}
           </svg>
         </div>
-        <div id="stagingArea" />
+        <svg width={735} height={50} style={{ backgroundColor: 'rgb(0, 0, 0)', color: 'white' }}>
+          <GraphDate offset={this.state.offset} weekPosition={0} date={this.props.currentDate}/>
+          <GraphDate offset={this.state.offset} weekPosition={1} date={this.props.prevChartDate}/>
+          <GraphDate offset={this.state.offset} weekPosition={2} date={this.props.twoWeeksBackChartDate}/>
+          <GraphDate offset={this.state.offset} weekPosition={3} date={this.props.threeWeeksBackChartDate}/>
+          <GraphDate offset={this.state.offset} weekPosition={4} date={this.props.fourWeeksBackChartDate}/>
+        </svg>
       </div>
     );
   }
