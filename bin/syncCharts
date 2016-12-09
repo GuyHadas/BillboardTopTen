@@ -1,10 +1,10 @@
 require 'json'
 
-charts = JSON.parse(File.read("public/charts/country/billboard-data.json"))
-track_meta = JSON.parse(File.read("public/charts/country/previewUrls.json"))
+charts = JSON.parse(File.read("public/charts/rap/billboard-data.json"))
+track_meta = JSON.parse(File.read("public/charts/rap/previewUrls.json"))
 
 charts.each do |k, v|
   charts.delete(k) unless track_meta[k]
 end
 
-File.write("public/charts/country/charts.json", JSON.generate(charts))
+File.write("public/charts/rap/charts.json", JSON.generate(charts))

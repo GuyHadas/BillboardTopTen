@@ -16,10 +16,10 @@ class Chart extends React.Component{
   componentDidMount() {
     // This is called 150 times throughout a chart interval
     // Line must move 175 pixels every chart interval
-    const VELOCITY = (175 / 150);
+    const VELOCITY = (175 / 75);
     this.offsetInterval = setInterval(() => {
       this.setState({ offset: this.state.offset + VELOCITY });
-    }, 20);
+    }, 40);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -95,7 +95,7 @@ class Chart extends React.Component{
             <li>9 &mdash;</li>
             <li>10 &mdash;</li>
           </ul>
-          <svg width={700} height={579} style={{ borderBottom: '1px solid white', backgroundColor: 'black' }}>
+          <svg width={700} height={579} style={{ borderBottom: '1px solid white', backgroundColor: 'transparent' }}>
             {sectionZero}
             {sectionOne}
             {sectionTwo}

@@ -3,7 +3,7 @@ require 'http'
 
 $defaultImageUrl = "http://24.media.tumblr.com/tumblr_m3j315A5l31r6luwpo1_500.png"
 
-old_track_images = JSON.parse(File.read("public/charts/hot100/images.json"))
+old_track_images = JSON.parse(File.read("public/charts/hiphop/images.json"))
 
 $not_found = []
 
@@ -45,8 +45,9 @@ end
 
 track_images = {}
 
-charts = JSON.parse(File.read("public/charts/country/billboard-data.json"))
+charts = JSON.parse(File.read("public/charts/rap/billboard-data.json"))
 charts.each do |date, chart|
+  sleep 2
   p date
   chart.each do |song|
     artist = song['artist']
@@ -63,4 +64,4 @@ end
 
 p $not_found
 p ["length", $not_found.length]
-File.write("public/charts/country/images.json", JSON.generate(track_images))
+File.write("public/charts/rap/images.json", JSON.generate(track_images))

@@ -3,7 +3,7 @@ require 'json'
 charts = {}
 
 
-lines = File.readlines("public/charts/country/billboard-data.txt")
+lines = File.readlines("public/charts/rap/billboard-data.txt")
 lines.each.with_index do |line, idx|
   next unless idx % 63 == 1
   date_key = lines[idx][0..-2]
@@ -25,4 +25,4 @@ lines.each.with_index do |line, idx|
 end
 
 # print JSON.generate(charts)
-File.write("public/charts/country/billboard-data.json", JSON.generate(charts))
+File.write("public/charts/rap/billboard-data.json", JSON.generate(charts))
