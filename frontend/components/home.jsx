@@ -9,6 +9,7 @@ import Title from './title.jsx';
 import Sound from 'react-sound';
 import Chart from './chart.jsx';
 import Tabs from './tabs.jsx';
+import IntroModal from './introModal.jsx';
 
 class Home extends React.Component {
   constructor(props) {
@@ -33,7 +34,8 @@ class Home extends React.Component {
       volOne: 100,
       volTwo: 0,
       isSoundOn: true,
-      genre: 'hot100'
+      genre: 'hot100',
+      isModalOpen: true
     };
 
     this.incrementCharts = this.incrementCharts.bind(this);
@@ -52,6 +54,7 @@ class Home extends React.Component {
     this.stopInterval = this.stopInterval.bind(this);
     this.startCharts = this.startCharts.bind(this);
     this.playGenre = this.playGenre.bind(this);
+    this.closeModal = this.closeModal.bind(this);
   }
 
   componentDidMount() {
@@ -365,6 +368,10 @@ class Home extends React.Component {
     }
   }
 
+  closeModal() {
+    this.setState({ isModalOpen: false });
+  }
+
   render() {
     let graphComponent;
     let audioComponent;
@@ -375,7 +382,7 @@ class Home extends React.Component {
 
     if (!this.state.charts || !this.state.currentTrackURL) {
       graphComponent = <div>Loading...</div>;
-    } else {
+    } else if (!this.state.isModalOpen) {
       titleBoxComponent = <Title
         date={this.formatDate(this.state.currentDate)}
         artist={this.state.charts[this.state.currentDate][0].artist}
@@ -425,6 +432,7 @@ class Home extends React.Component {
     return (
       <div>
         {titleBoxComponent}
+        <IntroModal isModalOpen={this.state.isModalOpen} onRequestClose={this.closeModal}/>
         <section id='mainContainer'>
           {tabsComponent}
           {chartComponent}

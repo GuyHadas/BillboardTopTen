@@ -25,6 +25,7 @@
     "moment": "^2.15.2",
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
+    "react-modal": "^1.6.2",
     "react-router": "^2.7.0",
     "react-sound": "^0.5.0",
     "string-hash": "^1.1.0",
