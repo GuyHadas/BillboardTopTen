@@ -25,8 +25,10 @@ class Month extends React.Component{
   }
 
   render() {
+    let hvrPulse = this.props.isCurrentMonth ? 'hvr-pulse' : '';
+
     return (
-        <div className="month" onClick={this.playFromMonth}>
+        <div className={`${hvrPulse} month`} onClick={this.playFromMonth}>
           {this.props.month}
         </div>
     );

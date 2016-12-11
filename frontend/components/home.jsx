@@ -5,10 +5,10 @@ import moment from 'moment';
 import StringHash from 'string-hash';
 
 import Graph from './graph.jsx';
-import { Title } from './title.jsx';
-import DatePicker from './datePicker.jsx';
+import Title from './title.jsx';
 import Sound from 'react-sound';
 import Chart from './chart.jsx';
+import Tabs from './tabs.jsx';
 
 class Home extends React.Component {
   constructor(props) {
@@ -32,7 +32,8 @@ class Home extends React.Component {
       soundComponentTwoStatus: Sound.status.STOPPED,
       volOne: 100,
       volTwo: 0,
-      isSoundOn: true
+      isSoundOn: true,
+      genre: 'hot100'
     };
 
     this.incrementCharts = this.incrementCharts.bind(this);
@@ -49,30 +50,45 @@ class Home extends React.Component {
     this.incrementDifferentTrack = this.incrementDifferentTrack.bind(this);
     this.fadeInFadeOut = this.fadeInFadeOut.bind(this);
     this.stopInterval = this.stopInterval.bind(this);
+    this.startCharts = this.startCharts.bind(this);
+    this.playGenre = this.playGenre.bind(this);
   }
 
   componentDidMount() {
+    this.activeSoundComponent = 'one';
+    this.startCharts(this.state.genre);
+  }
+
+  startCharts(genre) {
     let charts, albumImages;
 
-    $.get('charts/hot100/charts.json')
+    $.get(`charts/${genre}/charts.json`)
     .then(_charts => {
       charts = _charts;
 
-      return $.get('charts/hot100/images.json');
+      return $.get(`charts/${genre}/images.json`);
     })
     .then(_albumImages => {
       albumImages = _albumImages;
 
-      return $.get('charts/hot100/previewUrls.json');
+      return $.get(`charts/${genre}/previewUrls.json`);
     })
     .then(trackMetaData => {
+      this.i = 0;
+
       this.setState({
         trackMetaData: trackMetaData,
         albumImages: albumImages,
-        charts: charts
+        charts: charts,
+        fourWeeksBackChartDate: this.getDate(charts, this.i - 4),
+        threeWeeksBackChartDate: this.getDate(charts, this.i - 3),
+        twoWeeksBackChartDate: this.getDate(charts, this.i - 2),
+        lastChartDate: this.getDate(charts, this.i - 1),
+        currentDate: this.getDate(charts, this.i),
+        nextChartDate: this.getDate(charts, this.i + 1),
+        currentTrackURL: trackMetaData[this.getDate(charts, this.i)]['previewUrl'],
+        nextTrackURL: trackMetaData[this.getDate(charts, this.i + 1)]['previewUrl']
       });
-      this.i = 0;
-      this.activeSoundComponent = 'one';
 
       if (trackMetaData[this.getDate(charts, 0)]['previewUrl'] !== trackMetaData[this.getDate(charts, 1)]['previewUrl']) {
         this.incrementDifferentTrack();
@@ -150,6 +166,9 @@ class Home extends React.Component {
   }
 
   createInterval() {
+    if (this.nextDateInterval) {
+      clearInterval(this.nextDateInterval);
+    }
     this.nextDateInterval = setInterval(() => {
       clearInterval(this.fadeOutOneFadeInTwoInterval);
       clearInterval(this.fadeOutTwoFadeInOneInterval);
@@ -160,7 +179,7 @@ class Home extends React.Component {
       }
 
       this.i += 1;
-      if ( this.i === Object.keys(this.state.charts).length - 2) { // Stop incrementing on second to last date
+      if ( this.i >= Object.keys(this.state.charts).length - 2) { // Stop incrementing on second to last date
         this.i = 0;
       }
     }, 3000);
@@ -252,18 +271,16 @@ class Home extends React.Component {
 
   componentDidUpdate() {
     if ((this.isNextSongDifferent() && !this.areBothPlaying()) && this.state.isSoundOn) {
-      this.fadeInFadeOut();
 
+      this.fadeInFadeOut();
       let trackURLSoundComponentOne = this.activeSoundComponent === 'one' ? this.state.currentTrackURL : this.state.nextTrackURL;
       let trackURLSoundComponentTwo = this.activeSoundComponent === 'one' ? this.state.nextTrackURL : this.state.currentTrackURL;
-      let soundComponentOneStatus = this.activeSoundComponent === 'one' ? this.state.soundComponentOneStatus : Sound.status.PLAYING;
-      let soundComponentTwoStatus = this.activeSoundComponent === 'one' ? Sound.status.PLAYING : this.state.soundComponentTwoStatus;
 
       this.setState({
         trackURLSoundComponentOne: trackURLSoundComponentOne,
         trackURLSoundComponentTwo: trackURLSoundComponentTwo,
-        soundComponentOneStatus: soundComponentOneStatus,
-        soundComponentTwoStatus: soundComponentTwoStatus
+        soundComponentOneStatus: Sound.status.PLAYING,
+        soundComponentTwoStatus: Sound.status.PLAYING
       });
     }
   }
@@ -341,12 +358,20 @@ class Home extends React.Component {
     clearInterval(this.nextDateInterval);
   }
 
+  playGenre(genre) {
+    if (genre !== this.state.genre) {
+      this.setState({ genre: genre });
+      this.startCharts(genre);
+    }
+  }
+
   render() {
     let graphComponent;
     let audioComponent;
     let datePickerComponent;
     let titleBoxComponent;
     let chartComponent;
+    let tabsComponent;
 
     if (!this.state.charts || !this.state.currentTrackURL) {
       graphComponent = <div>Loading...</div>;
@@ -354,6 +379,9 @@ class Home extends React.Component {
       titleBoxComponent = <Title
         date={this.formatDate(this.state.currentDate)}
         artist={this.state.charts[this.state.currentDate][0].artist}
+        toggleSound={this.toggleSound}
+        isSoundOn={this.state.isSoundOn}
+        genre={this.state.genre}
         />;
 
       graphComponent = <Graph
@@ -369,13 +397,15 @@ class Home extends React.Component {
       audioComponent =
         <div>
           {this.songComponentOne(trackURLSoundComponentOne)}
-          <div onClick={this.toggleSound}
-               className='toggle-sound'>
-               {this.state.isSoundOn ? 'Mute' : 'Play'}
-          </div>
           {this.songComponentTwo(trackURLSoundComponentTwo)}
         </div>;
-      datePickerComponent = <DatePicker charts={this.state.charts} setChartDate={this.setChartDate.bind(this)}/>;
+
+      tabsComponent = <Tabs
+        charts={this.state.charts}
+        setChartDate={this.setChartDate.bind(this)}
+        currentDate={this.state.currentDate}
+        playGenre={this.playGenre}/>;
+
       chartComponent = <Chart
         chart={this.state.charts[this.state.currentDate]}
         nextChart={this.state.charts[this.state.nextChartDate]}
@@ -383,19 +413,24 @@ class Home extends React.Component {
         twoWeeksBackChart={this.state.charts[this.state.twoWeeksBackChartDate]}
         threeWeeksBackChart={this.state.charts[this.state.threeWeeksBackChartDate]}
         fourWeeksBackChart={this.state.charts[this.state.fourWeeksBackChartDate]}
-        getColorForTitle={this.getColorForTitle}/>;
+        getColorForTitle={this.getColorForTitle}
+        currentDate={this.state.currentDate}
+        nextChartDate={this.state.nextChartDate}
+        prevChartDate={this.state.lastChartDate}
+        twoWeeksBackChartDate={this.state.twoWeeksBackChartDate}
+        threeWeeksBackChartDate={this.state.threeWeeksBackChartDate}
+        fourWeeksBackChartDate={this.state.fourWeeksBackChartDate}
+        />;
     }
     return (
       <div>
         {titleBoxComponent}
         <section id='mainContainer'>
-          {datePickerComponent}
+          {tabsComponent}
           {chartComponent}
           {graphComponent}
         </section>
-        <div id='stagingArea'/>
         {audioComponent}
-        <span onClick={this.stopInterval}>STOP</span>
       </div>
     );
   }

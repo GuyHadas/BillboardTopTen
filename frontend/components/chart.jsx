@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import _ from 'lodash';
 
 import Line from './line.jsx';
+import GraphDate from './graphDate.jsx';
 
 class Chart extends React.Component{
   constructor(props){
@@ -15,10 +16,10 @@ class Chart extends React.Component{
   componentDidMount() {
     // This is called 150 times throughout a chart interval
     // Line must move 175 pixels every chart interval
-    const VELOCITY = (175 / 150);
+    const VELOCITY = (175 / 75);
     this.offsetInterval = setInterval(() => {
       this.setState({ offset: this.state.offset + VELOCITY });
-    }, 20);
+    }, 40);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -53,7 +54,7 @@ class Chart extends React.Component{
       return <Line
         offset={this.state.offset}
         color={this.props.getColorForTitle(track.title)}
-        key={`${track.title}sec${sectionNum}rank{track.rank}`}
+        key={`${track.title}sec${sectionNum}rank${track.rank}`}
         weekPosition={sectionNum}
         y1={this.getPositionForRank(track.rank)}
         y2={this.getPositionForRank(nextTrackRank)}/>;
@@ -63,7 +64,7 @@ class Chart extends React.Component{
       return <Line
         offset={this.state.offset}
         color={this.props.getColorForTitle(trackOnDeck.title)}
-        key={`${trackOnDeck.title}sec${sectionNum}rank{track.rank}`}
+        key={`${trackOnDeck.title}sec${sectionNum}rank${trackOnDeck.rank}`}
         weekPosition={sectionNum}
         y1={this.getPositionForRank(STAGING_AREA_RANK)}
         y2={this.getPositionForRank(trackOnDeck.rank)}/>;
@@ -80,13 +81,37 @@ class Chart extends React.Component{
     const sectionFour = this.getLinesForSection(4, this.props.fourWeeksBackChart, this.props.threeWeeksBackChart);
 
     return (
-      <svg width={700} height={579} style={{borderLeft: '1px solid white', borderBottom: '1px solid white', backgroundColor: 'black'}}>
-        {sectionZero}
-        {sectionOne}
-        {sectionTwo}
-        {sectionThree}
-        {sectionFour}
-      </svg>
+      <div id="chart-wrap-wrapper">
+        <div id="chart-wrap">
+          <ul id="chart-y-axis">
+            <li>1 &mdash;</li>
+            <li>2 &mdash;</li>
+            <li>3 &mdash;</li>
+            <li>4 &mdash;</li>
+            <li>5 &mdash;</li>
+            <li>6 &mdash;</li>
+            <li>7 &mdash;</li>
+            <li>8 &mdash;</li>
+            <li>9 &mdash;</li>
+            <li>10 &mdash;</li>
+          </ul>
+          <svg width={700} height={579} style={{ borderBottom: '1px solid white', backgroundColor: 'transparent' }}>
+            {sectionZero}
+            {sectionOne}
+            {sectionTwo}
+            {sectionThree}
+            {sectionFour}
+          </svg>
+        </div>
+        <svg width={700} height={50} style={{ backgroundColor: 'rgb(0, 0, 0)', color: 'white', marginLeft: 'auto' }}>
+          <GraphDate offset={this.state.offset} weekPosition={-1} date={this.props.nextChartDate}/>
+          <GraphDate offset={this.state.offset} weekPosition={0} date={this.props.currentDate}/>
+          <GraphDate offset={this.state.offset} weekPosition={1} date={this.props.prevChartDate}/>
+          <GraphDate offset={this.state.offset} weekPosition={2} date={this.props.twoWeeksBackChartDate}/>
+          <GraphDate offset={this.state.offset} weekPosition={3} date={this.props.threeWeeksBackChartDate}/>
+          <GraphDate offset={this.state.offset} weekPosition={4} date={this.props.fourWeeksBackChartDate}/>
+        </svg>
+      </div>
     );
   }
 }

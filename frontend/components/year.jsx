@@ -9,13 +9,18 @@ class Year extends React.Component{
   }
 
   playFromYear() {
+    if (!this.props.isCurrentYear) {
+      this.props.setChartDate(this.props.yearDates[this.props.yearDates.length - 1]); // play from last song in year
+    }
+
     this.props.showMonths(this.props.year);
-    this.props.setChartDate(this.props.yearDates[this.props.yearDates.length - 1]); // play from last song in year
   }
 
   render() {
+    let hvrPulse = this.props.isCurrentYear ? 'hvr-pulse' : '';
+
     return (
-        <div className="decadeYear" onClick={this.playFromYear}>
+        <div className={`${hvrPulse} decadeYear`} onClick={this.playFromYear}>
           {this.props.year}
         </div>
     );
