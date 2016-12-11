@@ -179,7 +179,7 @@ class Home extends React.Component {
       }
 
       this.i += 1;
-      if ( this.i === Object.keys(this.state.charts).length - 2) { // Stop incrementing on second to last date
+      if ( this.i >= Object.keys(this.state.charts).length - 2) { // Stop incrementing on second to last date
         this.i = 0;
       }
     }, 3000);
