@@ -53,3 +53,43 @@ body {
 	align-items: flex-start;
 	justify-content: flex-start;
 }
+
+#modalDescription {
+	font-family: 'Roboto', sans-serif;
+	font-size: 24px;
+	font-weight: 300;
+	text-align: center;
+	border-top: 1px solid white;
+	padding-top: 40px;
+	padding-bottom: 40px;
+	width: 79%;
+	border-bottom: 1px solid white;
+}
+
+#modalPlayButton {
+	border: 1px solid white;
+	border-radius: 5px;
+	padding: 20px;
+	width: 30px;
+	height: 30px;
+	margin-top: 40px;
+	cursor: pointer;
+}
+
+#modalPlayButton:hover {
+	background-color: rgba(255, 255, 255, 0.3);
+	color: black;
+}
+
+#modalHeadphonesImg {
+	width: 25px;
+	height: 25px;
+	margin-top: 40px;
+}
+
+#modalFooter {
+	font-family: 'Roboto';
+	font-weight: 300;
+	font-size: 12px;
+	margin-top: 5px;
+}
