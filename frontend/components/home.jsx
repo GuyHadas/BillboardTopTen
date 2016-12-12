@@ -58,8 +58,7 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    this.activeSoundComponent = 'one';
-    this.startCharts(this.state.genre);
+
   }
 
   startCharts(genre) {
@@ -370,6 +369,8 @@ class Home extends React.Component {
 
   closeModal() {
     this.setState({ isModalOpen: false });
+    this.activeSoundComponent = 'one';
+    this.startCharts(this.state.genre);
   }
 
   render() {
@@ -380,9 +381,7 @@ class Home extends React.Component {
     let chartComponent;
     let tabsComponent;
 
-    if (!this.state.charts || !this.state.currentTrackURL) {
-      graphComponent = <div>Loading...</div>;
-    } else if (!this.state.isModalOpen) {
+    if (this.state.charts && this.state.currentTrackURL) {
       titleBoxComponent = <Title
         date={this.formatDate(this.state.currentDate)}
         artist={this.state.charts[this.state.currentDate][0].artist}
