@@ -28,7 +28,7 @@ end
 
 trackMeta = {}
 
-charts = JSON.parse(File.read("public/charts/rap/billboard-data.json"))
+charts = JSON.parse(File.read("public/charts/electric/billboard-data.json"))
 
 charts.each do |date, chart|
   sleep 2
@@ -55,4 +55,4 @@ charts.each do |date, chart|
   # end
 end
 
-File.write("public/charts/rap/previewUrls.json", JSON.generate(trackMeta))
+File.write("public/charts/electric/previewUrls.json", JSON.generate(trackMeta))
