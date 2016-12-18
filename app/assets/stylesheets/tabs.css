@@ -120,25 +120,25 @@
 }
 
 #hot100Genre {
-  background-image: url('Hot100.png');
+  background-image: url('/Hot100.png');
 }
 
 #alternativeGenre {
-  background-image: url('Alternative.png');
+  background-image: url('/Alternative.png');
 }
 
 #hiphopGenre {
-  background-image: url('HipHop.png');
+  background-image: url('/HipHop.png');
 }
 
 #countryGenre {
-  background-image: url('Country.png');
+  background-image: url('/Country.png');
 }
 
 #rapGenre {
-  background-image: url('Rap.png');
+  background-image: url('/Rap.png');
 }
 
 #electricGenre {
-  background-image: url('EDM.png')
+  background-image: url('/EDM.png')
 }

@@ -18,7 +18,7 @@ class IntroModal extends React.Component{
         right: 0,
         bottom: 0,
         backgroundColor: 'rgba(0, 0, 0, 0.2)',
-        backgroundImage: 'url("assets/BackgroundModal.png")',
+        backgroundImage: 'url("BackgroundModal.png")',
         backgroundSize: 'cover'
       },
       content : {
@@ -34,7 +34,7 @@ class IntroModal extends React.Component{
         width: 600,
         height: 400,
         border: '1px solid white',
-        backgroundImage: 'url("assets/AlbumCovers.png")',
+        backgroundImage: 'url("AlbumCovers.png")',
         backgroundSize: 'cover',
         background: 'black',
         overflow: 'auto',
@@ -64,8 +64,8 @@ class IntroModal extends React.Component{
           &nbsp;
           top 10 music has changed over time
         </div>
-        <img id='modalPlayButton' src="assets/Triangle.png" onClick={this.props.onRequestClose}/>
-        <img id='modalHeadphonesImg' src="assets/Headphones.png"/>
+        <img id='modalPlayButton' src="Triangle.png" onClick={this.props.onRequestClose}/>
+        <img id='modalHeadphonesImg' src="Headphones.png"/>
         <span id='modalFooter'>Headphones Suggested</span>
       </Modal>
     );
