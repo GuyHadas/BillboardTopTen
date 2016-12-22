@@ -63,21 +63,28 @@ class Home extends React.Component {
 
   startCharts(genre) {
     let charts, albumImages;
+    let start = new Date().getTime();
+    console.log(start);
 
-    $.get(`charts/${genre}/charts.json`)
-    .then(_charts => {
+    $.getJSON(`https://content.dropboxapi.com/s/r0i41udc535svo2/charts.json?dl=0`)
+    .then(_charts =>  {
       charts = _charts;
+      let end1 = new Date().getTime();
+      console.log(end1 - start);
 
-      return $.get(`charts/${genre}/images.json`);
+      return $.getJSON(`https://content.dropboxapi.com/s/xzoxxfohq8yiw2b/images.json?dl=0`);
     })
     .then(_albumImages => {
       albumImages = _albumImages;
+      let end2 = new Date().getTime();
+      console.log(end2 - start);
 
-      return $.get(`charts/${genre}/previewUrls.json`);
+      return $.getJSON(`https://content.dropboxapi.com/s/sse08doc8njgbqj/previewUrls.json?dl=0`);
     })
     .then(trackMetaData => {
       this.i = 0;
-
+      let end3 = new Date().getTime();
+      console.log(end3 - start);
       this.setState({
         trackMetaData: trackMetaData,
         albumImages: albumImages,
@@ -91,7 +98,9 @@ class Home extends React.Component {
         currentTrackURL: trackMetaData[this.getDate(charts, this.i)]['previewUrl'],
         nextTrackURL: trackMetaData[this.getDate(charts, this.i + 1)]['previewUrl']
       });
-
+      console.log(charts);
+      console.log(trackMetaData);
+      console.log(albumImages);
       if (trackMetaData[this.getDate(charts, 0)]['previewUrl'] !== trackMetaData[this.getDate(charts, 1)]['previewUrl']) {
         this.incrementDifferentTrack();
       } else {

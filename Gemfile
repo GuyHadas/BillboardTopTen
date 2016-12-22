@@ -15,7 +15,7 @@ gem 'coffee-rails', '~> 4.1.0'
 # gem 'therubyracer', platforms: :ruby
 
 gem 'grooveshark'
-
+gem 'puma'
 gem 'bcrypt'
 gem 'http'
 # Use jquery as the JavaScript library
