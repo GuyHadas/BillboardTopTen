@@ -2,8 +2,18 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { hashHistory } from 'react-router';
 import moment from 'moment';
+import Promise from 'bluebird';
 import StringHash from 'string-hash';
-
+import * as firebase from "firebase";
+// Initialize Firebase
+var config = {
+  apiKey: "AIzaSyB0QvKu_mGljT7_d6dR-Ni__nxBn0ZGXEc",
+  authDomain: "billboardtopten-fdee2.firebaseapp.com",
+  databaseURL: "https://billboardtopten-fdee2.firebaseio.com",
+  storageBucket: "billboardtopten-fdee2.appspot.com",
+  messagingSenderId: "197337384732"
+};
+firebase.initializeApp(config);
 import Graph from './graph.jsx';
 import Title from './title.jsx';
 import Sound from 'react-sound';
@@ -16,7 +26,7 @@ class Home extends React.Component {
     super(props);
 
     this.state = {
-      albumImages: null,
+      albumImagesRef: null,
       charts: null,
       trackMetaData: null,
       lastChartDate: null,
@@ -58,47 +68,75 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
+    let database = firebase.database();
+    console.log(firebase.app().name);
+
+    database.ref('charts/hot100/charts/1997-06-21').once('value').then(function(snapshot) {
+      console.log(snapshot.val());
+    });
 
   }
 
   startCharts(genre) {
     let charts, albumImages;
-
-    $.get(`charts/${genre}/charts.json`)
-    .then(_charts => {
-      charts = _charts;
-
-      return $.get(`charts/${genre}/images.json`);
+    let self = this;
+    // $.get(`charts/${genre}/charts.json`)
+    // .then(_charts => {
+    //   charts = _charts;
+    //
+    //   return $.get(`charts/${genre}/images.json`);
+    // })
+    // .then(_albumImages => {
+    //   albumImages = _albumImages;
+    //
+    //   return $.get(`charts/${genre}/previewUrls.json`);
+    // })
+    // .then(trackMetaData => {
+    console.log('baaa');
+    let database = firebase.database();
+    Promise.try(function() {
+      return database.ref(`charts/${genre}/charts`).once('value').then(function(snapshot) {
+        charts = snapshot.val();
+      });
     })
-    .then(_albumImages => {
-      albumImages = _albumImages;
-
-      return $.get(`charts/${genre}/previewUrls.json`);
+    .then(function() {
+      return database.ref(`charts/${genre}/images`).once('value').then(function(snapshot) {
+        albumImages = snapshot.val();
+      });
     })
-    .then(trackMetaData => {
-      this.i = 0;
+    .then(function() {
+      return database.ref(`charts/${genre}/previewUrls`).once('value').then(function(snapshot) {
+        return snapshot.val();
+      });
+    })
+    .then(function(trackMetaData) {
+      console.log('HERHEHREHRE');
+      console.log(charts);
+      console.log(albumImages);
+      console.log(trackMetaData);
+      self.i = 0;
 
-      this.setState({
+      self.setState({
         trackMetaData: trackMetaData,
         albumImages: albumImages,
         charts: charts,
-        fourWeeksBackChartDate: this.getDate(charts, this.i - 4),
-        threeWeeksBackChartDate: this.getDate(charts, this.i - 3),
-        twoWeeksBackChartDate: this.getDate(charts, this.i - 2),
-        lastChartDate: this.getDate(charts, this.i - 1),
-        currentDate: this.getDate(charts, this.i),
-        nextChartDate: this.getDate(charts, this.i + 1),
-        currentTrackURL: trackMetaData[this.getDate(charts, this.i)]['previewUrl'],
-        nextTrackURL: trackMetaData[this.getDate(charts, this.i + 1)]['previewUrl']
+        fourWeeksBackChartDate: self.getDate(charts, self.i - 4),
+        threeWeeksBackChartDate: self.getDate(charts, self.i - 3),
+        twoWeeksBackChartDate: self.getDate(charts, self.i - 2),
+        lastChartDate: self.getDate(charts, self.i - 1),
+        currentDate: self.getDate(charts, self.i),
+        nextChartDate: self.getDate(charts, self.i + 1),
+        currentTrackURL: trackMetaData[self.getDate(charts, self.i)]['previewUrl'],
+        nextTrackURL: trackMetaData[self.getDate(charts, self.i + 1)]['previewUrl']
       });
 
-      if (trackMetaData[this.getDate(charts, 0)]['previewUrl'] !== trackMetaData[this.getDate(charts, 1)]['previewUrl']) {
-        this.incrementDifferentTrack();
+      if (trackMetaData[self.getDate(charts, 0)]['previewUrl'] !== trackMetaData[self.getDate(charts, 1)]['previewUrl']) {
+        self.incrementDifferentTrack();
       } else {
-        this.incrementSameTrack();
+        self.incrementSameTrack();
       }
 
-      this.incrementCharts();
+      self.incrementCharts();
     });
   }
 
@@ -233,7 +271,7 @@ class Home extends React.Component {
   }
 
   getDate(charts, index) {
-    return Object.keys(charts)[index];
+    return Object.keys(charts).reverse()[index];
   }
 
   formatDate(date) {

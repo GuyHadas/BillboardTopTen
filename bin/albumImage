@@ -45,7 +45,7 @@ end
 
 track_images = {}
 
-charts = JSON.parse(File.read("public/charts/electric/billboard-data.json"))
+charts = JSON.parse(File.read("public/charts/alternative/billboard-data.json"))
 charts.each do |date, chart|
   sleep 2
   p date
@@ -64,4 +64,4 @@ end
 
 p $not_found
 p ["length", $not_found.length]
-File.write("public/charts/electric/images.json", JSON.generate(track_images))
+File.write("public/charts/alternative/dashed-images.json", JSON.generate(track_images))
