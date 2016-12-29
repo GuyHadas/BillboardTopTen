@@ -67,14 +67,13 @@ class Home extends React.Component {
   }
 
   loadCharts() {
-    const GENRES = ['rap', 'alternative', 'country', 'hiphop'];
-
     this.loadChart('hot100')
     .then(() => {
       return Promise.all([
         this.loadChart('rap'),
         this.loadChart('alternative'),
         this.loadChart('country'),
+        this.loadChart('electric'),
         this.loadChart('hiphop')
       ])
       .then(() => {
