@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import { hashHistory } from 'react-router';
 import moment from 'moment';
 import StringHash from 'string-hash';
+import Promise from 'bluebird';
+import _ from 'lodash';
 
 import Graph from './graph.jsx';
 import Title from './title.jsx';
@@ -16,9 +18,9 @@ class Home extends React.Component {
     super(props);
 
     this.state = {
-      albumImages: null,
-      charts: null,
-      trackMetaData: null,
+      albumImages: {},
+      charts: {},
+      trackMetaData: {},
       lastChartDate: null,
       twoWeeksBackChartDate: null,
       threeWeeksBackChartDate: null,
@@ -35,7 +37,9 @@ class Home extends React.Component {
       volTwo: 0,
       isSoundOn: true,
       genre: 'hot100',
-      isModalOpen: true
+      isModalOpen: true,
+      isLoading: true,
+      isLoadingGenres: true
     };
 
     this.incrementCharts = this.incrementCharts.bind(this);
@@ -55,16 +59,33 @@ class Home extends React.Component {
     this.startCharts = this.startCharts.bind(this);
     this.playGenre = this.playGenre.bind(this);
     this.closeModal = this.closeModal.bind(this);
+    this.loadCharts = this.loadCharts.bind(this);
   }
 
   componentDidMount() {
-
+    this.loadCharts();
   }
 
-  startCharts(genre) {
+  loadCharts() {
+    this.loadChart('hot100')
+    .then(() => {
+      return Promise.all([
+        this.loadChart('rap'),
+        this.loadChart('alternative'),
+        this.loadChart('country'),
+        this.loadChart('electric'),
+        this.loadChart('hiphop')
+      ])
+      .then(() => {
+        return this.setState({ isLoadingGenres: false });
+      });
+    });
+  }
+
+  loadChart(genre) {
     let charts, albumImages;
 
-    $.get(`charts/${genre}/charts.json`)
+    return $.get(`charts/${genre}/charts.json`)
     .then(_charts => {
       charts = _charts;
 
@@ -76,30 +97,54 @@ class Home extends React.Component {
       return $.get(`charts/${genre}/previewUrls.json`);
     })
     .then(trackMetaData => {
-      this.i = 0;
+      let newGenreChart = {};
+      newGenreChart[genre] = charts;
+      let newCharts = _.extend({}, this.state.charts, newGenreChart);
+
+      let newGenreTrackMetaData = {};
+      newGenreTrackMetaData[genre] = trackMetaData;
+      let newTrackMetaData = _.extend({}, this.state.trackMetaData, newGenreTrackMetaData);
+
+      let newGenreAlbumImages = {};
+      newGenreAlbumImages[genre] = albumImages;
+      let newAlbumImages = _.extend({}, this.state.albumImages, newGenreAlbumImages);
 
       this.setState({
-        trackMetaData: trackMetaData,
-        albumImages: albumImages,
-        charts: charts,
-        fourWeeksBackChartDate: this.getDate(charts, this.i - 4),
-        threeWeeksBackChartDate: this.getDate(charts, this.i - 3),
-        twoWeeksBackChartDate: this.getDate(charts, this.i - 2),
-        lastChartDate: this.getDate(charts, this.i - 1),
-        currentDate: this.getDate(charts, this.i),
-        nextChartDate: this.getDate(charts, this.i + 1),
-        currentTrackURL: trackMetaData[this.getDate(charts, this.i)]['previewUrl'],
-        nextTrackURL: trackMetaData[this.getDate(charts, this.i + 1)]['previewUrl']
+        trackMetaData: newTrackMetaData,
+        albumImages: newAlbumImages,
+        charts: newCharts
       });
 
-      if (trackMetaData[this.getDate(charts, 0)]['previewUrl'] !== trackMetaData[this.getDate(charts, 1)]['previewUrl']) {
-        this.incrementDifferentTrack();
-      } else {
-        this.incrementSameTrack();
+      if (genre === 'hot100') {
+        this.setState({ isLoading: false });
       }
-
-      this.incrementCharts();
     });
+  }
+
+
+  startCharts(genre) {
+    this.i = 0;
+    const charts =  this.state.charts[genre];
+    const trackMetaData = this.state.trackMetaData[genre];
+
+    this.setState({
+      fourWeeksBackChartDate: this.getDate(charts, this.i - 4),
+      threeWeeksBackChartDate: this.getDate(charts, this.i - 3),
+      twoWeeksBackChartDate: this.getDate(charts, this.i - 2),
+      lastChartDate: this.getDate(charts, this.i - 1),
+      currentDate: this.getDate(charts, this.i),
+      nextChartDate: this.getDate(charts, this.i + 1),
+      currentTrackURL: trackMetaData[this.getDate(charts, this.i)]['previewUrl'],
+      nextTrackURL: trackMetaData[this.getDate(charts, this.i + 1)]['previewUrl']
+    });
+
+    if (trackMetaData[this.getDate(charts, 0)]['previewUrl'] !== trackMetaData[this.getDate(charts, 1)]['previewUrl']) {
+      this.incrementDifferentTrack(genre);
+    } else {
+      this.incrementSameTrack(genre);
+    }
+
+    this.incrementCharts();
   }
 
   incrementCharts() {
@@ -107,7 +152,11 @@ class Home extends React.Component {
     this.createInterval();
   }
 
-  incrementDifferentTrack() {
+  incrementDifferentTrack(genre) {
+    const currentGenre = genre ? genre : this.state.genre;
+    const trackMetaData = this.state.trackMetaData[currentGenre];
+    const charts = this.state.charts[currentGenre];
+
     let volOne = this.activeSoundComponent === 'one' ? 0 : 100;
     let volTwo = this.activeSoundComponent === 'one' ? 100 : 0;
     let soundComponentOneStatus;
@@ -119,21 +168,21 @@ class Home extends React.Component {
       soundComponentOneStatus = this.activeSoundComponent === 'one' ? Sound.status.STOPPED : this.state.soundComponentOneStatus;
       soundComponentTwoStatus = this.activeSoundComponent === 'one' ?  this.state.soundComponentTwoStatus : Sound.status.STOPPED;
     }
-    let trackURLSoundComponentOne = this.activeSoundComponent === 'one' ? this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'] :
-                                              this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'];
-    let trackURLSoundComponentTwo = this.activeSoundComponent === 'one' ? this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'] :
-                                              this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'];
+    let trackURLSoundComponentOne = this.activeSoundComponent === 'one' ? trackMetaData[this.getDate(charts, this.i + 1)]['previewUrl'] :
+                                              trackMetaData[this.getDate(charts, this.i)]['previewUrl'];
+    let trackURLSoundComponentTwo = this.activeSoundComponent === 'one' ? trackMetaData[this.getDate(charts, this.i)]['previewUrl'] :
+                                              trackMetaData[this.getDate(charts, this.i + 1)]['previewUrl'];
     this.activeSoundComponent = this.activeSoundComponent === 'one' ? 'two' : 'one';
 
     this.setState({
-      fourWeeksBackChartDate: this.getDate(this.state.charts, this.i - 4),
-      threeWeeksBackChartDate: this.getDate(this.state.charts, this.i - 3),
-      twoWeeksBackChartDate: this.getDate(this.state.charts, this.i - 2),
-      lastChartDate: this.getDate(this.state.charts, this.i - 1),
-      currentDate: this.getDate(this.state.charts, this.i),
-      nextChartDate: this.getDate(this.state.charts, this.i + 1),
-      currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-      nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+      fourWeeksBackChartDate: this.getDate(charts, this.i - 4),
+      threeWeeksBackChartDate: this.getDate(charts, this.i - 3),
+      twoWeeksBackChartDate: this.getDate(charts, this.i - 2),
+      lastChartDate: this.getDate(charts, this.i - 1),
+      currentDate: this.getDate(charts, this.i),
+      nextChartDate: this.getDate(charts, this.i + 1),
+      currentTrackURL: trackMetaData[this.getDate(charts, this.i)]['previewUrl'],
+      nextTrackURL: trackMetaData[this.getDate(charts, this.i + 1)]['previewUrl'],
       trackURLSoundComponentOne: trackURLSoundComponentOne,
       trackURLSoundComponentTwo: trackURLSoundComponentTwo,
       soundComponentOneStatus: soundComponentOneStatus,
@@ -143,23 +192,27 @@ class Home extends React.Component {
     });
   }
 
-  incrementSameTrack() {
+  incrementSameTrack(genre) {
+    const currentGenre = genre ? genre : this.state.genre;
+    const trackMetaData = this.state.trackMetaData[currentGenre];
+    const charts = this.state.charts[currentGenre];
+
     let volOne = this.activeSoundComponent === 'one' ? 100 : 0;
     let volTwo = this.activeSoundComponent === 'one' ? 0 : 100;
-    let trackURLSoundComponentOne = this.activeSoundComponent === 'one' ? this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'] :
-                                              this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'];
-    let trackURLSoundComponentTwo = this.activeSoundComponent === 'one' ? this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'] :
-                                              this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'];
+    let trackURLSoundComponentOne = this.activeSoundComponent === 'one' ? trackMetaData[this.getDate(charts, this.i)]['previewUrl'] :
+                                              trackMetaData[this.getDate(charts, this.i + 1)]['previewUrl'];
+    let trackURLSoundComponentTwo = this.activeSoundComponent === 'one' ? trackMetaData[this.getDate(charts, this.i + 1)]['previewUrl'] :
+                                              trackMetaData[this.getDate(charts, this.i)]['previewUrl'];
 
     this.setState({
-      fourWeeksBackChartDate: this.getDate(this.state.charts, this.i - 4),
-      threeWeeksBackChartDate: this.getDate(this.state.charts, this.i - 3),
-      twoWeeksBackChartDate: this.getDate(this.state.charts, this.i - 2),
-      lastChartDate: this.getDate(this.state.charts, this.i - 1),
-      currentDate: this.getDate(this.state.charts, this.i),
-      nextChartDate: this.getDate(this.state.charts, this.i + 1),
-      currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-      nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+      fourWeeksBackChartDate: this.getDate(charts, this.i - 4),
+      threeWeeksBackChartDate: this.getDate(charts, this.i - 3),
+      twoWeeksBackChartDate: this.getDate(charts, this.i - 2),
+      lastChartDate: this.getDate(charts, this.i - 1),
+      currentDate: this.getDate(charts, this.i),
+      nextChartDate: this.getDate(charts, this.i + 1),
+      currentTrackURL: trackMetaData[this.getDate(charts, this.i)]['previewUrl'],
+      nextTrackURL: trackMetaData[this.getDate(charts, this.i + 1)]['previewUrl'],
       trackURLSoundComponentOne: trackURLSoundComponentOne,
       trackURLSoundComponentTwo: trackURLSoundComponentTwo,
       volOne: volOne,
@@ -181,19 +234,22 @@ class Home extends React.Component {
       }
 
       this.i += 1;
-      if ( this.i >= Object.keys(this.state.charts).length - 2) { // Stop incrementing on second to last date
+      if ( this.i >= Object.keys(this.state.charts[this.state.genre]).length - 2) { // Stop incrementing on second to last date
         this.i = 0;
       }
     }, 3000);
   }
 
   setChartDate(date) {
-    this.i = Object.keys(this.state.charts).indexOf(date);
+    const trackMetaData = this.state.trackMetaData[this.state.genre];
+    const charts = this.state.charts[this.state.genre];
+
+    this.i = Object.keys(charts).indexOf(date);
     if (this.nextDateInterval) clearInterval(this.nextDateInterval);
     if (this.fadeOutOneFadeInTwoInterval) clearInterval(this.fadeOutOneFadeInTwoInterval);
     if (this.fadeOutTwoFadeInOneInterval) clearInterval(this.fadeOutTwoFadeInOneInterval);
 
-    if ( this.i === Object.keys(this.state.charts).length - 1) { // Last song was chosen
+    if ( this.i === Object.keys(charts).length - 1) { // Last song was chosen
       this.i -= 3;
     }
 
@@ -206,22 +262,22 @@ class Home extends React.Component {
 
     let volOne = this.activeSoundComponent === 'one' ? 0 : 100;
     let volTwo = this.activeSoundComponent === 'one' ? 100 : 0;
-    let trackURLSoundComponentOne = this.activeSoundComponent === 'one' ? this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'] :
-                                              this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'];
-    let trackURLSoundComponentTwo = this.activeSoundComponent === 'one' ? this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'] :
-                                              this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'];
+    let trackURLSoundComponentOne = this.activeSoundComponent === 'one' ? trackMetaData[this.getDate(charts, this.i + 1)]['previewUrl'] :
+                                              trackMetaData[this.getDate(charts, this.i)]['previewUrl'];
+    let trackURLSoundComponentTwo = this.activeSoundComponent === 'one' ? trackMetaData[this.getDate(charts, this.i)]['previewUrl'] :
+                                              trackMetaData[this.getDate(charts, this.i + 1)]['previewUrl'];
 
     this.activeSoundComponent = this.activeSoundComponent === 'one' ? 'two' : 'one';
 
     this.setState({
-      fourWeeksBackChartDate: this.getDate(this.state.charts, this.i - 4),
-      threeWeeksBackChartDate: this.getDate(this.state.charts, this.i - 3),
-      twoWeeksBackChartDate: this.getDate(this.state.charts, this.i - 2),
-      lastChartDate: this.getDate(this.state.charts, this.i - 1),
-      currentDate: this.getDate(this.state.charts, this.i),
-      nextChartDate: this.getDate(this.state.charts, this.i + 1),
-      currentTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i)]['previewUrl'],
-      nextTrackURL: this.state.trackMetaData[this.getDate(this.state.charts, this.i + 1)]['previewUrl'],
+      fourWeeksBackChartDate: this.getDate(charts, this.i - 4),
+      threeWeeksBackChartDate: this.getDate(charts, this.i - 3),
+      twoWeeksBackChartDate: this.getDate(charts, this.i - 2),
+      lastChartDate: this.getDate(charts, this.i - 1),
+      currentDate: this.getDate(charts, this.i),
+      nextChartDate: this.getDate(charts, this.i + 1),
+      currentTrackURL: trackMetaData[this.getDate(charts, this.i)]['previewUrl'],
+      nextTrackURL: trackMetaData[this.getDate(charts, this.i + 1)]['previewUrl'],
       trackURLSoundComponentOne: trackURLSoundComponentOne,
       trackURLSoundComponentTwo: trackURLSoundComponentTwo,
       volOne: volOne,
@@ -374,6 +430,8 @@ class Home extends React.Component {
   }
 
   render() {
+    const currentChart = this.state.charts[this.state.genre];
+
     let graphComponent;
     let audioComponent;
     let datePickerComponent;
@@ -381,10 +439,10 @@ class Home extends React.Component {
     let chartComponent;
     let tabsComponent;
 
-    if (this.state.charts && this.state.currentTrackURL) {
+    if (currentChart && this.state.currentTrackURL) {
       titleBoxComponent = <Title
         date={this.formatDate(this.state.currentDate)}
-        artist={this.state.charts[this.state.currentDate][0].artist}
+        artist={currentChart[this.state.currentDate][0].artist}
         toggleSound={this.toggleSound}
         isSoundOn={this.state.isSoundOn}
         genre={this.state.genre}
@@ -392,9 +450,9 @@ class Home extends React.Component {
 
       graphComponent = <Graph
         date={this.state.currentDate}
-        chart={this.state.charts[this.state.currentDate]}
-        nextChart={this.state.charts[this.state.nextChartDate]}
-        albumImages={this.state.albumImages}
+        chart={currentChart[this.state.currentDate]}
+        nextChart={currentChart[this.state.nextChartDate]}
+        albumImages={this.state.albumImages[this.state.genre]}
         getColorForTitle={this.getColorForTitle}
         />;
       const trackURLSoundComponentOne = this.state.trackURLSoundComponentOne;
@@ -407,18 +465,19 @@ class Home extends React.Component {
         </div>;
 
       tabsComponent = <Tabs
-        charts={this.state.charts}
+        charts={currentChart}
         setChartDate={this.setChartDate.bind(this)}
         currentDate={this.state.currentDate}
-        playGenre={this.playGenre}/>;
+        playGenre={this.playGenre}
+        isLoadingGenres={this.state.isLoadingGenres}/>;
 
       chartComponent = <Chart
-        chart={this.state.charts[this.state.currentDate]}
-        nextChart={this.state.charts[this.state.nextChartDate]}
-        prevChart={this.state.charts[this.state.lastChartDate]}
-        twoWeeksBackChart={this.state.charts[this.state.twoWeeksBackChartDate]}
-        threeWeeksBackChart={this.state.charts[this.state.threeWeeksBackChartDate]}
-        fourWeeksBackChart={this.state.charts[this.state.fourWeeksBackChartDate]}
+        chart={currentChart[this.state.currentDate]}
+        nextChart={currentChart[this.state.nextChartDate]}
+        prevChart={currentChart[this.state.lastChartDate]}
+        twoWeeksBackChart={currentChart[this.state.twoWeeksBackChartDate]}
+        threeWeeksBackChart={currentChart[this.state.threeWeeksBackChartDate]}
+        fourWeeksBackChart={currentChart[this.state.fourWeeksBackChartDate]}
         getColorForTitle={this.getColorForTitle}
         currentDate={this.state.currentDate}
         nextChartDate={this.state.nextChartDate}
@@ -431,7 +490,7 @@ class Home extends React.Component {
     return (
       <div>
         {titleBoxComponent}
-        <IntroModal isModalOpen={this.state.isModalOpen} onRequestClose={this.closeModal}/>
+        <IntroModal isModalOpen={this.state.isModalOpen} onRequestClose={this.closeModal} isLoading={this.state.isLoading}/>
         <section id='mainContainer'>
           {tabsComponent}
           {chartComponent}
