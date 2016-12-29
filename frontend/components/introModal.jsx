@@ -52,11 +52,12 @@ class IntroModal extends React.Component{
   }
 
   render() {
+    let playButton = this.props.isLoading ? <img id='loader' src='loader.gif'/> :
+    <img id='modalPlayButton' src="Triangle.png" onClick={this.props.onRequestClose}/>;
     return (
       <Modal
         isOpen={this.props.isModalOpen}
         style={this.style}
-        onRequestClose={this.props.onRequestClose}
         contentLabel='modal'>
         <div id='modalDescription'>
           A visualization of how &nbsp;
@@ -64,7 +65,7 @@ class IntroModal extends React.Component{
           &nbsp;
           top 10 music has changed over time
         </div>
-        <img id='modalPlayButton' src="Triangle.png" onClick={this.props.onRequestClose}/>
+        {playButton}
         <img id='modalHeadphonesImg' src="Headphones.png"/>
         <span id='modalFooter'>Headphones Suggested</span>
       </Modal>

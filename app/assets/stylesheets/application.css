@@ -81,6 +81,13 @@ body {
 	color: black;
 }
 
+#loader {
+	margin-top: 40px;
+	height: 50px;
+	width: 50px;
+	padding: 20px;
+}
+
 #modalHeadphonesImg {
 	width: 25px;
 	height: 25px;

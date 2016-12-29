@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { hashHistory } from 'react-router';
 import moment from 'moment';
 import StringHash from 'string-hash';
+import _ from 'lodash';
 
 import Graph from './graph.jsx';
 import Title from './title.jsx';
@@ -35,7 +36,8 @@ class Home extends React.Component {
       volTwo: 0,
       isSoundOn: true,
       genre: 'hot100',
-      isModalOpen: true
+      isModalOpen: true,
+      isLoading: true
     };
 
     this.incrementCharts = this.incrementCharts.bind(this);
@@ -58,7 +60,12 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
+    // this.loadCharts();
+  }
 
+  loadCharts() {
+    const GENRES = ['hot100', 'rap', 'alternative', 'country', 'hiphop'];
+    _.each(GENRES, genre => this.startCharts(genre));
   }
 
   startCharts(genre) {
@@ -431,7 +438,7 @@ class Home extends React.Component {
     return (
       <div>
         {titleBoxComponent}
-        <IntroModal isModalOpen={this.state.isModalOpen} onRequestClose={this.closeModal}/>
+        <IntroModal isModalOpen={this.state.isModalOpen} onRequestClose={this.closeModal} isLoading={this.state.isLoading}/>
         <section id='mainContainer'>
           {tabsComponent}
           {chartComponent}
