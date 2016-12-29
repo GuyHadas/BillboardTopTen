@@ -437,7 +437,7 @@ class Home extends React.Component {
         date={this.state.currentDate}
         chart={currentChart[this.state.currentDate]}
         nextChart={currentChart[this.state.nextChartDate]}
-        albumImages={this.state.albumImages}
+        albumImages={this.state.albumImages[this.state.genre]}
         getColorForTitle={this.getColorForTitle}
         />;
       const trackURLSoundComponentOne = this.state.trackURLSoundComponentOne;
