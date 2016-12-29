@@ -67,19 +67,26 @@ class Home extends React.Component {
   }
 
   loadCharts() {
-    const GENRES = ['hot100', 'rap', 'alternative', 'country', 'hiphop'];
-    Promise.each(GENRES, (genre) => {
-      this.loadChart(genre);
-    })
+    const GENRES = ['rap', 'alternative', 'country', 'hiphop'];
+
+    this.loadChart('hot100')
     .then(() => {
-      this.setState({ isLoadingGenres: false });
+      return Promise.all([
+        this.loadChart('rap'),
+        this.loadChart('alternative'),
+        this.loadChart('country'),
+        this.loadChart('hiphop')
+      ])
+      .then(() => {
+        return this.setState({ isLoadingGenres: false });
+      });
     });
   }
 
   loadChart(genre) {
     let charts, albumImages;
 
-    $.get(`charts/${genre}/charts.json`)
+    return $.get(`charts/${genre}/charts.json`)
     .then(_charts => {
       charts = _charts;
 
@@ -92,6 +99,7 @@ class Home extends React.Component {
     })
     .then(trackMetaData => {
       let newGenreChart = {};
+      console.log(genre);
       newGenreChart[genre] = charts;
       let newCharts = _.extend({}, this.state.charts, newGenreChart);
 
