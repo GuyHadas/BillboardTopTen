@@ -99,7 +99,6 @@ class Home extends React.Component {
     })
     .then(trackMetaData => {
       let newGenreChart = {};
-      console.log(genre);
       newGenreChart[genre] = charts;
       let newCharts = _.extend({}, this.state.charts, newGenreChart);
 
@@ -141,9 +140,9 @@ class Home extends React.Component {
     });
 
     if (trackMetaData[this.getDate(charts, 0)]['previewUrl'] !== trackMetaData[this.getDate(charts, 1)]['previewUrl']) {
-      this.incrementDifferentTrack();
+      this.incrementDifferentTrack(genre);
     } else {
-      this.incrementSameTrack();
+      this.incrementSameTrack(genre);
     }
 
     this.incrementCharts();
@@ -154,9 +153,10 @@ class Home extends React.Component {
     this.createInterval();
   }
 
-  incrementDifferentTrack() {
-    const trackMetaData = this.state.trackMetaData[this.state.genre];
-    const charts = this.state.charts[this.state.genre];
+  incrementDifferentTrack(genre) {
+    const currentGenre = genre ? genre : this.state.genre;
+    const trackMetaData = this.state.trackMetaData[currentGenre];
+    const charts = this.state.charts[currentGenre];
 
     let volOne = this.activeSoundComponent === 'one' ? 0 : 100;
     let volTwo = this.activeSoundComponent === 'one' ? 100 : 0;
@@ -193,9 +193,10 @@ class Home extends React.Component {
     });
   }
 
-  incrementSameTrack() {
-    const trackMetaData = this.state.trackMetaData[this.state.genre];
-    const charts = this.state.charts[this.state.genre];
+  incrementSameTrack(genre) {
+    const currentGenre = genre ? genre : this.state.genre;
+    const trackMetaData = this.state.trackMetaData[currentGenre];
+    const charts = this.state.charts[currentGenre];
 
     let volOne = this.activeSoundComponent === 'one' ? 100 : 0;
     let volTwo = this.activeSoundComponent === 'one' ? 0 : 100;
