@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { hashHistory } from 'react-router';
 import moment from 'moment';
 import StringHash from 'string-hash';
+import Promise from 'bluebird';
 import _ from 'lodash';
 
 import Graph from './graph.jsx';
@@ -37,7 +38,8 @@ class Home extends React.Component {
       isSoundOn: true,
       genre: 'hot100',
       isModalOpen: true,
-      isLoading: true
+      isLoading: true,
+      isLoadingGenres: true
     };
 
     this.incrementCharts = this.incrementCharts.bind(this);
@@ -66,7 +68,12 @@ class Home extends React.Component {
 
   loadCharts() {
     const GENRES = ['hot100', 'rap', 'alternative', 'country', 'hiphop'];
-    _.each(GENRES, genre => this.loadChart(genre));
+    Promise.each(GENRES, (genre) => {
+      this.loadChart(genre);
+    })
+    .then(() => {
+      this.setState({ isLoadingGenres: false });
+    });
   }
 
   loadChart(genre) {
@@ -453,7 +460,8 @@ class Home extends React.Component {
         charts={currentChart}
         setChartDate={this.setChartDate.bind(this)}
         currentDate={this.state.currentDate}
-        playGenre={this.playGenre}/>;
+        playGenre={this.playGenre}
+        isLoadingGenres={this.state.isLoadingGenres}/>;
 
       chartComponent = <Chart
         chart={currentChart[this.state.currentDate]}

@@ -21,7 +21,7 @@ class Tabs extends React.Component{
   render() {
     let renderedTab = [
       <DatePicker charts={this.props.charts} setChartDate={this.props.setChartDate} currentDate={this.props.currentDate}/>,
-      <Genres playGenre={this.props.playGenre}/>
+      <Genres playGenre={this.props.playGenre} isLoadingGenres={this.props.isLoadingGenres}/>
     ][this.state.tabIndex];
 
     let genreTabBackgroundColor, genreTabColor, datePickerTabBackgroundColor, datePickerTabColor;
