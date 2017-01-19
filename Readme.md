@@ -1,6 +1,6 @@
 # BillboardTopTen
 
-[BillboardTopTen][heroku] is a web application that allows music enthusiasts to explore Billboard's top ten charts throughout history. Inspired by [Billboard charts][Billboard], BillboardTopTen is built using Ruby on Rails on the backend, React.js on the frontend, and a PostgreSQL database.
+[BillboardTopTen][heroku] is a web application that allows music enthusiasts to explore Billboard's top ten charts throughout history. Inspired by [Billboard charts][Billboard], BillboardTopTen is built using Ruby on Rails on the backend, React.JS on the Front-end, and a PostgreSQL database.
 
 
 [heroku]: https://billboardtopten.herokuapp.com/
@@ -10,7 +10,7 @@
 
 * Dynamic visualization of Billboard's top ten charts for every week
 * Week's top song playing while charts are displayed
-* Smooth music fade in fade out transitions between different weeks
+* Smooth music fade in fade out transitions between different charts
 * Date Picker for user exploration of top ten charts through history
 * Genre Picker for user exploration of different music genres
 * Album Images associated with each artist on the chart
@@ -20,14 +20,46 @@
 
 ### BillboardTopTen Web Scraping and Search APIs
 
-BillboardTopTen depends on web scraping [Billboard charts][Billboard] to retrieve all of charts for top ten tracks.
+BillboardTopTen depends on web scraping HTML form [Billboard charts][Billboard] to retrieve all of the charts. A Python script using [billboard.py][billboardpy] API for accessing music charts was written to scrape ten songs for each chart. Each song in a chart contained the following fields: title, artist, weeks, rank, spotifyId, and spotifyLink.
 
-Once tracks and artists were scraped, a script was used to parse data for a specific genre into a JSON file. This JSON file contains a large hash map with a specific weeks date as a key and a list of the top ten tracks for that week as a value.
+[billboardpy]: https://github.com/guoguo12/billboard-charts
 
-From the new JSON, another script was used to loop through the hash map and build queries which where used to retrieve top track samples.
-The queries where built by first searching Spotify's API and retrieving clean formats for artist and title. These queries are sent through a HTTP GET to search iTunes API for 30 sec track samples. These samples where saved into another JSON map with a week's date as key and sample url as values. This new map will later be used to play music for each week.
+#### Sample iTunes Search API Script
 
-A final script similar to the previous script was used to retrieve URLs for album images associated with each track in the week. Album images may be more difficult to find then tracks, so the script required queries to Spotify, iTunes, and Last.fm's APIs. Each album image found was save to a JSON file mapping track and artist names as keys to the album image URL.
+```python
+import billboard
+from time import sleep
+
+f = open('edm.txt', 'w')
+
+i = 0
+chart = billboard.ChartData('dance-electronic-songs')
+while chart.previousDate:
+    print chart.date
+    if len(chart) < 10:
+        chart = billboard.ChartData('dance-electronic-songs', chart.previousDate)
+
+    f.write("*****")
+    f.write("\n")
+    f.write(chart.date)
+    f.write("\n")
+
+    for x in range(0, 10):
+        f.write(str(chart[x].title))
+        f.write("\n")
+
+        f.write(str(chart[x].artist))
+        f.write("\n")
+
+    ...
+```
+Once all of the charts were scraped, a second script was used to parse data into a JSON. This JSON contains a large hash map with a chart's date as a key, and a value as a list top ten tracks.
+
+From the new JSON, another script was used to loop through the hash map and build queries which where used to retrieve track samples from iTunes.
+
+The queries were built by first searching Spotify's API and retrieving clean formats for track artist and title. Once built, queries are sent through a HTTP GET to search iTunes API for track samples. These samples where saved into another JSON map with a week's date as key and sample URLs as values. This new map will later be used to play music for each week.
+
+A final script was used to retrieve URLs for album images associated with each track in the week. Album images may be more difficult to find then tracks. The script required queries to Spotify, iTunes, and Last.fm's APIs. Each album image found was save to a JSON file mapping track and artist names as keys to the album image URL.
 
 
 #### Sample iTunes Search API Script
@@ -86,9 +118,9 @@ File.write("public/charts/electric/previewUrls.json", JSON.generate(trackMeta))
 
 ### Data Visualization and Graphing
 
-BillboardTopTen takes advantage of React.JS render library for smooth and dynamic visualization of Billboard's charts. There are two separate React components in charge of data visualization for BillboardTopTen.
+BillboardTopTen takes advantage of React.JS rapid render library for smooth visualization of Billboard's charts. There are two separate React components in charge of data visualization for BillboardTopTen.
 
-The first component is the charts component. This component displays a track's progression over time by drawing out distinct lines following it's ranking. 
+The first component is the charts component. This component displays a track's progression over time by drawing out distinct lines following it's ranking. The chart is an SVG tag split in two five subsection. Each subsection contains ten lines for each track. Every lines vertical coordinate represents a tracks position for the current week while the lines end represents the position of the track in the next week.  
 
 The second component is the the graph component. this component is in charge of rendering ten album images and track names according to their ranking for a given week. As the rankings change over time, the graph component updates all positions of current tracks on the graph. The graph and charts components work harmoniously together to create a pleasing visualize for top ten tracks.  
 
