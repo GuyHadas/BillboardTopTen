@@ -24,7 +24,7 @@ BillboardTopTen depends on web scraping HTML form [Billboard charts][Billboard] 
 
 [billboardpy]: https://github.com/guoguo12/billboard-charts
 
-#### Sample iTunes Search API Script
+#### Sample Web Scraping Script Snippet
 
 ```python
 import billboard
@@ -62,7 +62,7 @@ The queries were built by first searching Spotify's API and retrieving clean for
 A final script was used to retrieve URLs for album images associated with each track in the week. Album images may be more difficult to find then tracks. The script required queries to Spotify, iTunes, and Last.fm's APIs. Each album image found was save to a JSON file mapping track and artist names as keys to the album image URL.
 
 
-#### Sample iTunes Search API Script
+#### Sample iTunes Search API Script Snippet
 
 ```ruby
 def get_itunes_track(query)
@@ -120,15 +120,114 @@ File.write("public/charts/electric/previewUrls.json", JSON.generate(trackMeta))
 
 BillboardTopTen takes advantage of React.JS rapid render library for smooth visualization of Billboard's charts. There are two separate React components in charge of data visualization for BillboardTopTen.
 
-The first component is the charts component. This component displays a track's progression over time by drawing out distinct lines following it's ranking. The chart is an SVG tag split in two five subsection. Each subsection contains ten lines for each track. Every lines vertical coordinate represents a tracks position for the current week while the lines end represents the position of the track in the next week.  
-
-The second component is the the graph component. this component is in charge of rendering ten album images and track names according to their ranking for a given week. As the rankings change over time, the graph component updates all positions of current tracks on the graph. The graph and charts components work harmoniously together to create a pleasing visualize for top ten tracks.  
-
-![homePage]
-[homePage]: ./public/homePage.png
+The first component is the charts component. This component displays a track's progression over time by drawing out distinct lines following a tracks ranking. The chart component contains an SVG tag split in two five subsection. Each subsection contains ten lines for each track. Every line's vertical coordinate represents a tracks position for the current week while the lines end represents the position of the track in the next week. Each subsection is given a velocity such that the lines are animated across the screen.
 
 
-#### Sample Graph Code Snippets
+#### Sample Charts Code Snippet
+
+```javascript
+class Chart extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      offset: 0
+    };
+  }
+
+  componentDidMount() {
+    // This is called 150 times throughout a chart interval
+    // Line must move 175 pixels every chart interval
+    const VELOCITY = (175 / 75);
+    this.offsetInterval = setInterval(() => {
+      this.setState({ offset: this.state.offset + VELOCITY });
+    }, 40);
+  }
+ ...
+ getLinesForSection(sectionNum, startingChart, endingChart) {
+   const STAGING_AREA_RANK = 11;
+   const startingTracks = _.map(startingChart, 'title');
+   const endingTracks = _.map(endingChart, 'title');
+   const tracksOnDeck = _.filter(endingChart, trackOnDeck => {
+     return !(_.includes(startingTracks, trackOnDeck.title));
+   });
+
+   let lines = _.map(startingChart, track => {
+     let nextTrackRank = endingTracks.indexOf(track.title) + 1; // index 0 should be rank 1, etc...
+
+     if (nextTrackRank === 0) {
+       nextTrackRank = STAGING_AREA_RANK; // if track is not in next week's charts, animate to bottom of list
+     }
+
+     return <Line
+       offset={this.state.offset}
+       color={this.props.getColorForTitle(track.title)}
+       key={`${track.title}sec${sectionNum}rank${track.rank}`}
+       weekPosition={sectionNum}
+       y1={this.getPositionForRank(track.rank)}
+       y2={this.getPositionForRank(nextTrackRank)}/>;
+   });
+
+   const tracksOnDeckLines = tracksOnDeck.map(trackOnDeck => {
+     return <Line
+       offset={this.state.offset}
+       color={this.props.getColorForTitle(trackOnDeck.title)}
+       key={`${trackOnDeck.title}sec${sectionNum}rank${trackOnDeck.rank}`}
+       weekPosition={sectionNum}
+       y1={this.getPositionForRank(STAGING_AREA_RANK)}
+       y2={this.getPositionForRank(trackOnDeck.rank)}/>;
+   });
+
+   return lines.concat(tracksOnDeckLines);
+ }
+
+ render() {
+   const sectionZero = this.getLinesForSection(0, this.props.chart, this.props.nextChart);
+   const sectionOne = this.getLinesForSection(1, this.props.prevChart, this.props.chart);
+   const sectionTwo = this.getLinesForSection(2, this.props.twoWeeksBackChart, this.props.prevChart);
+   const sectionThree = this.getLinesForSection(3, this.props.threeWeeksBackChart, this.props.twoWeeksBackChart);
+   const sectionFour = this.getLinesForSection(4, this.props.fourWeeksBackChart, this.props.threeWeeksBackChart);
+
+   return (
+     <div id="chart-wrap-wrapper">
+       <div id="chart-wrap">
+         <ul id="chart-y-axis">
+           <li>1 &mdash;</li>
+           <li>2 &mdash;</li>
+           <li>3 &mdash;</li>
+           <li>4 &mdash;</li>
+           <li>5 &mdash;</li>
+           <li>6 &mdash;</li>
+           <li>7 &mdash;</li>
+           <li>8 &mdash;</li>
+           <li>9 &mdash;</li>
+           <li>10 &mdash;</li>
+         </ul>
+         <svg width={700} height={579} style={{ borderBottom: '1px solid white', backgroundColor: 'transparent' }}>
+           {sectionZero}
+           {sectionOne}
+           {sectionTwo}
+           {sectionThree}
+           {sectionFour}
+         </svg>
+       </div>
+       <svg width={700} height={50} style={{ backgroundColor: 'rgb(0, 0, 0)', color: 'white', marginLeft: 'auto' }}>
+         <GraphDate offset={this.state.offset} weekPosition={-1} date={this.props.nextChartDate}/>
+         <GraphDate offset={this.state.offset} weekPosition={0} date={this.props.currentDate}/>
+         <GraphDate offset={this.state.offset} weekPosition={1} date={this.props.prevChartDate}/>
+         <GraphDate offset={this.state.offset} weekPosition={2} date={this.props.twoWeeksBackChartDate}/>
+         <GraphDate offset={this.state.offset} weekPosition={3} date={this.props.threeWeeksBackChartDate}/>
+         <GraphDate offset={this.state.offset} weekPosition={4} date={this.props.fourWeeksBackChartDate}/>
+       </svg>
+     </div>
+   );
+ }
+}
+```
+
+
+The second component is the graph component. this component is in charge of rendering ten album images and track names according to their ranking for a given week. As the rankings change over time, the graph component updates its state which in turn will update positions of current tracks on the graph. Using CSS transitions the tracks will move smoothly towards there new ranking. The graph and charts components work harmoniously together to create a pleasing visualize for top ten tracks.  
+
+#### Sample Graph Code Snippet
 
 ```javascript
 class Graph extends React.Component{
@@ -180,23 +279,58 @@ class Graph extends React.Component{
     );
   }
 }
-
-export default Graph;
 ```
 
 ### Music
 
-BillboardTopTen plays music synchronously with it's visuals. For every week, BillboardTopTen will play the number one ranked track in the background. Through the used of React Sound library, sound component's containing track URL's will play music in the background.
+BillboardTopTen plays music synchronously with it's visuals. For every week, BillboardTopTen will play the number one ranked track in the background. Through the used of React Sound library, sound component's containing track URL's will play music.
 
-One unique feature of BillboardTopTen is that it makes use of
+One unique feature of BillboardTopTen is that it makes use of React's rapid state handling to control which component is playing music and at what volume. Through this, BillboardTopTen is able to create seamless fade in fade out transitions between different top songs for different weeks. While the current week's track component is playing sound the next weeks track component is cached. If the songs between two weeks differ, then a fade in fade out method is applied. This method decrements the volume of the current chart's state while simultaneously incrementing the volume of the next char's state.
 
-
-#### Sample Design Show
+#### Sample Music Snippet
 
 ```javascript
-```
+fadeInFadeOut() {
+  if (this.isNextSongDifferent()) {
+    if (this.fadeOutOneFadeInTwoInterval) clearInterval(this.fadeOutOneFadeInTwoInterval);
+    if (this.fadeOutTwoFadeInOneInterval) clearInterval(this.fadeOutTwoFadeInOneInterval);
 
-### Comments
+    if (this.activeSoundComponent === 'one') {
+      this.fadeOutOneFadeInTwoInterval = setInterval(() => {
+        this.setState({
+          volOne: this.state.volOne - 1.5,
+          volTwo: this.state.volTwo + 1.5
+        });
+      }, (1000 / 30));
+    } else {
+      this.fadeOutTwoFadeInOneInterval = setInterval(() => {
+        this.setState({
+          volOne: this.state.volOne + 1.5,
+          volTwo: this.state.volTwo - 1.5
+        });
+      }, (1000 / 30));
+    }
+  }
+}
+...
+componentDidUpdate() {
+  if ((this.isNextSongDifferent() && !this.areBothPlaying()) && this.state.isSoundOn) {
+
+    this.fadeInFadeOut();
+    let trackURLSoundComponentOne = this.activeSoundComponent === 'one' ? this.state.currentTrackURL : this.state.nextTrackURL;
+    let trackURLSoundComponentTwo = this.activeSoundComponent === 'one' ? this.state.nextTrackURL : this.state.currentTrackURL;
+
+    this.setState({
+      trackURLSoundComponentOne: trackURLSoundComponentOne,
+      trackURLSoundComponentTwo: trackURLSoundComponentTwo,
+      soundComponentOneStatus: Sound.status.PLAYING,
+      soundComponentTwoStatus: Sound.status.PLAYING
+    });
+  }
+}
+...
+```
+### Date and Genre Picker
 
 Scribbble comments are unique, each one lives at a specific spot on their respective design. Hovering over comments in the 'commentBox' displays their location on the design while clicking on the design creates a comment at that location.
 
@@ -205,15 +339,3 @@ Green comment pins reference a comment being created, while yellow comment pins 
 In addition to having body, design_id, and user_id columns in the database, comments contain X and Y coordinates that eventually pertain to their parent div (the design they belong to).
 
 Scribbble's API efficiently returns each designs' comments through a single query to the database.
-
-Ex. Comment Box
-![commentBox]
-[commentBox]: ./screenshots/commentBox.png
-
-Ex. Comment Pins
-![commentPins]
-[commentPins]: ./screenshots/commentPins.png
-
-
-```javascript
-```
