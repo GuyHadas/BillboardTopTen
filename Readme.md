@@ -332,10 +332,59 @@ componentDidUpdate() {
 ```
 ### Date and Genre Picker
 
-Scribbble comments are unique, each one lives at a specific spot on their respective design. Hovering over comments in the 'commentBox' displays their location on the design while clicking on the design creates a comment at that location.
+A feature of BillboardTopTen that can keep users engaged for extended periods of time is the ability to explore different music genres and dates for Billboard's charts.
 
-Green comment pins reference a comment being created, while yellow comment pins reference a comment being viewed.
+By caching the charts JSON object in memory, the ability to explore different timelines comes down to React setting a new state for the current chart. By setting a new date, React will access a new key, the new date, in the cached JSON. This in turn will return the selected chart that the user intended. Similarly a genre picker was also implemented. but instead of resetting a key in a JSON map, A different JSOM map is accessed as the new current genre.
 
-In addition to having body, design_id, and user_id columns in the database, comments contain X and Y coordinates that eventually pertain to their parent div (the design they belong to).
+#### Date Picker Code Snippet
+```javascript
+...
+setChartDate(date) {
+  const trackMetaData = this.state.trackMetaData[this.state.genre];
+  const charts = this.state.charts[this.state.genre];
 
-Scribbble's API efficiently returns each designs' comments through a single query to the database.
+  this.i = Object.keys(charts).indexOf(date);
+  if (this.nextDateInterval) clearInterval(this.nextDateInterval);
+  if (this.fadeOutOneFadeInTwoInterval) clearInterval(this.fadeOutOneFadeInTwoInterval);
+  if (this.fadeOutTwoFadeInOneInterval) clearInterval(this.fadeOutTwoFadeInOneInterval);
+
+  if ( this.i === Object.keys(charts).length - 1) { // Last song was chosen
+    this.i -= 3;
+  }
+
+  if (this.state.isSoundOn) {
+    this.setState({
+      soundComponentOneStatus: this.activeSoundComponent === 'one' ? Sound.status.STOPPED : Sound.status.PLAYING,
+      soundComponentTwoStatus: this.activeSoundComponent === 'one' ? Sound.status.PLAYING : Sound.status.STOPPED
+    });
+  }
+
+  let volOne = this.activeSoundComponent === 'one' ? 0 : 100;
+  let volTwo = this.activeSoundComponent === 'one' ? 100 : 0;
+  let trackURLSoundComponentOne = this.activeSoundComponent === 'one' ? trackMetaData[this.getDate(charts, this.i + 1)]['previewUrl'] :
+                                            trackMetaData[this.getDate(charts, this.i)]['previewUrl'];
+  let trackURLSoundComponentTwo = this.activeSoundComponent === 'one' ? trackMetaData[this.getDate(charts, this.i)]['previewUrl'] :
+                                            trackMetaData[this.getDate(charts, this.i + 1)]['previewUrl'];
+
+  this.activeSoundComponent = this.activeSoundComponent === 'one' ? 'two' : 'one';
+
+  this.setState({
+    fourWeeksBackChartDate: this.getDate(charts, this.i - 4),
+    threeWeeksBackChartDate: this.getDate(charts, this.i - 3),
+    twoWeeksBackChartDate: this.getDate(charts, this.i - 2),
+    lastChartDate: this.getDate(charts, this.i - 1),
+    currentDate: this.getDate(charts, this.i),
+    nextChartDate: this.getDate(charts, this.i + 1),
+    currentTrackURL: trackMetaData[this.getDate(charts, this.i)]['previewUrl'],
+    nextTrackURL: trackMetaData[this.getDate(charts, this.i + 1)]['previewUrl'],
+    trackURLSoundComponentOne: trackURLSoundComponentOne,
+    trackURLSoundComponentTwo: trackURLSoundComponentTwo,
+    volOne: volOne,
+    volTwo: volTwo
+  });
+
+  this.i += 1;
+  this.createInterval();
+}
+...
+```
