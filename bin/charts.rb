@@ -1,0 +1,30 @@
+require 'json'
+
+charts = {}
+
+
+lines = File.readlines("public/charts/hot100/billboard-data.txt")
+lines.each.with_index do |line, idx|
+  next unless idx % 63 == 1
+  date_key = lines[idx][0..-2]
+  next if date_key[0..3].to_i < 1970
+
+  charts[date_key] = []
+
+  i = 0
+  while i < 10
+    factor = 6 * i
+    track = {
+      title: lines[idx + 1 + (factor)][0..-2],
+      artist: lines[idx + 2 + (factor)][0..-2],
+      rank: lines[idx + 4 + (factor)][0..-2],
+      spotify_id: lines[idx + 5 + (factor)][0..-2],
+      spotify_link: lines[idx + 6 + (factor)][0..-2]
+    }
+    charts[date_key] << track
+    i += 1
+  end
+end
+
+# print JSON.generate(charts)
+File.write("public/charts/hot100/billboard-data.json", JSON.generate(charts))

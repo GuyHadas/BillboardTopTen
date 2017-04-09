@@ -1,0 +1,59 @@
+require 'json'
+require 'http'
+
+oldTrackMeta = JSON.parse(File.read("public/charts/hot100/previewUrls-old.json"))
+
+def get_itunes_track(query)
+  res = HTTP.get("https://itunes.apple.com/search?term=#{query}&country=us&limit=1&media=music")
+  if res.code == 200
+    JSON.parse(res)
+  else
+    p "GOT 403"
+    return {"resultCount" => 0}
+  end
+end
+
+def build_query(chart, spotify_id)
+  begin
+    track = JSON.parse(HTTP.get("https://api.spotify.com/v1/tracks/#{spotify_id}").to_s)
+    title = track['name'].gsub(/[^0-9a-zA-Z ]/, "").split(" ").join("+")
+    artist = track['artists'][0]['name'].gsub(/[^0-9a-zA-Z ]/, "").split(" ").join("+");
+  rescue
+    title = chart[0]['title'].gsub(/[^0-9a-zA-Z ]/, "").split(' ').join('+')
+    artist = chart[0]['artist'].gsub(/[^0-9a-zA-Z ]/, "").split(' ').join('+')
+  ensure
+    return [title, artist].join("+");
+  end
+end
+
+trackMeta = {}
+
+charts = JSON.parse(File.read("public/charts/hot100/billboard-data.json"))
+
+charts.each do |date, chart|
+  p date
+
+  if oldTrackMeta[date]
+    trackMeta[date] = oldTrackMeta[date]
+  else
+    sleep 2
+
+    top_song = chart[0]
+    query = build_query(chart, top_song['spotify_id'])
+    response = get_itunes_track(query)
+    i = 1
+    until response["resultCount"] != 0 || i == 10
+      query = build_query(chart, chart[i])
+      response = get_itunes_track(query)
+      i += 1
+    end
+    if (response["resultCount"] > 0)
+      itunes_track = response["results"][0]
+      unless trackMeta[itunes_track['trackId']]
+        trackMeta[date] = { 'previewUrl' => itunes_track['previewUrl'], 'albumImg' => itunes_track['artworkUrl100'] }
+      end
+    end
+  end
+end
+
+File.write("public/charts/hot100/previewUrls.json", JSON.generate(trackMeta))
