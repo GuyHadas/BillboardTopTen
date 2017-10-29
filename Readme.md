@@ -53,14 +53,8 @@ while chart.previousDate:
 
     ...
 ```
-Once all of the charts were scraped, a second script was used to parse data into a JSON. This JSON contains a large hash map with a chart's date as a key, and a value as a list top ten tracks.
 
-From the new JSON, another script was used to loop through the hash map and build queries which where used to retrieve track samples from iTunes.
-
-The queries were built by first searching Spotify's API and retrieving clean formats for track artist and title. Once built, queries are sent through a HTTP GET to search iTunes API for track samples. These samples where saved into another JSON map with a week's date as key and sample URLs as values. This new map will later be used to play music for each week.
-
-A final script was used to retrieve URLs for album images associated with each track in the week. Album images may be more difficult to find then tracks. The script required queries to Spotify, iTunes, and Last.fm's APIs. Each album image found was save to a JSON file mapping track and artist names as keys to the album image URL.
-
+Similarly, scraping is done to retrieve track samples from iTunes, and album images for the top songs in each week.
 
 #### Sample iTunes Search API Script Snippet
 
@@ -118,9 +112,9 @@ File.write("public/charts/electric/previewUrls.json", JSON.generate(trackMeta))
 
 ### Data Visualization and Graphing
 
-BillboardTopTen takes advantage of React.JS rapid render library for smooth visualization of Billboard's charts. There are two separate React components in charge of data visualization for BillboardTopTen.
+BillboardTopTen takes advantage of React.JS rapid render library for smooth visualization of Billboard's charts. There are two separate React components in charge of data visualization for BillboardTopTen: Charts component and Graph component.
 
-The first component is the charts component. This component displays a track's progression over time by drawing out distinct lines following a tracks ranking. The chart component contains an SVG tag split in two five subsection. Each subsection contains ten lines for each track. Every line's vertical coordinate represents a tracks position for the current week while the lines end represents the position of the track in the next week. Each subsection is given a velocity such that the lines are animated across the screen.
+The first component is the charts component. This component displays a track's progression over time by drawing out distinct lines following a tracks ranking. Using a set velocity, the lines are animated across the screen.
 
 
 #### Sample Charts Code Snippet
@@ -225,7 +219,7 @@ class Chart extends React.Component{
 ```
 
 
-The second component is the graph component. this component is in charge of rendering ten album images and track names according to their ranking for a given week. As the rankings change over time, the graph component updates its state which in turn will update positions of current tracks on the graph. Using CSS transitions the tracks will move smoothly towards there new ranking. The graph and charts components work harmoniously together to create a pleasing visualize for top ten tracks.  
+The second component is the graph component. this component is in charge of rendering ten album images and track names according to their ranking for a given week. Updates in state coupled with CSS transitions will change positions of tracks.
 
 #### Sample Graph Code Snippet
 
@@ -285,7 +279,7 @@ class Graph extends React.Component{
 
 BillboardTopTen plays music synchronously with it's visuals. For every week, BillboardTopTen will play the number one ranked track in the background. Through the used of React Sound library, sound component's containing track URL's will play music.
 
-One unique feature of BillboardTopTen is that it makes use of React's rapid state handling to control which component is playing music and at what volume. Through this, BillboardTopTen is able to create seamless fade in fade out transitions between different top songs for different weeks. While the current week's track component is playing sound the next weeks track component is cached. If the songs between two weeks differ, then a fade in fade out method is applied. This method decrements the volume of the current chart's state while simultaneously incrementing the volume of the next char's state.
+BillboardTopTen makes use of React's rapid state handling to control which component is playing music and at what volume. BillboardTopTen is able to seamless fade in fade out track samples.
 
 #### Sample Music Snippet
 
@@ -333,8 +327,6 @@ componentDidUpdate() {
 ### Date and Genre Picker
 
 A feature of BillboardTopTen that can keep users engaged for extended periods of time is the ability to explore different music genres and dates for Billboard's charts.
-
-By caching the charts JSON object in memory, the ability to explore different timelines comes down to React setting a new state for the current chart. By setting a new date, React will access a new key, the new date, in the cached JSON. This in turn will return the selected chart that the user intended. Similarly a genre picker was also implemented. but instead of resetting a key in a JSON map, A different JSOM map is accessed as the new current genre.
 
 #### Date Picker Code Snippet
 ```javascript
