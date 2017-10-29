@@ -2,11 +2,12 @@
 
 [BillboardTopTen][heroku] is a web application that allows music enthusiasts to explore Billboard's top ten charts throughout history. Inspired by [Billboard charts][Billboard], BillboardTopTen is built using Ruby on Rails on the backend, React.JS on the Front-end, and a PostgreSQL database.
 
+![BillboardTopTenImage](public/ImageForReadMe.jpg?raw=true "BillboardTopTenImage")
 
 [heroku]: https://billboardtopten.herokuapp.com/
 [Billboard]: http://www.billboard.com/charts
 
-##BillboardTopTen Features
+## BillboardTopTen Features
 
 * Dynamic visualization of Billboard's top ten charts for every week
 * Week's top song playing while charts are displayed
