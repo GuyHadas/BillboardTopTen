@@ -223,7 +223,7 @@ class Chart extends React.Component{
 The second component is the graph component. this component is in charge of rendering ten album images and track names according to their ranking for a given week. Updates in state coupled with CSS transitions will change positions of tracks.
 
 
-![GraphCompnent](public/GraphCompnent.png?raw=true "GraphCompnent")
+![GraphComponent](public/GraphComponent.png?raw=true "GraphComponent")
 #### Sample Graph Code Snippet
 
 ```javascript
