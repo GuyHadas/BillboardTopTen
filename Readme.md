@@ -117,9 +117,7 @@ BillboardTopTen takes advantage of React.JS rapid render library for smooth visu
 
 The first component is the charts component. This component displays a track's progression over time by drawing out distinct lines following a tracks ranking. Using a set velocity, the lines are animated across the screen.
 
-<img src="public/ChartsComponent.png" "width="330px" height="275px"/>
-
-
+![ChartsComponent](public/ChartsComponent.png?raw=true){ width=50% height=50% }
 #### Sample Charts Code Snippet
 
 ```javascript
@@ -225,9 +223,7 @@ class Chart extends React.Component{
 The second component is the graph component. this component is in charge of rendering ten album images and track names according to their ranking for a given week. Updates in state coupled with CSS transitions will change positions of tracks.
 
 
-<img src="public/GraphComponent.png" width="175px" height="275px"/>
-
-
+![GraphComponent](public/GraphComponent.png?raw=true){ width=50% height=50% }
 #### Sample Graph Code Snippet
 
 ```javascript
