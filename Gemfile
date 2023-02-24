@@ -15,6 +15,7 @@ gem 'coffee-rails', '~> 4.1.0'
 # gem 'therubyracer', platforms: :ruby
 
 gem 'grooveshark'
+gem 'bigdecimal', '1.3.5'
 
 gem 'bcrypt'
 gem 'http'
